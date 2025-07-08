@@ -88,19 +88,26 @@ $isi_sambutan = mysqli_fetch_assoc($sambutan)['isi'] ?? '';
 
 
 
-<section class="section" id="berita">
-    <h3>Berita Terbaru</h3>
-    <?php
-    $berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT 3");
-    while ($b = mysqli_fetch_assoc($berita)) {
-        echo "<div class='berita-item'>
-            <h4>{$b['judul']}</h4>
-            <small>{$b['tanggal_post']}</small>
-            <p>" . substr($b['isi'], 0, 150) . "...</p>
-        </div>";
-    }
-    ?>
+<section class="py-8 bg-gray-100" id="berita">
+    <div class="max-w-5xl mx-auto px-4">
+        <h3 class="text-2xl font-bold mb-4 text-center">Berita Terbaru</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+            <?php
+            $berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT 3");
+            while ($b = mysqli_fetch_assoc($berita)) :
+            ?>
+                <div class="bg-white rounded shadow p-4">
+                    <?php if (!empty($b['gambar_utama'])): ?>
+                        <img src="upload/<?= $b['gambar_utama'] ?>" class="mb-3 h-40 w-full object-cover rounded" alt="Gambar Berita">
+                    <?php endif; ?>
+                    <h4 class="text-lg font-semibold mb-2"><?= htmlspecialchars($b['judul']) ?></h4>
+                    <small class="text-gray-500"><?= date('d M Y', strtotime($b['tanggal_post'])) ?></small>
+                </div>
+            <?php endwhile; ?>
+        </div>
+    </div>
 </section>
+
 
 <section class="section" id="statistik">
     <h3>Info Sekolah</h3>

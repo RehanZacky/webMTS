@@ -20,7 +20,7 @@ include 'koneksi.php';
     </nav>
 </header>
 
-<main class="p-6 max-w-4xl mx-auto">
+<main class="p-6 max-w-5xl mx-auto">
     <h2 class="text-2xl font-semibold mb-6">Daftar Berita</h2>
 
     <?php
@@ -28,28 +28,19 @@ include 'koneksi.php';
     while ($b = mysqli_fetch_assoc($berita)) :
     ?>
         <div class="bg-white shadow-md rounded p-6 mb-8">
-            <h3 class="text-xl font-bold mb-1"><?= htmlspecialchars($b['judul']) ?></h3>
-            <p class="text-sm text-gray-500 mb-3"><?= date('d M Y', strtotime($b['tanggal_post'])) ?> • <?= htmlspecialchars($b['penulis']) ?></p>
-
             <?php if (!empty($b['gambar_utama'])): ?>
-                <img src="upload/<?= $b['gambar_utama'] ?>" class="mt-2 max-h-60 rounded shadow mx-auto mb-4" alt="Gambar Berita">
+                <a href="berita_detail.php?id=<?= $b['id'] ?>">
+                    <img src="upload/<?= $b['gambar_utama'] ?>" class="mb-4 h-48 w-full object-cover rounded hover:opacity-90 transition" alt="Gambar Berita">
+                </a>
             <?php endif; ?>
 
-            <p class="text-justify"><?= nl2br(htmlspecialchars(substr($b['isi'], 0, 300))) ?>...</p>
+            <a href="berita_detail.php?id=<?= $b['id'] ?>" class="text-green-700 hover:underline">
+                <h3 class="text-xl font-bold mb-1"><?= htmlspecialchars($b['judul']) ?></h3>
+            </a>
 
-            <?php if (!empty($b['video_youtube'])): ?>
-                <?php
-                parse_str(parse_url($b['video_youtube'], PHP_URL_QUERY), $ytParams);
-                $videoID = $ytParams['v'] ?? null;
-                ?>
-                <?php if ($videoID): ?>
-                    <div class="flex justify-center mt-4">
-                        <div class="w-full max-w-2xl aspect-video">
-                            <iframe class="w-full h-full rounded" src="https://www.youtube.com/embed/<?= $videoID ?>" frameborder="0" allowfullscreen></iframe>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            <?php endif; ?>
+            <p class="text-sm text-gray-500 mb-3"><?= date('d M Y', strtotime($b['tanggal_post'])) ?> • <?= htmlspecialchars($b['penulis']) ?></p>
+            
+            <p class="text-justify"><?= nl2br(htmlspecialchars(substr($b['isi'], 0, 250))) ?>...</p>
         </div>
     <?php endwhile; ?>
 </main>
