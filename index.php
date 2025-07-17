@@ -18,26 +18,57 @@ include 'koneksi.php';
 </head>
 <body class="bg-gray-50">
 
-    <header class="bg-white/75 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="flex items-center gap-3">
-                <img src="https://placehold.co/40x40/16a34a/white?text=A" alt="Logo Al-Mujahidin" class="h-10 w-10">
-                <span class="text-xl font-bold text-gray-800">Pondok Pesantren <br> Roudlotul Quran</span>
-            </a>
-            <nav class="hidden md:flex items-center space-x-8">
-                <a href="#galeri" class="text-gray-600 hover:text-green-600 font-semibold">Beranda</a>
-                <a href="#galeri" class="text-gray-600 hover:text-green-600 font-semibold">Profil</a>
-                <a href="berita.php" class="text-gray-600 hover:text-green-600 font-semibold">Berita</a>
-                <a href="galeri.php" class="text-gray-600 hover:text-green-600 font-semibold">Galeri</a>
-            </nav>
+   <!-- NAVBAR UTAMA -->
+<header class="bg-white/75 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="index.php" class="flex items-center gap-3">
+            <img src="https://placehold.co/40x40/16a34a/white?text=A" alt="Logo" class="h-10 w-10">
+            <span class="text-xl font-bold text-gray-800 leading-tight">Pondok Pesantren <br> Roudlotul Quran</span>
+        </a>
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex items-center space-x-8">
+            <a href="index.php" class="text-gray-600 hover:text-green-600 font-semibold">Beranda</a>
+            <a href="profil.php" class="text-gray-600 hover:text-green-600 font-semibold">Profil</a>
+            <a href="berita.php" class="text-gray-600 hover:text-green-600 font-semibold">Berita</a>
+            <a href="galeri.php" class="text-gray-600 hover:text-green-600 font-semibold">Galeri</a>
+        </nav>
+
+        <!-- Mobile Hamburger Menu Button -->
+        <div class="md:hidden">
+            <button id="menu-toggle" class="focus:outline-none">
+                <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
         </div>
-    </header>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4">
+        <a href="index.php" class="block py-2 text-gray-700 hover:text-green-600">Beranda</a>
+        <a href="profil.php" class="block py-2 text-gray-700 hover:text-green-600">Profil</a>
+        <a href="berita.php" class="block py-2 text-gray-700 hover:text-green-600">Berita</a>
+        <a href="galeri.php" class="block py-2 text-gray-700 hover:text-green-600">Galeri</a>
+    </div>
+</header>
+
+<!-- SCRIPT UNTUK MOBILE MENU -->
+<script>
+    document.getElementById("menu-toggle").addEventListener("click", function () {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+    });
+</script>
+
 
     <main>
         <section class="relative h-screen flex items-center justify-center text-white text-center overflow-hidden">
-        <div class="absolute inset-0 bg-black/100 z-0" style="background-image: url('gambar_beranda/UBS00415.JPG'); background-size: cover; background-position: center;"></div>
+        <div class="absolute inset-0 z-0" style="background-image: url('gambar_beranda/UBS00415.JPG'); background-size: cover; background-position: center;">
+        <div class="absolute inset-0 bg-black/70"></div>
+        </div>
         <div class="relative z-10 max-w-3xl px-4">
-            <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">Selamat Datang di Pondok Pesantren Al-Mujahidin</h1>
+            <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">Selamat Datang di Pondok Pesantren Roudlotul Quran</h1>
             <p class="mt-4 text-lg md:text-xl text-green-200">Mewujudkan sumber daya manusia yang peduli dan berbudaya ramah lingkungan melalui kegiatan madrasah yang berkesinambungan.</p>
             <div class="mt-8 flex justify-center gap-4">
                 <a href="#sambutan" class="bg-white text-green-700 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-transform hover:scale-105">Tentang Kami</a>

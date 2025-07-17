@@ -26,50 +26,52 @@ if (!$berita) {
 </head>
 <body class="bg-gray-100 font-sans text-gray-800">
 
-<!-- NAVBAR -->
-<nav class="bg-white shadow-md fixed w-full z-50 top-0">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-            <div class="flex-shrink-0 flex items-center space-x-2">
-                <img class="h-10 w-auto" src="logo.png" alt="Logo">
-                <span class="font-bold text-green-700">Ponpes Roudlotul Quran</span>
-                
-            </div>
-            <div class="hidden md:flex space-x-6 items-center">
-                <a href="index.php" class="hover:text-green-700">Beranda</a>
-                <a href="#profil.php" class="hover:text-green-700">Profil</a>
-                <a href="berita.php" class="hover:text-green-700">Berita</a>
-                <a href="galeri.php" class="hover:text-green-700">Galeri</a>
-                <a href="#" class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600">PPDB Online</a>
-            </div>
-            <div class="md:hidden">
-                <button id="menu-toggle" class="focus:outline-none">
-                    <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden py-2 space-y-2">
-            <a href="index.php" class="block text-green-700 px-4">Beranda</a>
-            <a href="#" class="block px-4">Profil</a>
-            <a href="berita.php" class="block px-4">Berita</a>
-            <a href="#" class="block px-4">Galeri</a>
-            <a href="#" class="block bg-green-700 text-white text-center mx-4 py-2 rounded">PPDB Online</a>
+<!-- NAVBAR UTAMA -->
+<header class="bg-white/75 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="index.php" class="flex items-center gap-3">
+            <img src="https://placehold.co/40x40/16a34a/white?text=A" alt="Logo" class="h-10 w-10">
+            <span class="text-xl font-bold text-gray-800 leading-tight">Pondok Pesantren <br> Roudlotul Quran</span>
+        </a>
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex items-center space-x-8">
+            <a href="index.php" class="text-gray-600 hover:text-green-600 font-semibold">Beranda</a>
+            <a href="profil.php" class="text-gray-600 hover:text-green-600 font-semibold">Profil</a>
+            <a href="berita.php" class="text-gray-600 hover:text-green-600 font-semibold">Berita</a>
+            <a href="galeri.php" class="text-gray-600 hover:text-green-600 font-semibold">Galeri</a>
+        </nav>
+
+        <!-- Mobile Hamburger Menu Button -->
+        <div class="md:hidden">
+            <button id="menu-toggle" class="focus:outline-none">
+                <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
         </div>
     </div>
-</nav>
 
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4">
+        <a href="index.php" class="block py-2 text-gray-700 hover:text-green-600">Beranda</a>
+        <a href="profil.php" class="block py-2 text-gray-700 hover:text-green-600">Profil</a>
+        <a href="berita.php" class="block py-2 text-gray-700 hover:text-green-600">Berita</a>
+        <a href="galeri.php" class="block py-2 text-gray-700 hover:text-green-600">Galeri</a>
+    </div>
+</header>
+
+<!-- SCRIPT UNTUK MOBILE MENU -->
 <script>
-    document.getElementById("menu-toggle").onclick = function () {
+    document.getElementById("menu-toggle").addEventListener("click", function () {
         const menu = document.getElementById("mobile-menu");
         menu.classList.toggle("hidden");
-    };
+    });
 </script>
 
+
 <!-- HEADER -->
-<header class="mt-16 bg-gradient-to-b from-green-700 to-green-500 text-white text-center py-12">
+<header class="bg-gradient-to-b from-green-700 to-green-400 text-white text-center py-20">
     <h1 class="text-3xl md:text-4xl font-bold px-4">Detail Berita</h1>
 </header>
 
