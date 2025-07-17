@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 11, 2025 at 08:54 AM
+-- Generation Time: Jul 17, 2025 at 03:00 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -42,7 +42,8 @@ CREATE TABLE `berita` (
 --
 
 INSERT INTO `berita` (`id`, `judul`, `isi`, `penulis`, `tanggal_post`, `gambar_utama`, `video_youtube`) VALUES
-(1, 'test', 'test', 'test', '2025-07-08 00:00:00', 'berita_1751981795.jpg', 'https://www.youtube.com/watch?v=XpmeVNxZ-Ks&list=RDpp4YQPykBMM&index=11&ab_channel=IlleniumVEVO');
+(1, 'test', 'test', 'test', '2025-07-08 00:00:00', 'berita_1751981795.jpg', 'https://www.youtube.com/watch?v=XpmeVNxZ-Ks&list=RDpp4YQPykBMM&index=11&ab_channel=IlleniumVEVO'),
+(2, 'tes', 'jadi gini', 'saya', '2025-07-17 00:00:00', 'berita_1752753200.jpeg', '');
 
 -- --------------------------------------------------------
 
@@ -100,9 +101,6 @@ CREATE TABLE `profil` (
 --
 
 INSERT INTO `profil` (`id`, `jenis`, `isi`) VALUES
-(1, 'visi', ''),
-(2, 'misi', ''),
-(3, 'sejarah', ''),
 (4, 'sambutan_kepala', 'https://www.youtube.com/watch?v=pp4YQPykBMM&list=RDpp4YQPykBMM&start_radio=1&ab_channel=IlleniumVEVO');
 
 -- --------------------------------------------------------
@@ -168,7 +166,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `berita`
 --
 ALTER TABLE `berita`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `gambar`
