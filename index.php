@@ -7,7 +7,7 @@ include 'koneksi.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pondok Pesantren Al-Mujahidin</title>
+    <title>Roudlotul Quran</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Menambahkan style untuk scroll yang lebih halus */
@@ -18,30 +18,32 @@ include 'koneksi.php';
 </head>
 <body class="bg-gray-50">
 
-    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+    <header class="bg-white/75 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="#" class="flex items-center gap-3">
                 <img src="https://placehold.co/40x40/16a34a/white?text=A" alt="Logo Al-Mujahidin" class="h-10 w-10">
-                <span class="text-xl font-bold text-gray-800">Pondok Pesantren <br> Al-Mujahidin</span>
+                <span class="text-xl font-bold text-gray-800">Pondok Pesantren <br> Roudlotul Quran</span>
             </a>
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="#home" class="text-gray-600 hover:text-green-600 font-semibold border-b-2 border-green-600 pb-1">Beranda</a>
-                <a href="#artikel" class="text-gray-600 hover:text-green-600 font-semibold">Artikel</a>
-                <a href="#galeri" class="text-gray-600 hover:text-green-600 font-semibold">Galeri</a>
+                <a href="#galeri" class="text-gray-600 hover:text-green-600 font-semibold">Beranda</a>
+                <a href="#galeri" class="text-gray-600 hover:text-green-600 font-semibold">Profil</a>
+                <a href="berita.php" class="text-gray-600 hover:text-green-600 font-semibold">Berita</a>
+                <a href="galeri.php" class="text-gray-600 hover:text-green-600 font-semibold">Galeri</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <section id="home" class="h-screen bg-green-700 flex items-center justify-center text-white text-center" style="background-image: linear-gradient(rgba(0, 80, 0, 0.6), rgba(0, 80, 0, 0.6)), url('https://placehold.co/1920x1080'); background-size: cover; background-position: center;">
-            <div class="max-w-3xl px-4">
-                <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">Selamat Datang di Pondok Pesantren Al-Mujahidin</h1>
-                <p class="mt-4 text-lg md:text-xl text-green-200">Mewujudkan sumber daya manusia yang peduli dan berbudaya ramah lingkungan melalui kegiatan madrasah yang berkesinambungan.</p>
-                <div class="mt-8 flex justify-center gap-4">
-                    <a href="#sambutan" class="bg-white text-green-700 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-transform hover:scale-105">Tentang Kami</a>
-                    <a href="#galeri" class="border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-green-700 transition-all hover:scale-105">Lihat Galeri</a>
-                </div>
+        <section class="relative h-screen flex items-center justify-center text-white text-center overflow-hidden">
+        <div class="absolute inset-0 bg-black/100 z-0" style="background-image: url('gambar_beranda/UBS00415.JPG'); background-size: cover; background-position: center;"></div>
+        <div class="relative z-10 max-w-3xl px-4">
+            <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">Selamat Datang di Pondok Pesantren Al-Mujahidin</h1>
+            <p class="mt-4 text-lg md:text-xl text-green-200">Mewujudkan sumber daya manusia yang peduli dan berbudaya ramah lingkungan melalui kegiatan madrasah yang berkesinambungan.</p>
+            <div class="mt-8 flex justify-center gap-4">
+                <a href="#sambutan" class="bg-white text-green-700 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-transform hover:scale-105">Tentang Kami</a>
+                <a href="#galeri" class="border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-green-700 transition-all hover:scale-105">Lihat Galeri</a>
             </div>
+        </div>
         </section>
 
         <section class="py-16 bg-white">
@@ -98,9 +100,36 @@ include 'koneksi.php';
             </div>
         </section>
 
+        <section id="visi-misi" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-800">Visi & Misi</h2>
+                    <p class="mt-2 text-gray-600">Landasan dan tujuan Pondok Pesantren Al-Mujahidin.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-12 items-start">
+                    <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Visi</h3>
+                        <p class="text-gray-600 text-center">
+                            "Mewujudkan sumber daya manusia yang berakhlak mulia, unggul dalam prestasi, peduli, dan berbudaya ramah lingkungan."
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Misi</h3>
+                        <ul class="list-disc list-inside space-y-3 text-gray-600">
+                            <li>Menyelenggarakan pendidikan formal dan non-formal yang berkualitas berbasis nilai-nilai Islam.</li>
+                            <li>Membina santri menjadi pribadi yang beriman, bertaqwa, dan berakhlak mulia sesuai Al-Quran dan Sunnah.</li>
+                            <li>Mengembangkan potensi santri di bidang akademik, non-akademik, dan kewirausahaan untuk berdaya saing global.</li>
+                            <li>Menanamkan kesadaran dan kepedulian terhadap kelestarian lingkungan hidup melalui kegiatan yang nyata dan berkelanjutan.</li>
+                            <li>Membangun jiwa kepemimpinan yang amanah dan bertanggung jawab pada diri santri.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="artikel" class="py-20 bg-white">
             <div class="container mx-auto px-6 text-center">
-                <h2 class="text-3xl font-bold text-gray-800">Artikel & Berita Terbaru</h2>
+                <h2 class="text-3xl font-bold text-gray-800">Berita Terbaru</h2>
                 <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Ikuti perkembangan dan kegiatan terbaru dari Pondok Pesantren Al-Mujahidin</p>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 text-left">
                     <?php
@@ -125,12 +154,46 @@ include 'koneksi.php';
                     ?>
                 </div>
                 <div class="mt-12">
-                    <a href="/semua-artikel" class="bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition-colors">
-                        Lihat Semua Artikel
+                    <a href="berita.php" class="bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition-colors">
+                        Lihat Semua Berita
                     </a>
                 </div>
             </div>
         </section>
+        
+        <section id="galeri" class="py-20 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold text-gray-800">Galeri Kegiatan</h2>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Momen dan kegiatan yang terdokumentasi di Pondok Pesantren Al-Mujahidin.</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-12">
+                    <?php
+                    // KODE DIPERBAIKI: Menggunakan tabel `gambar` dan kolom yang sesuai
+                    $galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_upload DESC LIMIT 8");
+                    if ($galeri_query && mysqli_num_rows($galeri_query) > 0) :
+                        while ($foto = mysqli_fetch_assoc($galeri_query)) :
+                    ?>
+                    <div class="rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition-transform duration-300">
+                        <a href="<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>">
+                             <img src="<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
+                        </a>
+                    </div>
+                    <?php
+                        endwhile;
+                    else:
+                        echo '<p class="text-center col-span-full text-gray-500">Belum ada foto di galeri.</p>';
+                    endif;
+                    ?>
+                </div>
+
+                <div class="mt-12">
+                    <a href="galeri.php" class="bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition-colors">
+                        Lihat Semua Galeri
+                    </a>
+                </div>
+            </div>
+        </section>
+
 
     </main>
 
@@ -138,8 +201,8 @@ include 'koneksi.php';
         <div class="container mx-auto px-6 py-12">
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
                 <div class="lg:col-span-2">
-                    <h4 class="text-white text-lg font-semibold mb-4">Pondok Pesantren Al-Mujahidin</h4>
-                    <p class="text-gray-400">Pondok Pesantren Al-Mujahidin berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin dalam membangun peradaban yang berkualitas.</p>
+                    <h4 class="text-white text-lg font-semibold mb-4">Pondok Pesantren Roudlotul Quran</h4>
+                    <p class="text-gray-400">Pondok Pesantren Roudlotul Quran berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin dalam membangun peradaban yang berkualitas.</p>
                      <div class="flex space-x-4 mt-4">
                         <a href="#" class="text-gray-400 hover:text-white"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M..."></path></svg></a>
                         <a href="#" class="text-gray-400 hover:text-white"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M..."></path></svg></a>
@@ -163,7 +226,7 @@ include 'koneksi.php';
                 </div>
             </div>
             <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
-                <p>&copy; <?= date('Y') ?> Pondok Pesantren Al-Mujahidin. All rights reserved.</p>
+                <p>&copy; <?= date('Y') ?> Pondok Pesantren Roudlotul Quran. All rights reserved.</p>
             </div>
         </div>
     </footer>

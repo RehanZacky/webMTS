@@ -24,27 +24,21 @@ while ($row = mysqli_fetch_assoc($query)) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Profil Sekolah</title>
+    <title>Ganti Video Profil</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
 
 <nav class="bg-green-700 text-white px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">Edit Profil Sekolah</h1>
+    <h1 class="text-xl font-bold">Ganti Video Profil</h1>
     <a href="dashboard_admin.php" class="bg-white text-green-700 px-3 py-1 rounded hover:bg-gray-100">⬅️ Dashboard</a>
 </nav>
 
 <main class="p-6 max-w-4xl mx-auto bg-white rounded shadow mt-6">
-    <h2 class="text-2xl font-semibold mb-4">Formulir Edit Profil</h2>
-
     <?php if (isset($success)) echo "<p class='text-green-600 mb-4'>$success</p>"; ?>
-
     <form method="POST">
         <?php
         $judul = [
-            'visi' => 'Visi Sekolah',
-            'misi' => 'Misi Sekolah',
-            'sejarah' => 'Sejarah Singkat',
             'sambutan_kepala' => 'Link Video Youtube'
         ];
         foreach ($judul as $jenis => $label) :
