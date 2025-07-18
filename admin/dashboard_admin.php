@@ -61,10 +61,6 @@ $aktivitas_terbaru = [
             to { transform: scale(1); opacity: 1; }
         }
         
-        .notification-dot {
-            animation: pulse 2s infinite;
-        }
-        
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -146,19 +142,6 @@ $aktivitas_terbaru = [
 
                 <!-- Right side items -->
                 <div class="flex items-center space-x-4">
-                    <!-- Notifications -->
-                    <div class="relative">
-                        <button class="relative text-green-100 hover:text-white p-2 rounded-full hover:bg-green-700 transition-colors">
-                            <i class="fas fa-bell text-lg"></i>
-                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full notification-dot"></span>
-                        </button>
-                    </div>
-
-                    <!-- Time -->
-                    <div class="text-sm text-green-100">
-                        <span id="currentTime"></span>
-                    </div>
-
                     <!-- User Dropdown -->
                     <div class="relative dropdown">
                         <button class="flex items-center text-green-100 hover:text-white p-2 rounded-md hover:bg-green-700 transition-colors">
