@@ -137,9 +137,34 @@ include 'koneksi.php';
 </section>
 
 <!-- FOOTER -->
-<footer class="text-center text-sm text-gray-500 py-4">
-    &copy; <?= date('Y') ?> Pondok Pesantren Roudlotul Quran. All rights reserved.
-</footer>
+ <footer class="bg-gray-800 text-gray-300 mt-16">
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                <div class="lg:col-span-2">
+                    <h4 class="text-white text-lg font-semibold mb-4">Pondok Pesantren Roudlotul Quran</h4>
+                    <p class="text-gray-400">Pondok Pesantren Roudlotul Quran berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin dalam membangun peradaban yang berkualitas.</p>
+                </div>
+                <div>
+                    <h4 class="text-white text-lg font-semibold mb-4">Kontak Kami</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>Jl. Raya Pesantren No. 123, Sidoarjo, Jawa Timur 61234</li>
+                        <li>+62 31 1234 5678</li>
+                        <li>info@almujahidin.ac.id</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white text-lg font-semibold mb-4">Jam Operasional</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><span class="font-semibold">Senin - Jumat:</span> 07:00 - 16:00 WIB</li>
+                        <li><span class="font-semibold">Sabtu - Minggu:</span> 07:00 - 12:00 WIB</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
+                <p>© <?= date('Y') ?> Pondok Pesantren Al-Mujahidin. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>
