@@ -247,8 +247,7 @@ $aktivitas_terbaru = [
                         <?php while ($b = mysqli_fetch_assoc($berita_query)) : ?>
                             <?php if (!empty($b['gambar_utama'])): ?>
                                 <div class="inline-block w-80 flex-shrink-0 bg-gray-50 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                                    <a href="berita_detail.php?id=<?= $b['id'] ?>">
-                                        <img src="upload/<?= $b['gambar_utama'] ?>" class="h-48 w-full object-cover rounded-t-lg" alt="Gambar Berita">
+                                    <a href="../berita_detail.php?id=<?= $b['id'] ?>">
                                     </a>
                                     <div class="p-4">
                                         <p class="text-sm text-gray-500 mb-1 flex items-center">
