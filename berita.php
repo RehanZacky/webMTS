@@ -62,29 +62,48 @@ if ($semua_berita) {
             <span class="text-xl font-bold text-gray-800 leading-tight">Pondok Pesantren <br> Roudlotul Quran</span>
         </a>
 
+        <!-- NAVBAR UTAMA -->
+    <header class="bg-white/75 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="index.php" class="flex items-center gap-3">
+            <img src="https://placehold.co/40x40/16a34a/white?text=A" alt="Logo" class="h-10 w-10">
+            <span class="text-xl font-bold text-gray-800 leading-tight">Pondok Pesantren <br> Roudlotul Quran</span>
+        </a>
+        <!-- Desktop Menu -->
         <nav class="hidden md:flex items-center space-x-8">
             <a href="index.php" class="text-gray-600 hover:text-green-600 font-semibold">Beranda</a>
             <a href="profil.php" class="text-gray-600 hover:text-green-600 font-semibold">Profil</a>
-            <a href="berita.php" class="text-green-600 font-bold border-b-2 border-green-600 pb-1">Berita</a>
+            <a href="berita.php" class="text-gray-600 hover:text-green-600 font-semibold">Berita</a>
             <a href="galeri.php" class="text-gray-600 hover:text-green-600 font-semibold">Galeri</a>
         </nav>
 
+        <!-- Mobile Hamburger Menu Button -->
         <div class="md:hidden">
             <button id="menu-toggle" class="focus:outline-none">
-                <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
             </button>
         </div>
     </div>
 
+    <!-- Mobile Dropdown Menu -->
     <div id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4">
         <a href="index.php" class="block py-2 text-gray-700 hover:text-green-600">Beranda</a>
         <a href="profil.php" class="block py-2 text-gray-700 hover:text-green-600">Profil</a>
-        <a href="berita.php" class="block py-2 text-green-600 font-semibold">Berita</a>
+        <a href="berita.php" class="block py-2 text-gray-700 hover:text-green-600">Berita</a>
         <a href="galeri.php" class="block py-2 text-gray-700 hover:text-green-600">Galeri</a>
     </div>
 </header>
+
+<!-- SCRIPT UNTUK MOBILE MENU -->
+<script>
+    document.getElementById("menu-toggle").addEventListener("click", function () {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+    });
+</script>
 
 <main class="py-24">
     <div class="container mx-auto px-6">
