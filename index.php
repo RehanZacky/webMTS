@@ -19,7 +19,7 @@ include 'koneksi.php';
 <body class="bg-gray-50">
 
    <!-- NAVBAR UTAMA -->
-<header class="bg-white/75 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+    <header class="bg-white/75 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
             <img src="https://placehold.co/40x40/16a34a/white?text=A" alt="Logo" class="h-10 w-10">
@@ -61,7 +61,7 @@ include 'koneksi.php';
     });
 </script>
 
-
+    <!-- HOMEPAGE -->
     <main>
         <section class="relative h-screen flex items-center justify-center text-white text-center overflow-hidden">
         <div class="absolute inset-0 z-0" style="background-image: url('gambar_beranda/UBS00415.JPG'); background-size: cover; background-position: center;">
@@ -181,7 +181,7 @@ include 'koneksi.php';
                         <div class="p-6">
                             <h3 class="text-xl font-semibold mb-2 text-gray-800"><?= htmlspecialchars($artikel['judul']) ?></h3>
                             <p class="text-gray-500 text-sm mb-4">Diposting: <?= date('d F Y', strtotime($artikel['tanggal_post'])) ?></p>
-                            <a href="#" class="text-green-600 hover:text-green-800 font-bold">Baca Selengkapnya →</a>
+                            <a href="berita_detail.php" class="text-green-600 hover:text-green-800 font-bold">Baca Selengkapnya →</a>
                         </div>
                     </div>
                     <?php
