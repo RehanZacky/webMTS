@@ -54,11 +54,12 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
             <img src="https://placehold.co/40x40/16a34a/white?text=A" alt="Logo" class="h-10 w-10">
             <span class="text-xl font-bold text-gray-800 leading-tight">Pondok Pesantren <br> Roudlotul Quran</span>
         </a>
-<nav class="hidden md:flex items-center space-x-8">
+
+        <nav class="hidden md:flex items-center space-x-8">
             <a href="index.php" class="text-gray-600 hover:text-green-600 font-semibold">Beranda</a>
             <a href="profil.php" class="text-gray-600 hover:text-green-600 font-semibold">Profil</a>
-            <a href="berita.php" class="text-green-600  hover:text-green-600 font-semibold">Berita</a>
-            <a href="galeri.php" class="text-gray-600 hover:text-green-600 font-semibold">Galeri</a>
+            <a href="berita.php" class="text-gray-600 hover:text-green-600 font-semibold">Berita</a>
+            <a href="galeri.php" class="text-green-600 font-bold border-b-2 border-green-600 pb-1">Galeri</a>
         </nav>
 
         <div class="md:hidden">
@@ -74,7 +75,7 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
         <a href="index.php" class="block py-2 text-gray-700 hover:text-green-600">Beranda</a>
         <a href="profil.php" class="block py-2 text-gray-700 hover:text-green-600">Profil</a>
         <a href="berita.php" class="block py-2 text-gray-700 hover:text-green-600">Berita</a>
-        <a href="galeri.php" class="block py-2 text-gray-700 hover:text-green-600">Galeri</a>
+        <a href="galeri.php" class="block py-2 text-green-600 font-semibold">Galeri</a>
     </div>
 </header>
 

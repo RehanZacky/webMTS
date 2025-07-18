@@ -65,7 +65,7 @@ if ($semua_berita) {
         <nav class="hidden md:flex items-center space-x-8">
             <a href="index.php" class="text-gray-600 hover:text-green-600 font-semibold">Beranda</a>
             <a href="profil.php" class="text-gray-600 hover:text-green-600 font-semibold">Profil</a>
-            <a href="berita.php" class="text-green-600  hover:text-green-600 font-semibold">Berita</a>
+            <a href="berita.php" class="text-green-600 font-bold border-b-2 border-green-600 pb-1">Berita</a>
             <a href="galeri.php" class="text-gray-600 hover:text-green-600 font-semibold">Galeri</a>
         </nav>
 
@@ -81,7 +81,7 @@ if ($semua_berita) {
     <div id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4">
         <a href="index.php" class="block py-2 text-gray-700 hover:text-green-600">Beranda</a>
         <a href="profil.php" class="block py-2 text-gray-700 hover:text-green-600">Profil</a>
-        <a href="berita.php" class="block py-2 text-gray-700 hover:text-green-600">Berita</a>
+        <a href="berita.php" class="block py-2 text-green-600 font-semibold">Berita</a>
         <a href="galeri.php" class="block py-2 text-gray-700 hover:text-green-600">Galeri</a>
     </div>
 </header>
