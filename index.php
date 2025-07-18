@@ -65,7 +65,7 @@ include 'koneksi.php';
     <main>
         <section class="relative h-screen flex items-center justify-center text-white text-center overflow-hidden">
         <div class="absolute inset-0 z-0" style="background-image: url('gambar_beranda/UBS00415.JPG'); background-size: cover; background-position: center;">
-        <div class="absolute inset-0 bg-black/70"></div>
+    <div class="absolute inset-0 bg-black/70"></div>
         </div>
         <div class="relative z-10 max-w-3xl px-4">
             <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">Selamat Datang di Pondok Pesantren Roudlotul Quran</h1>
@@ -97,18 +97,24 @@ include 'koneksi.php';
             </div>
         </section>
 
-        <section id="sambutan" class="py-20 bg-gray-50">
-            <div class="container mx-auto px-6">
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Sambutan Pimpinan</h2>
-                        <div class="mt-6">
-                            <h4 class="font-bold text-lg text-gray-900">KH. Abdullah Wahab, M.Pd.I</h4>
-                            <p class="text-gray-500">Pengasuh Pondok Pesantren Al-Mujahidin</p>
-                        </div>
-                    </div>
+        <section id="profil-video" class="py-20 bg-green-50">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-800">Profil Pondok</h2>
+            <p class="mt-2 text-gray-600">Mengenal lebih dekat pimpinan dan visi kehidupan di Pondok Pesantren.</p>
+
+                 <div class="text-center">
+                <div class="flex justify-center">
+                    <img src="https://placehold.co/200x200/16a34a/ffffff?text=KH" alt="Pimpinan" class="w-40 h-40 object-cover rounded-full shadow-md border-4 border-white">
+                </div>
+                <h3 class="mt-6 text-xl font-semibold text-gray-800">KH. Muhammad Rifqi, Lc</h3>
+                <p class="text-gray-500 mb-4">Wakil Pengasuh Roudlotul Quran</p>
+                <blockquote class="italic text-green-700 text-lg font-medium">"Ilmu tanpa adab adalah kesesatan, dan adab tanpa ilmu adalah kebodohan."</blockquote>
+            </div>
+        </div>
+    </div>
                     
-                        <?php
+    <?php
     $profil = mysqli_query($koneksi, "SELECT isi FROM profil WHERE jenis = 'sambutan_kepala' LIMIT 1");
     $data_profil = mysqli_fetch_assoc($profil);
     $link = $data_profil['isi'] ?? '';
