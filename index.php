@@ -164,6 +164,7 @@ include 'koneksi.php';
             </div>
         </section>
 
+        <!-- BERITA SECTION -->
         <section id="artikel" class="py-20 bg-white">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold text-gray-800">Berita Terbaru</h2>
@@ -197,7 +198,8 @@ include 'koneksi.php';
                 </div>
             </div>
         </section>
-        
+
+        <!-- GALERI SECTION -->
         <section id="galeri" class="py-20 bg-white">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold text-gray-800">Galeri Kegiatan</h2>
@@ -230,10 +232,9 @@ include 'koneksi.php';
                 </div>
             </div>
         </section>
-
-
     </main>
 
+    <!-- FOOTER -->
     <footer class="bg-gray-800 text-gray-300">
         <div class="container mx-auto px-6 py-12">
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
