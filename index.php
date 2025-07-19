@@ -19,37 +19,34 @@ include 'koneksi.php';
 <body class="bg-gray-50">
 
    <!-- NAVBAR UTAMA -->
-    <header class="bg-white/75 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+<header class="bg-green-700 sticky top-0 z-50 shadow-lg">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
-            <img src="https://placehold.co/40x40/16a34a/white?text=A" alt="Logo" class="h-10 w-10">
-            <span class="text-xl font-bold text-gray-800 leading-tight">Pondok Pesantren <br> Roudlotul Quran</span>
+            <img src="https://placehold.co/40x40/FFFFFF/15803d?text=A" alt="Logo Al-Mujahidin" class="h-10 w-10">
+            <span class="text-xl font-bold text-white leading-tight">Pondok Pesantren <br> Roudlotul Quran</span>
         </a>
-        <!-- Desktop Menu -->
+
         <nav class="hidden md:flex items-center space-x-8">
-            <a href="index.php" class="text-gray-600 hover:text-green-600 font-semibold">Beranda</a>
-            <a href="profil.php" class="text-gray-600 hover:text-green-600 font-semibold">Profil</a>
-            <a href="berita.php" class="text-gray-600 hover:text-green-600 font-semibold">Berita</a>
-            <a href="galeri.php" class="text-gray-600 hover:text-green-600 font-semibold">Galeri</a>
+            <a href="index.php" class="text-white font-bold">Beranda</a>
+            <a href="profil.php" class="text-green-100 hover:text-white font-semibold">Profil</a>
+            <a href="berita.php" class="text-green-100 hover:text-white font-semibold">Berita</a>
+            <a href="galeri.php" class="text-green-100 hover:text-white font-semibold">Galeri</a>
         </nav>
 
-        <!-- Mobile Hamburger Menu Button -->
         <div class="md:hidden">
             <button id="menu-toggle" class="focus:outline-none">
-                <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M4 6h16M4 12h16M4 18h16"/>
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
         </div>
     </div>
 
-    <!-- Mobile Dropdown Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4">
-        <a href="index.php" class="block py-2 text-gray-700 hover:text-green-600">Beranda</a>
-        <a href="profil.php" class="block py-2 text-gray-700 hover:text-green-600">Profil</a>
-        <a href="berita.php" class="block py-2 text-gray-700 hover:text-green-600">Berita</a>
-        <a href="galeri.php" class="block py-2 text-gray-700 hover:text-green-600">Galeri</a>
+    <div id="mobile-menu" class="hidden md:hidden bg-green-700 px-6 pb-4">
+        <a href="index.php" class="block py-2 text-white font-semibold">Beranda</a>
+        <a href="profil.php" class="block py-2 text-green-100 hover:text-white">Profil</a>
+        <a href="berita.php" class="block py-2 text-green-100 hover:text-white">Berita</a>
+        <a href="galeri.php" class="block py-2 text-green-100 hover:text-white">Galeri</a>
     </div>
 </header>
 
