@@ -55,7 +55,7 @@ if ($semua_berita) {
 </head>
 <body class="bg-gray-50 min-h-screen font-sans">
 
-<header class="bg-green-700 opacity-50 sticky top-0 z-50 shadow-lg">
+<header class="bg-green-700 sticky top-0 z-50 shadow-lg">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
             <img src="upload\STK-20250718-WA0016.png" alt="Roudlotul Quran" class="h-20 w-20">
