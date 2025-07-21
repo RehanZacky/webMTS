@@ -119,22 +119,25 @@ $aktivitas_terbaru = [
                 <!-- Navigation Links -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#" class="nav-item bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-chart-line mr-2"></i>Dashboard
                         </a>
-                        <a href="berita_edit.php" class="nav-item text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="berita_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-newspaper mr-2"></i>Kelola Berita
                         </a>
-                        <a href="statistik_edit.php" class="nav-item text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="statistik_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-chart-bar mr-2"></i>Statistik
                         </a>
-                        <a href="profil_edit.php" class="nav-item text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="profil_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-school mr-2"></i>Profil Sekolah
                         </a>
-                        <a href="prestasi_edit.php" class="nav-item text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="prestasi_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-trophy mr-2"></i>Prestasi
                         </a>
-                        <a href="#" class="nav-item text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="pegawai_edit.php" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">
+                            <i class="fas fa-users mr-2"></i>Guru & Staff
+                        </a>
+                        <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-images mr-2"></i>Galeri
                         </a>
                     </div>
@@ -142,56 +145,14 @@ $aktivitas_terbaru = [
 
                 <!-- Right side items -->
                 <div class="flex items-center space-x-4">
-                    <!-- User Dropdown -->
-                    <div class="relative dropdown">
-                        <button class="flex items-center text-green-100 hover:text-white p-2 rounded-md hover:bg-green-700 transition-colors">
-                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-2">
-                                <i class="fas fa-user text-white text-sm"></i>
-                            </div>
-                            <span class="text-sm font-medium"><?= $username ?></span>
-                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
-                        </button>
-                        <div class="dropdown-content absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                            <div class="border-t border-gray-100"></div>
-                            <a href="../logout.php" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                            </a>
+                    <!-- User Info -->
+                    <div class="flex items-center text-green-100">
+                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-2">
+                            <i class="fas fa-user text-white text-sm"></i>
                         </div>
+                        <span class="text-sm font-medium"><?= $username ?></span>
                     </div>
-                </div>
-
-                <!-- Mobile menu button -->
-                <div class="md:hidden">
-                    <button id="mobileMenuBtn" class="text-green-100 hover:text-white p-2">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Navigation Menu -->
-        <div id="mobileMenu" class="md:hidden hidden bg-green-700">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#" class="bg-green-800 text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-chart-line mr-2"></i>Dashboard
-                </a>
-                <a href="berita_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-newspaper mr-2"></i>Kelola Berita
-                </a>
-                <a href="statistik_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-chart-bar mr-2"></i>Statistik
-                </a>
-                <a href="profil_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-school mr-2"></i>Profil Sekolah
-                </a>
-                <a href="prestasi_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-trophy mr-2"></i>Prestasi
-                </a>
-                <a href="#" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-images mr-2"></i>Galeri
-                </a>
-                <div class="border-t border-green-600 pt-4">
-                    <a href="../logout.php" class="text-red-300 hover:bg-red-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                         <i class="fas fa-sign-out-alt mr-2"></i>Logout
                     </a>
                 </div>
@@ -362,13 +323,13 @@ $aktivitas_terbaru = [
                     </div>
                 </a>
                 
-               <a href="#" class="flex flex-col items-center space-y-3 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors group">
+               <a href="pegawai_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors group">
                    <div class="p-3 bg-slate-500 rounded-full group-hover:scale-110 transition-transform">
-                        <i class="fas fa-cog text-white text-xl"></i>
+                        <i class="fas fa-user text-white text-xl"></i>
                     </div>
                     <div class="text-center">
-                       <p class="font-medium text-slate-700">Pengaturan</p>
-                       <p class="text-xs text-slate-600">Konfigurasi sistem</p>
+                       <p class="font-medium text-slate-700">Guru & Staff</p>
+                       <p class="text-xs text-slate-600">Tambah Guru dan Staff</p>
                     </div>
                 </a>
             </div>

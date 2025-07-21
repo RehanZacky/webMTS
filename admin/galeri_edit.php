@@ -5,12 +5,12 @@ include '../koneksi.php';
 // Hapus foto
 if (isset($_GET['hapus'])) {
     $id = intval($_GET['hapus']);
-    $cek = mysqli_query($koneksi, "SELECT nama_file FROM galeri WHERE id = $id");
+    $cek = mysqli_query($koneksi, "SELECT nama_file FROM gambar WHERE id = $id");
     $row = mysqli_fetch_assoc($cek);
     if ($row && file_exists("../upload/" . $row['nama_file'])) {
         unlink("../upload/" . $row['nama_file']);
     }
-    mysqli_query($koneksi, "DELETE FROM galeri WHERE id = $id");
+    mysqli_query($koneksi, "DELETE FROM gambar WHERE id = $id");
     header("Location: galeri_edit.php");
     exit;
 }
@@ -28,7 +28,7 @@ if (isset($_POST['tambah'])) {
         move_uploaded_file($_FILES['foto']['tmp_name'], "../upload/$nama_file");
     }
 
-    mysqli_query($koneksi, "INSERT INTO galeri (judul, deskripsi, nama_file, tanggal_upload)
+    mysqli_query($koneksi, "INSERT INTO gambar (judul, deskripsi, nama_file, tanggal_upload)
         VALUES ('$judul', '$deskripsi', '$nama_file', '$tanggal')");
     header("Location: galeri_edit.php");
     exit;
@@ -70,7 +70,7 @@ if (isset($_POST['tambah'])) {
     <h2 class="text-2xl font-semibold mb-4">Daftar Galeri</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <?php
-        $galeri = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY tanggal_upload DESC");
+        $galeri = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_upload DESC");
         while ($g = mysqli_fetch_assoc($galeri)) :
         ?>
             <div class="bg-white p-4 rounded shadow">
