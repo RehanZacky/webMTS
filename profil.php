@@ -67,7 +67,7 @@ $pegawai_result = mysqli_query($koneksi, $query_pegawai);
                     Profil Guru & <span class="text-green-600">Staff</span>
                 </h1>
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                    Tenaga pendidik dan staf yang berdedikasi di Pondok Pesantren Al-Mujahidin, siap membimbing santri menuju kesuksesan dunia dan akhirat.
+                    Tenaga pendidik dan staf yang berdedikasi di Pondok Pesantren Roudlotul Quran, siap membimbing santri menuju kesuksesan dunia dan akhirat.
                 </p>
                 <div class="w-24 h-1 bg-gradient-to-r from-green-400 to-green-600 rounded-full mx-auto mt-6"></div>
             </div>
@@ -102,8 +102,8 @@ $pegawai_result = mysqli_query($koneksi, $query_pegawai);
         <div class="container mx-auto px-6 py-12">
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
                  <div class="lg:col-span-2">
-                    <h4 class="text-white text-lg font-semibold mb-4">Pondok Pesantren Al-Mujahidin</h4>
-                    <p class="text-gray-400">Pondok Pesantren Al-Mujahidin berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin dalam membangun peradaban yang berkualitas.</p>
+                    <h4 class="text-white text-lg font-semibold mb-4">Pondok Pesantren Roudlotul Quran</h4>
+                    <p class="text-gray-400">Pondok Pesantren Roudlotul Quran berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin dalam membangun peradaban yang berkualitas.</p>
                 </div>
                 <div>
                     <h4 class="text-white text-lg font-semibold mb-4">Kontak Kami</h4>
@@ -122,7 +122,7 @@ $pegawai_result = mysqli_query($koneksi, $query_pegawai);
                 </div>
             </div>
             <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
-                <p>© <?= date('Y') ?> Pondok Pesantren Al-Mujahidin. All rights reserved.</p>
+                <p>© <?= date('Y') ?> Pondok Pesantren Roudlotul Quran. All rights reserved.</p>
             </div>
         </div>
     </footer>
