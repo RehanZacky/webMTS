@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $foto = '';
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "upload/";
+                $target_dir = "../upload/";
                 $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
                 $foto = uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $foto;
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $foto_query = "";
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "upload/";
+                $target_dir = "../upload/";
                 $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
                 $foto = uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $foto;
@@ -66,8 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query = "DELETE FROM pegawai WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete photo file if exists
-                if ($photo_data['foto'] && file_exists("upload/" . $photo_data['foto'])) {
-                    unlink("upload/" . $photo_data['foto']);
+                if ($photo_data['foto'] && file_exists("../upload/" . $photo_data['foto'])) {
+                    unlink("../upload/" . $photo_data['foto']);
                 }
                 $success_message = "Data pegawai berhasil dihapus!";
             } else {
@@ -302,7 +302,7 @@ $username = $_SESSION['username'];
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <?php if ($pegawai['foto']): ?>
-                                        <img src="upload/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-12 w-12 rounded-full object-cover">
+                                        <img src="../upload/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-12 w-12 rounded-full object-cover">
                                     <?php else: ?>
                                         <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
                                             <i class="fas fa-user text-green-600"></i>

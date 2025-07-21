@@ -164,6 +164,7 @@ $username = $_SESSION['username'];
         .line-clamp-3 {
             display: -webkit-box;
             -webkit-line-clamp: 3;
+            line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -318,7 +319,7 @@ $username = $_SESSION['username'];
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
                     <div class="relative">
                         <?php if ($berita['gambar_utama']): ?>
-                            <img src="upload/<?= $berita['gambar_utama'] ?>" alt="<?= htmlspecialchars($berita['judul']) ?>" class="w-full h-48 object-cover">
+                            <img src="../upload/<?= $berita['gambar_utama'] ?>" alt="<?= htmlspecialchars($berita['judul']) ?>" class="w-full h-48 object-cover">
                         <?php else: ?>
                             <div class="w-full h-48 bg-green-100 flex items-center justify-center">
                                 <i class="fas fa-newspaper text-green-600 text-4xl"></i>
