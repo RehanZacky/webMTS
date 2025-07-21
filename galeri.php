@@ -97,7 +97,7 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
                 if ($galeri_query && mysqli_num_rows($galeri_query) > 0) :
                     while ($foto = mysqli_fetch_assoc($galeri_query)) :
                 ?>
-                <a href="<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>" class="group block rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
+                <a href="upload/<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>" class="group block rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
                      <div class="overflow-hidden">
                         <img src="upload/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
                      </div>

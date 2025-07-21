@@ -119,7 +119,7 @@ $aktivitas_terbaru = [
                 <!-- Navigation Links -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="dashboard_admin.php" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-chart-line mr-2"></i>Dashboard
                         </a>
                         <a href="berita_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
@@ -134,17 +134,20 @@ $aktivitas_terbaru = [
                         <a href="prestasi_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-trophy mr-2"></i>Prestasi
                         </a>
-                        <a href="pegawai_edit.php" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-users mr-2"></i>Guru & Staff
                         </a>
                         <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-images mr-2"></i>Galeri
                         </a>
+                        <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
                     </div>
                 </div>
 
                 <!-- Right side items -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center justify-end space-x-4">
                     <!-- User Info -->
                     <div class="flex items-center text-green-100">
                         <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-2">
@@ -152,9 +155,6 @@ $aktivitas_terbaru = [
                         </div>
                         <span class="text-sm font-medium"><?= $username ?></span>
                     </div>
-                    <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
                 </div>
 
                 <!-- Mobile menu button -->

@@ -211,7 +211,7 @@ include 'koneksi.php';
                     ?>
                     <div class="rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition-transform duration-300">
                         <a href="<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>">
-                             <img src="<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
+                             <img src="upload/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
                         </a>
                     </div>
                     <?php
