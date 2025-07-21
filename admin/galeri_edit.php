@@ -5,7 +5,7 @@ include '../koneksi.php';
 // Hapus foto
 if (isset($_GET['hapus'])) {
     $id = intval($_GET['hapus']);
-    $cek = mysqli_query($koneksi, "SELECT nama_file FROM gambar WHERE id = $id");
+    $cek = mysqli_query($koneksi, "SELECT file_path FROM gambar WHERE id = $id");
     $row = mysqli_fetch_assoc($cek);
     if ($row && file_exists("../upload/" . $row['nama_file'])) {
         unlink("../upload/" . $row['nama_file']);
@@ -17,19 +17,19 @@ if (isset($_GET['hapus'])) {
 
 // Tambah foto
 if (isset($_POST['tambah'])) {
-    $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
+    $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
     $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
     $tanggal = date("Y-m-d");
 
     $nama_file = "";
     if ($_FILES['foto']['name']) {
         $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-        $nama_file = "galeri_" . time() . "." . $ext;
-        move_uploaded_file($_FILES['foto']['tmp_name'], "../upload/$nama_file");
+        $file_path = "galeri_" . time() . "." . $ext;
+        move_uploaded_file($_FILES['foto']['tmp_name'], "../upload/$file_path");
     }
 
-    mysqli_query($koneksi, "INSERT INTO gambar (judul, deskripsi, nama_file, tanggal_upload)
-        VALUES ('$judul', '$deskripsi', '$nama_file', '$tanggal')");
+    mysqli_query($koneksi, "INSERT INTO gambar (nama, deskripsi, file_path, tanggal_upload)
+        VALUES ('$nama', '$deskripsi', '$file_path', '$tanggal')");
     header("Location: galeri_edit.php");
     exit;
 }
@@ -74,8 +74,8 @@ if (isset($_POST['tambah'])) {
         while ($g = mysqli_fetch_assoc($galeri)) :
         ?>
             <div class="bg-white p-4 rounded shadow">
-                <img src="../upload/<?= $g['nama_file'] ?>" class="rounded mb-2 w-full aspect-video object-cover" alt="Foto Galeri">
-                <h3 class="font-bold text-lg"><?= htmlspecialchars($g['judul']) ?></h3>
+                <img src="../upload/<?= $g['file_path'] ?>" class="rounded mb-2 w-full aspect-video object-cover" alt="Foto Galeri">
+                <h3 class="font-bold text-lg"><?= htmlspecialchars($g['nama']) ?></h3>
                 <p class="text-sm text-gray-600 mb-2"><?= nl2br(htmlspecialchars($g['deskripsi'])) ?></p>
                 <small class="text-gray-500"><?= date('d M Y', strtotime($g['tanggal_upload'])) ?></small>
                 <div class="mt-2">

@@ -77,7 +77,7 @@ $pegawai_result = mysqli_query($koneksi, $query_pegawai);
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         <?php while ($pegawai = mysqli_fetch_assoc($pegawai_result)) : ?>
                             <div class="bg-gray-50 rounded-xl p-8 text-center flex flex-col items-center transition-all duration-300 hover:shadow-xl hover:bg-white hover:-translate-y-1">
-                                <img src="<?= htmlspecialchars($pegawai['foto']) ?>" alt="Foto <?= htmlspecialchars($pegawai['nama']) ?>" class="w-28 h-28 rounded-full object-cover mb-4 ring-4 ring-green-100">
+                                <img src="upload/<?= htmlspecialchars($pegawai['foto']) ?>" alt="Foto <?= htmlspecialchars($pegawai['nama']) ?>" class="w-28 h-28 rounded-full object-cover mb-4 ring-4 ring-green-100">
                                 <h3 class="text-lg font-bold text-gray-800"><?= htmlspecialchars($pegawai['nama']) ?></h3>
                                 <p class="text-green-600 font-semibold mb-3"><?= htmlspecialchars($pegawai['jabatan']) ?></p>
                                 <p class="text-gray-500 text-sm flex-grow">

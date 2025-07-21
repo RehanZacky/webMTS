@@ -134,7 +134,7 @@ $username = $_SESSION['username'];
                         <a href="pegawai_edit.php" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-users mr-2"></i>Guru & Staff
                         </a>
-                        <a href="#" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-images mr-2"></i>Galeri
                         </a>
                     </div>
