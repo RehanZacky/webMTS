@@ -209,7 +209,7 @@ $username = $_SESSION['username'];
         <?php endif; ?>
 
         <!-- Main Form Card -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in" style="animation-delay: 0.2s;">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden" style="animation-delay: 0.2s;">
             <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-800 flex items-center">
                     <i class="fas fa-edit text-green-500 mr-2"></i>
