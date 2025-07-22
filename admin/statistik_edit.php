@@ -185,26 +185,6 @@ $username = $_SESSION['username'];
             </div>
         </div>
 
-        <!-- Breadcrumb -->
-        <div class="mb-6">
-            <nav class="flex" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                    <li class="inline-flex items-center">
-                        <a href="dashboard_admin.php" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-green-600">
-                            <i class="fas fa-home mr-2"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li>
-                        <div class="flex items-center">
-                            <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-                            <span class="text-sm font-medium text-green-600">Statistik</span>
-                        </div>
-                    </li>
-                </ol>
-            </nav>
-        </div>
-
         <!-- Success Alert -->
         <?php if (isset($success)): ?>
         <div class="mb-6 success-alert">
@@ -305,26 +285,6 @@ $username = $_SESSION['username'];
                 </div>
             </form>
         </div>
-
-        <!-- Info Card -->
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 animate-fade-in" style="animation-delay: 0.4s;">
-            <div class="flex items-start">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-info-circle text-blue-400 text-xl"></i>
-                </div>
-                <div class="ml-3">
-                    <h3 class="text-sm font-medium text-blue-800">Informasi Penting</h3>
-                    <div class="mt-2 text-sm text-blue-700">
-                        <ul class="list-disc list-inside space-y-1">
-                            <li>Data statistik akan langsung ditampilkan di halaman utama website setelah disimpan</li>
-                            <li>Pastikan nilai yang dimasukkan akurat dan terbaru</li>
-                            <li>Gunakan angka saja tanpa tanda baca atau simbol tambahan</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
 
     <script>
         // Mobile menu toggle
