@@ -5,7 +5,73 @@ include '../koneksi.php';
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
-        if ($_POST['action'] == 'add') {
+        if ($_POST['action'] == 'add_pemimpin') {
+            $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
+            $jabatan = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
+            $slogan = mysqli_real_escape_string($koneksi, $_POST['slogan']);
+            
+            $foto = '';
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                $target_dir = "upload/";
+                $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
+                $foto = uniqid() . '.' . $file_extension;
+                $target_file = $target_dir . $foto;
+                
+                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+                    // File uploaded successfully
+                } else {
+                    $foto = '';
+                }
+            }
+            
+            $query = "INSERT INTO profil_pemimpin (nama, jabatan, foto, slogan) VALUES ('$nama', '$jabatan', '$foto', '$slogan')";
+            if (mysqli_query($koneksi, $query)) {
+                $success_message = "Profil pemimpin berhasil ditambahkan!";
+            } else {
+                $error_message = "Error: " . mysqli_error($koneksi);
+            }
+        } elseif ($_POST['action'] == 'edit_pemimpin') {
+            $id = (int)$_POST['id'];
+            $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
+            $jabatan = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
+            $slogan = mysqli_real_escape_string($koneksi, $_POST['slogan']);
+            
+            $foto_query = "";
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                $target_dir = "upload/";
+                $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
+                $foto = uniqid() . '.' . $file_extension;
+                $target_file = $target_dir . $foto;
+                
+                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+                    $foto_query = ", foto = '$foto'";
+                }
+            }
+            
+            $query = "UPDATE profil_pemimpin SET nama = '$nama', jabatan = '$jabatan', slogan = '$slogan' $foto_query WHERE id = $id";
+            if (mysqli_query($koneksi, $query)) {
+                $success_message = "Profil pemimpin berhasil diperbarui!";
+            } else {
+                $error_message = "Error: " . mysqli_error($koneksi);
+            }
+        } elseif ($_POST['action'] == 'delete_pemimpin') {
+            $id = (int)$_POST['id'];
+            
+            // Get photo filename to delete
+            $get_photo = mysqli_query($koneksi, "SELECT foto FROM profil_pemimpin WHERE id = $id");
+            $photo_data = mysqli_fetch_assoc($get_photo);
+            
+            $query = "DELETE FROM profil_pemimpin WHERE id = $id";
+            if (mysqli_query($koneksi, $query)) {
+                // Delete photo file if exists
+                if ($photo_data['foto'] && file_exists("upload/" . $photo_data['foto'])) {
+                    unlink("upload/" . $photo_data['foto']);
+                }
+                $success_message = "Profil pemimpin berhasil dihapus!";
+            } else {
+                $error_message = "Error: " . mysqli_error($koneksi);
+            }
+        } elseif ($_POST['action'] == 'add') {
             $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
             $jabatan = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
             $pengalaman_kerja = mysqli_real_escape_string($koneksi, $_POST['pengalaman_kerja']);
@@ -13,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $foto = '';
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "../upload/";
+                $target_dir = "upload/";
                 $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
                 $foto = uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $foto;
@@ -40,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $foto_query = "";
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "../upload/";
+                $target_dir = "upload/";
                 $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
                 $foto = uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $foto;
@@ -66,8 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query = "DELETE FROM pegawai WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete photo file if exists
-                if ($photo_data['foto'] && file_exists("../upload/" . $photo_data['foto'])) {
-                    unlink("../upload/" . $photo_data['foto']);
+                if ($photo_data['foto'] && file_exists("upload/" . $photo_data['foto'])) {
+                    unlink("upload/" . $photo_data['foto']);
                 }
                 $success_message = "Data pegawai berhasil dihapus!";
             } else {
@@ -80,6 +146,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Get all staff data
 $pegawai_query = mysqli_query($koneksi, "SELECT * FROM pegawai ORDER BY urutan ASC, nama ASC");
 
+// Get all profil pemimpin data
+$pemimpin_query = mysqli_query($koneksi, "SELECT * FROM profil_pemimpin ORDER BY id ASC");
+
 $username = $_SESSION['username'];
 ?>
 
@@ -91,7 +160,7 @@ $username = $_SESSION['username'];
     <title>Kelola Guru & Staff - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-<style>
+    <style>
         .gradient-bg {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
@@ -147,7 +216,7 @@ $username = $_SESSION['username'];
                 <!-- Navigation Links -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="index.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-chart-line mr-2"></i>Dashboard
                         </a>
                         <a href="berita_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
@@ -165,7 +234,7 @@ $username = $_SESSION['username'];
                         <a href="pegawai_edit.php" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-users mr-2"></i>Guru & Staff
                         </a>
-                        <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="#" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-images mr-2"></i>Galeri
                         </a>
                     </div>
@@ -197,7 +266,7 @@ $username = $_SESSION['username'];
         <!-- Mobile Navigation Menu -->
         <div id="mobileMenu" class="md:hidden hidden bg-green-700">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                <a href="index.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-chart-line mr-2"></i>Dashboard
                 </a>
                 <a href="berita_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
@@ -215,7 +284,7 @@ $username = $_SESSION['username'];
                 <a href="pegawai_edit.php" class="bg-green-800 text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-users mr-2"></i>Guru & Staff
                 </a>
-                <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                <a href="#" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-images mr-2"></i>Galeri
                 </a>
                 <div class="border-t border-green-600 pt-4">
@@ -230,12 +299,12 @@ $username = $_SESSION['username'];
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
-        <dclass="mb-8">
+        <div class="mb-8">
             <div class="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl shadow-lg p-6 text-white">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-bold mb-2">Kelola Guru & Staff</h1>
-                        <p class="text-green-100">Tambah, edit, dan kelola data guru serta staff sekolah</p>
+                        <h1 class="text-3xl font-bold mb-2">Kelola Guru, Staff & Pemimpin</h1>
+                        <p class="text-green-100">Tambah, edit, dan kelola data guru, staff, serta profil pemimpin sekolah</p>
                     </div>
                     <div class="hidden md:block">
                         <i class="fas fa-users text-6xl text-green-200 opacity-50"></i>
@@ -263,16 +332,73 @@ $username = $_SESSION['username'];
         </div>
         <?php endif; ?>
 
-        <div>
-            <br>
+        <!-- Action Buttons -->
+        <div class="mb-6">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
+                    <i class="fas fa-plus mr-2"></i>
+                    Tambah Guru/Staff Baru
+                </button>
+            </div>
         </div>
 
-        <!-- Add New Staff Button -->
-        <div class="mb-6">
-            <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center">
-                <i class="fas fa-plus mr-2"></i>
-                Tambah Guru/Staff Baru
-            </button>
+        <!-- Profil Pemimpin Section -->
+        <div class="mb-8">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="px-6 py-4 bg-emerald-50 border-b border-emerald-100">
+                    <h2 class="text-lg font-semibold text-emerald-800 flex items-center">
+                        <i class="fas fa-crown mr-2"></i>
+                        Profil Pemimpin Sekolah
+                    </h2>
+                </div>
+                
+                <div class="p-6">
+                    <?php if (mysqli_num_rows($pemimpin_query) > 0): ?>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <?php while ($pemimpin = mysqli_fetch_assoc($pemimpin_query)): ?>
+                            <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-100 card-hover">
+                                <div class="text-center">
+                                    <?php if ($pemimpin['foto']): ?>
+                                        <img src="upload/<?= $pemimpin['foto'] ?>" alt="<?= $pemimpin['nama'] ?>" class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-emerald-200">
+                                    <?php else: ?>
+                                        <div class="w-20 h-20 rounded-full bg-emerald-200 flex items-center justify-center mx-auto mb-4">
+                                            <i class="fas fa-crown text-emerald-600 text-2xl"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                    <h3 class="font-bold text-lg text-gray-900 mb-1"><?= htmlspecialchars($pemimpin['nama']) ?></h3>
+                                    <p class="text-emerald-600 font-medium mb-3"><?= htmlspecialchars($pemimpin['jabatan']) ?></p>
+                                    
+                                    <?php if ($pemimpin['slogan']): ?>
+                                    <div class="bg-white rounded-lg p-3 mb-4 border border-emerald-100">
+                                        <p class="text-sm text-gray-600 italic">"<?= htmlspecialchars($pemimpin['slogan']) ?>"</p>
+                                    </div>
+                                    <?php endif; ?>
+                                    
+                                    <div class="flex space-x-2">
+                                        <button onclick="editPemimpin(<?= htmlspecialchars(json_encode($pemimpin)) ?>)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                            <i class="fas fa-edit mr-1"></i> Edit
+                                        </button>
+                                        <button onclick="deletePemimpin(<?= $pemimpin['id'] ?>, '<?= htmlspecialchars($pemimpin['nama']) ?>')" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                            <i class="fas fa-trash mr-1"></i> Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endwhile; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center py-12">
+                            <i class="fas fa-crown text-gray-300 text-6xl mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada profil pemimpin</h3>
+                            <p class="text-gray-500 mb-4">Mulai tambahkan profil pemimpin sekolah Anda</p>
+                            <button onclick="openModal('addPemimpinModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-plus mr-2"></i>Tambah Profil Pemimpin Pertama
+                            </button>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
 
         <!-- Staff List -->
@@ -288,61 +414,123 @@ $username = $_SESSION['username'];
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jabatan</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pengalaman</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Urutan</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
+                            <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                            <th class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jabatan</th>
+                            <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pengalaman</th>
+                            <th class="hidden sm:table-cell px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Urutan</th>
+                            <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <?php if (mysqli_num_rows($pegawai_query) > 0): ?>
                             <?php while ($pegawai = mysqli_fetch_assoc($pegawai_query)): ?>
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap">
                                     <?php if ($pegawai['foto']): ?>
-                                        <img src="../upload/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-12 w-12 rounded-full object-cover">
+                                        <img src="upload/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover">
                                     <?php else: ?>
-                                        <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
-                                            <i class="fas fa-user text-green-600"></i>
+                                        <div class="h-10 w-10 md:h-12 md:w-12 rounded-full bg-green-100 flex items-center justify-center">
+                                            <i class="fas fa-user text-green-600 text-sm md:text-base"></i>
                                         </div>
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-3 md:px-6 py-4">
                                     <div class="text-sm font-medium text-gray-900"><?= htmlspecialchars($pegawai['nama']) ?></div>
+                                    <div class="md:hidden text-xs text-gray-500 mt-1"><?= htmlspecialchars($pegawai['jabatan']) ?></div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900"><?= htmlspecialchars($pegawai['jabatan']) ?></div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="hidden lg:table-cell px-6 py-4">
                                     <div class="text-sm text-gray-900"><?= htmlspecialchars($pegawai['pengalaman_kerja']) ?></div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="hidden sm:table-cell px-3 md:px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                         <?= $pegawai['urutan'] ?>
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button onclick="editStaff(<?= htmlspecialchars(json_encode($pegawai)) ?>)" class="text-green-600 hover:text-green-900 mr-3">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button onclick="deleteStaff(<?= $pegawai['id'] ?>, '<?= htmlspecialchars($pegawai['nama']) ?>')" class="text-red-600 hover:text-red-900">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
+                                        <button onclick="editStaff(<?= htmlspecialchars(json_encode($pegawai)) ?>)" class="text-green-600 hover:text-green-900 text-xs sm:text-sm">
+                                            <i class="fas fa-edit"></i> <span class="hidden sm:inline">Edit</span>
+                                        </button>
+                                        <button onclick="deleteStaff(<?= $pegawai['id'] ?>, '<?= htmlspecialchars($pegawai['nama']) ?>')" class="text-red-600 hover:text-red-900 text-xs sm:text-sm">
+                                            <i class="fas fa-trash"></i> <span class="hidden sm:inline">Hapus</span>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                    <i class="fas fa-users text-4xl mb-2 block"></i>
-                                    Belum ada data guru atau staff
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                    <div class="flex flex-col items-center">
+                                        <i class="fas fa-users text-4xl mb-2 text-gray-300"></i>
+                                        <p class="text-sm">Belum ada data guru atau staff</p>
+                                    </button>
+                                        <button onclick="openModal('addModal')" class="mt-2 text-green-600 hover:text-green-800 text-sm">
+                                            <i class="fas fa-plus mr-1"></i>Tambah Data Pertama
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Mobile Card View (Alternative for very small screens) -->
+        <div class="block sm:hidden mt-6">
+            <div class="space-y-4">
+                <?php 
+                // Reset query for mobile view
+                $pegawai_query_mobile = mysqli_query($koneksi, "SELECT * FROM pegawai ORDER BY urutan ASC, nama ASC");
+                if (mysqli_num_rows($pegawai_query_mobile) > 0): 
+                ?>
+                    <?php while ($pegawai = mysqli_fetch_assoc($pegawai_query_mobile)): ?>
+                    <div class="bg-white rounded-lg shadow-md p-4 border border-gray-200">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <?php if ($pegawai['foto']): ?>
+                                    <img src="upload/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-12 w-12 rounded-full object-cover">
+                                <?php else: ?>
+                                    <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-user text-green-600"></i>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-medium text-gray-900 truncate"><?= htmlspecialchars($pegawai['nama']) ?></h3>
+                                <p class="text-xs text-gray-500"><?= htmlspecialchars($pegawai['jabatan']) ?></p>
+                                <p class="text-xs text-gray-400 mt-1"><?= htmlspecialchars($pegawai['pengalaman_kerja']) ?></p>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        Urutan: <?= $pegawai['urutan'] ?>
+                                    </span>
+                                    <div class="flex space-x-2">
+                                        <button onclick="editStaff(<?= htmlspecialchars(json_encode($pegawai)) ?>)" class="text-green-600 hover:text-green-900 text-xs">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="deleteStaff(<?= $pegawai['id'] ?>, '<?= htmlspecialchars($pegawai['nama']) ?>')" class="text-red-600 hover:text-red-900 text-xs">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="text-center py-8 bg-white rounded-lg shadow-md">
+                        <i class="fas fa-users text-gray-300 text-4xl mb-4"></i>
+                        <p class="text-gray-500 mb-4">Belum ada data guru atau staff</p>
+                        <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+                            <i class="fas fa-plus mr-2"></i>Tambah Data Pertama
+                        </button>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </main>
@@ -402,10 +590,12 @@ $username = $_SESSION['username'];
             </div>
         </div>
     </div>
+    </main>
+    </div>
 
     <!-- Edit Modal -->
     <div id="editModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <div class="relative top-4 md:top-20 mx-auto p-4 md:p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white max-h-screen overflow-y-auto">
             <div class="mt-3">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-medium text-gray-900 flex items-center">
@@ -417,41 +607,43 @@ $username = $_SESSION['username'];
                     </button>
                 </div>
                 
-                <form method="POST" enctype="multipart/form-data" class="space-y-4">
+                <form method="POST" enctype="multipart/form-data" class="space-y-3 md:space-y-4">
                     <input type="hidden" name="action" value="edit">
                     <input type="hidden" name="id" id="edit_id">
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                        <input type="text" name="nama" id="edit_nama" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <input type="text" name="nama" id="edit_nama" required class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan</label>
-                        <input type="text" name="jabatan" id="edit_jabatan" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <input type="text" name="jabatan" id="edit_jabatan" required class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Pengalaman Kerja</label>
-                        <textarea name="pengalaman_kerja" id="edit_pengalaman_kerja" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                        <textarea name="pengalaman_kerja" id="edit_pengalaman_kerja" rows="3" class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
                     </div>
                     
-                    <div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                        <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Urutan Tampil</label>
-                        <input type="number" name="urutan" id="edit_urutan" min="1" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                    </div>
+                            <input type="number" name="urutan" id="edit_urutan" min="1" required class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
                     
-                    <div>
+                        <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Foto Baru (Opsional)</label>
-                        <input type="file" name="foto" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah foto</p>
+                            <input type="file" name="foto" accept="image/*" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
                     </div>
+                    <p class="text-xs text-gray-500">Kosongkan jika tidak ingin mengubah foto</p>
                     
-                    <div class="flex justify-end space-x-3 pt-4">
-                        <button type="button" onclick="closeModal('editModal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                    <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4">
+                        <button type="button" onclick="closeModal('editModal')" class="w-full sm:w-auto px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm">
                             Batal
                         </button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm">
                             <i class="fas fa-save mr-2"></i>Update
                         </button>
                     </div>
@@ -462,13 +654,13 @@ $username = $_SESSION['username'];
 
     <!-- Delete Modal -->
     <div id="deleteModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="relative top-20 mx-auto p-4 md:p-5 border w-11/12 max-w-md shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
                     <i class="fas fa-exclamation-triangle text-red-600"></i>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Konfirmasi Hapus</h3>
-                <p class="text-sm text-gray-500 mb-4">
+                <h3 class="text-base md:text-lg font-medium text-gray-900 mb-2">Konfirmasi Hapus</h3>
+                <p class="text-sm text-gray-500 mb-4 px-2">
                     Apakah Anda yakin ingin menghapus data <span id="delete_name" class="font-semibold"></span>?
                     <br>Tindakan ini tidak dapat dibatalkan.
                 </p>
@@ -477,11 +669,144 @@ $username = $_SESSION['username'];
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="id" id="delete_id">
                     
-                    <div class="flex justify-center space-x-3">
-                        <button type="button" onclick="closeModal('deleteModal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                    <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-3">
+                        <button type="button" onclick="closeModal('deleteModal')" class="w-full sm:w-auto px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm">
                             Batal
                         </button>
-                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                        <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">
+                            <i class="fas fa-trash mr-2"></i>Hapus
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Pemimpin Modal -->
+    <div id="addPemimpinModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-4 md:top-20 mx-auto p-4 md:p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white max-h-screen overflow-y-auto">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                        <i class="fas fa-crown text-emerald-600 mr-2"></i>
+                        Tambah Profil Pemimpin
+                    </h3>
+                    <button onclick="closeModal('addPemimpinModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data" class="space-y-3 md:space-y-4">
+                    <input type="hidden" name="action" value="add_pemimpin">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                        <input type="text" name="nama" required class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan</label>
+                        <input type="text" name="jabatan" required class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Slogan/Motto</label>
+                        <textarea name="slogan" rows="3" class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Masukkan slogan atau motto pemimpin..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Foto</label>
+                        <input type="file" name="foto" accept="image/*" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <p class="text-xs text-gray-500 mt-1">Format foto: JPG, PNG, GIF. Maksimal 2MB</p>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4">
+                        <button type="button" onclick="closeModal('addPemimpinModal')" class="w-full sm:w-auto px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm">
+                            Batal
+                        </button>
+                        <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 text-sm">
+                            <i class="fas fa-save mr-2"></i>Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Pemimpin Modal -->
+    <div id="editPemimpinModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-4 md:top-20 mx-auto p-4 md:p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white max-h-screen overflow-y-auto">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                        <i class="fas fa-crown text-emerald-600 mr-2"></i>
+                        Edit Profil Pemimpin
+                    </h3>
+                    <button onclick="closeModal('editPemimpinModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data" class="space-y-3 md:space-y-4">
+                    <input type="hidden" name="action" value="edit_pemimpin">
+                    <input type="hidden" name="id" id="edit_pemimpin_id">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                        <input type="text" name="nama" id="edit_pemimpin_nama" required class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan</label>
+                        <input type="text" name="jabatan" id="edit_pemimpin_jabatan" required class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Slogan/Motto</label>
+                        <textarea name="slogan" id="edit_pemimpin_slogan" rows="3" class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Foto Baru (Opsional)</label>
+                        <input type="file" name="foto" accept="image/*" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah foto</p>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4">
+                        <button type="button" onclick="closeModal('editPemimpinModal')" class="w-full sm:w-auto px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm">
+                            Batal
+                        </button>
+                        <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 text-sm">
+                            <i class="fas fa-save mr-2"></i>Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Pemimpin Modal -->
+    <div id="deletePemimpinModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-4 md:p-5 border w-11/12 max-w-md shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                    <i class="fas fa-exclamation-triangle text-red-600"></i>
+                </div>
+                <h3 class="text-base md:text-lg font-medium text-gray-900 mb-2">Konfirmasi Hapus</h3>
+                <p class="text-sm text-gray-500 mb-4 px-2">
+                    Apakah Anda yakin ingin menghapus profil <span id="delete_pemimpin_name" class="font-semibold"></span>?
+                    <br>Tindakan ini tidak dapat dibatalkan.
+                </p>
+                
+                <form method="POST" class="inline">
+                    <input type="hidden" name="action" value="delete_pemimpin">
+                    <input type="hidden" name="id" id="delete_pemimpin_id">
+                    
+                    <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-3">
+                        <button type="button" onclick="closeModal('deletePemimpinModal')" class="w-full sm:w-auto px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm">
+                            Batal
+                        </button>
+                        <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">
                             <i class="fas fa-trash mr-2"></i>Hapus
                         </button>
                     </div>
@@ -528,9 +853,23 @@ $username = $_SESSION['username'];
             openModal('deleteModal');
         }
 
+        function editPemimpin(pemimpin) {
+            document.getElementById('edit_pemimpin_id').value = pemimpin.id;
+            document.getElementById('edit_pemimpin_nama').value = pemimpin.nama;
+            document.getElementById('edit_pemimpin_jabatan').value = pemimpin.jabatan;
+            document.getElementById('edit_pemimpin_slogan').value = pemimpin.slogan || '';
+            openModal('editPemimpinModal');
+        }
+
+        function deletePemimpin(id, name) {
+            document.getElementById('delete_pemimpin_id').value = id;
+            document.getElementById('delete_pemimpin_name').textContent = name;
+            openModal('deletePemimpinModal');
+        }
+
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modals = ['addModal', 'editModal', 'deleteModal'];
+            const modals = ['addModal', 'editModal', 'deleteModal', 'addPemimpinModal', 'editPemimpinModal', 'deletePemimpinModal'];
             modals.forEach(modalId => {
                 const modal = document.getElementById(modalId);
                 if (event.target === modal) {

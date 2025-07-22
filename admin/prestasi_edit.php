@@ -13,7 +13,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
             $tanggal_post = date('Y-m-d H:i:s');
             
-            $query = "INSERT INTO prestasi (nama_prestasi, tingkat, penyelenggara, tahun, deskripsi, tanggal_post) VALUES ('$nama_prestasi', '$tingkat', '$penyelenggara', '$tahun', '$deskripsi', '$tanggal_post')";
+            $gambar = '';
+            if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] == 0) {
+                $target_dir = "upload/";
+                $file_extension = strtolower(pathinfo($_FILES["gambar"]["name"], PATHINFO_EXTENSION));
+                $gambar = uniqid() . '.' . $file_extension;
+                $target_file = $target_dir . $gambar;
+                
+                if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
+                    // File uploaded successfully
+                } else {
+                    $gambar = '';
+                }
+            }
+            
+            $query = "INSERT INTO prestasi (nama_prestasi, tingkat, penyelenggara, tahun, deskripsi, gambar, tanggal_post) VALUES ('$nama_prestasi', '$tingkat', '$penyelenggara', '$tahun', '$deskripsi', '$gambar', '$tanggal_post')";
             if (mysqli_query($koneksi, $query)) {
                 $success_message = "Data prestasi berhasil ditambahkan!";
             } else {
@@ -27,7 +41,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $tahun = mysqli_real_escape_string($koneksi, $_POST['tahun']);
             $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
             
-            $query = "UPDATE prestasi SET nama_prestasi = '$nama_prestasi', tingkat = '$tingkat', penyelenggara = '$penyelenggara', tahun = '$tahun', deskripsi = '$deskripsi' WHERE id = $id";
+            $gambar_query = "";
+            if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] == 0) {
+                $target_dir = "upload/";
+                $file_extension = strtolower(pathinfo($_FILES["gambar"]["name"], PATHINFO_EXTENSION));
+                $gambar = uniqid() . '.' . $file_extension;
+                $target_file = $target_dir . $gambar;
+                
+                if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
+                    $gambar_query = ", gambar = '$gambar'";
+                }
+            }
+            
+            $query = "UPDATE prestasi SET nama_prestasi = '$nama_prestasi', tingkat = '$tingkat', penyelenggara = '$penyelenggara', tahun = '$tahun', deskripsi = '$deskripsi' $gambar_query WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 $success_message = "Data prestasi berhasil diperbarui!";
             } else {
@@ -36,8 +62,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif ($_POST['action'] == 'delete') {
             $id = (int)$_POST['id'];
             
+            // Get image filename to delete
+            $get_image = mysqli_query($koneksi, "SELECT gambar FROM prestasi WHERE id = $id");
+            $image_data = mysqli_fetch_assoc($get_image);
+            
             $query = "DELETE FROM prestasi WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
+                // Delete image file if exists
+                if ($image_data['gambar'] && file_exists("upload/" . $image_data['gambar'])) {
+                    unlink("upload/" . $image_data['gambar']);
+                }
                 $success_message = "Data prestasi berhasil dihapus!";
             } else {
                 $error_message = "Error: " . mysqli_error($koneksi);
@@ -116,7 +150,7 @@ $username = $_SESSION['username'];
                 <!-- Navigation Links -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="index.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-chart-line mr-2"></i>Dashboard
                         </a>
                         <a href="berita_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
@@ -134,7 +168,7 @@ $username = $_SESSION['username'];
                         <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-users mr-2"></i>Guru & Staff
                         </a>
-                        <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="#" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-images mr-2"></i>Galeri
                         </a>
                     </div>
@@ -150,45 +184,6 @@ $username = $_SESSION['username'];
                         <span class="text-sm font-medium"><?= $username ?></span>
                     </div>
                     <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
-                </div>
-
-                <!-- Mobile menu button -->
-                <div class="md:hidden">
-                    <button id="mobileMenuBtn" class="text-green-100 hover:text-white p-2">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Navigation Menu -->
-        <div id="mobileMenu" class="md:hidden hidden bg-green-700">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-chart-line mr-2"></i>Dashboard
-                </a>
-                <a href="berita_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-newspaper mr-2"></i>Kelola Berita
-                </a>
-                <a href="statistik_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-chart-bar mr-2"></i>Statistik
-                </a>
-                <a href="profil_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-school mr-2"></i>Profil Sekolah
-                </a>
-                <a href="prestasi_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-trophy mr-2"></i>Prestasi
-                </a>
-                <a href="pegawai_edit.php" class="bg-green-800 text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-users mr-2"></i>Guru & Staff
-                </a>
-                <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-images mr-2"></i>Galeri
-                </a>
-                <div class="border-t border-green-600 pt-4">
-                    <a href="../logout.php" class="text-red-300 hover:bg-red-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                         <i class="fas fa-sign-out-alt mr-2"></i>Logout
                     </a>
                 </div>
@@ -245,9 +240,15 @@ $username = $_SESSION['username'];
             <?php if (mysqli_num_rows($prestasi_query) > 0): ?>
                 <?php while ($prestasi = mysqli_fetch_assoc($prestasi_query)): ?>
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                    <div class="relative">
+                        <?php if ($prestasi['gambar']): ?>
+                            <img src="upload/<?= $prestasi['gambar'] ?>" alt="<?= htmlspecialchars($prestasi['nama_prestasi']) ?>" class="w-full h-48 object-cover">
+                        <?php else: ?>
                         <div class="w-full h-48 bg-green-100 flex items-center justify-center">
                             <i class="fas fa-trophy text-green-600 text-4xl"></i>
                         </div>
+                        <?php endif; ?>
+                    </div>
                     
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-2">
@@ -313,6 +314,7 @@ $username = $_SESSION['username'];
                 </div>
                 
                 <form method="POST" class="space-y-4">
+                <form method="POST" enctype="multipart/form-data" class="space-y-4">
                     <input type="hidden" name="action" value="add">
                     
                     <div>
@@ -345,8 +347,14 @@ $username = $_SESSION['username'];
                     </div>
                     
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Prestasi</label>
+                        <input type="file" name="gambar" accept="image/*" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal 2MB</p>
+                    </div>
+                    
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
-                        <textarea name="deskripsi" rows="4" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                        <textarea name="deskripsi" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
                     </div>
                     
                     <div class="flex justify-end space-x-3 pt-4">
@@ -377,6 +385,7 @@ $username = $_SESSION['username'];
                 </div>
                 
                 <form method="POST" class="space-y-4">
+                <form method="POST" enctype="multipart/form-data" class="space-y-4">
                     <input type="hidden" name="action" value="edit">
                     <input type="hidden" name="id" id="edit_id">
                     
@@ -410,8 +419,14 @@ $username = $_SESSION['username'];
                     </div>
                     
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Prestasi Baru (Opsional)</label>
+                        <input type="file" name="gambar" accept="image/*" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah gambar</p>
+                    </div>
+                    
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
-                        <textarea name="deskripsi" id="edit_deskripsi" rows="4" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                        <textarea name="deskripsi" id="edit_deskripsi" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
                     </div>
                     
                     <div class="flex justify-end space-x-3 pt-4">
@@ -458,16 +473,6 @@ $username = $_SESSION['username'];
     </div>
 
     <script>
-                // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-
-        if (mobileMenuBtn && mobileMenu) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
         }
@@ -514,23 +519,6 @@ $username = $_SESSION['username'];
             }
         `;
         document.head.appendChild(style);
-
-                // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const mobileMenu = document.getElementById('mobileMenu');
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            
-            if (mobileMenu && !mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
-                mobileMenu.classList.add('hidden');
-            }
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 768) {
-                document.getElementById('mobileMenu').classList.add('hidden');
-            }
-        });
     </script>
 </body>
 </html>

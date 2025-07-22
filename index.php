@@ -1,6 +1,18 @@
 <?php
-// Koneksi ke database Anda tetap tidak berubah
+// Koneksi ke database
 include 'koneksi.php';
+
+// Mengambil semua data dari tabel profil untuk digunakan di halaman ini
+$profil_query = mysqli_query($koneksi, "SELECT jenis, isi FROM profil");
+$profil_data = [];
+while ($row = mysqli_fetch_assoc($profil_query)) {
+    $profil_data[$row['jenis']] = $row['isi'];
+}
+
+// Mengambil data pimpinan dari tabel profil_pemimpin
+$pemimpin_query = mysqli_query($koneksi, "SELECT * FROM profil_pemimpin LIMIT 1");
+$pemimpin = mysqli_fetch_assoc($pemimpin_query);
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -10,7 +22,6 @@ include 'koneksi.php';
     <title>Roudlotul Quran</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Menambahkan style untuk scroll yang lebih halus */
         html {
             scroll-behavior: smooth;
         }
@@ -18,8 +29,7 @@ include 'koneksi.php';
 </head>
 <body class="bg-gray-50">
 
-   <!-- NAVBAR UTAMA -->
-<header class="bg-green-700 sticky top-0 z-50 shadow-lg">
+   <header class="bg-green-700 sticky top-0 z-50 shadow-lg">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
             <img src="upload\STK-20250718-WA0016.png" alt="Roudlotul Quran" class="h-20 w-20">
@@ -50,7 +60,6 @@ include 'koneksi.php';
     </div>
 </header>
 
-<!-- SCRIPT UNTUK MOBILE MENU -->
 <script>
     document.getElementById("menu-toggle").addEventListener("click", function () {
         const menu = document.getElementById("mobile-menu");
@@ -58,7 +67,6 @@ include 'koneksi.php';
     });
 </script>
 
-    <!-- HOMEPAGE -->
     <main>
         <section class="relative h-screen flex items-center justify-center text-white text-center overflow-hidden">
         <div class="absolute inset-0 z-0" style="background-image: url('gambar_beranda/UBS00415.JPG'); background-size: cover; background-position: center;">
@@ -66,9 +74,11 @@ include 'koneksi.php';
         </div>
         <div class="relative z-10 max-w-3xl px-4">
             <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">Selamat Datang di Pondok Pesantren Roudlotul Quran</h1>
-            <p class="mt-4 text-lg md:text-xl text-green-200">Mewujudkan sumber daya manusia yang peduli dan berbudaya ramah lingkungan melalui kegiatan madrasah yang berkesinambungan.</p>
+            
+            <p class="mt-4 text-lg md:text-xl text-green-200"><?= htmlspecialchars($profil_data['tag_line'] ?? 'Tagline belum diisi.') ?></p>
+            
             <div class="mt-8 flex justify-center gap-4">
-                <a href="#sambutan" class="bg-white text-green-700 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-transform hover:scale-105">Tentang Kami</a>
+                <a href="#profil-video" class="bg-white text-green-700 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-transform hover:scale-105">Tentang Kami</a>
                 <a href="#galeri" class="border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-green-700 transition-all hover:scale-105">Lihat Galeri</a>
             </div>
         </div>
@@ -78,7 +88,6 @@ include 'koneksi.php';
             <div class="container mx-auto px-6">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                     <?php
-                    // PHP untuk mengambil data statistik, sama seperti kode asli Anda
                     $data_statistik = mysqli_query($koneksi, "SELECT * FROM info_statistik ORDER BY id ASC LIMIT 4");
                     while ($row = mysqli_fetch_assoc($data_statistik)) :
                     ?>
@@ -95,42 +104,38 @@ include 'koneksi.php';
         </section>
 
         <section id="profil-video" class="py-20 bg-green-50">
-    <div class="container mx-auto px-6">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-gray-800">Profil Pondok</h2>
-            <p class="mt-2 text-gray-600">Mengenal lebih dekat pimpinan dan visi kehidupan di Pondok Pesantren.</p>
-
-                 <div class="text-center">
-                <div class="flex justify-center">
-                    <img src="https://placehold.co/200x200/16a34a/ffffff?text=KH" alt="Pimpinan" class="w-40 h-40 object-cover rounded-full shadow-md border-4 border-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-800">Profil Pondok</h2>
+                    <p class="mt-2 text-gray-600">Mengenal lebih dekat pimpinan dan visi kehidupan di Pondok Pesantren.</p>
                 </div>
-                <h3 class="mt-6 text-xl font-semibold text-gray-800">KH. Muhammad Rifqi, Lc</h3>
-                <p class="text-gray-500 mb-4">Wakil Pengasuh Roudlotul Quran</p>
-                <blockquote class="italic text-green-700 text-lg font-medium">"Ilmu tanpa adab adalah kesesatan, dan adab tanpa ilmu adalah kebodohan."</blockquote>
-            </div>
-        </div>
-    </div>
-                    
-    <?php
-    $profil = mysqli_query($koneksi, "SELECT isi FROM profil WHERE jenis = 'sambutan_kepala' LIMIT 1");
-    $data_profil = mysqli_fetch_assoc($profil);
-    $link = $data_profil['isi'] ?? '';
-
-    // Ekstrak ID dari link YouTube
-    parse_str(parse_url($link, PHP_URL_QUERY), $ytParams);
-    $videoID = $ytParams['v'] ?? null;
-
-    if ($videoID) {
-        echo '<div class="flex justify-center">';
-        echo '<div class="w-full max-w-2xl aspect-video">';
-        echo "<iframe class='w-full h-full' src='https://www.youtube.com/embed/$videoID' frameborder='0' allowfullscreen></iframe>";
-        echo '</div></div>';
-    } else {
-        echo "<p class='text-gray-500'>Link video tidak valid atau belum diisi.</p>";
-    }
-    ?>
-                    
+                <?php if ($pemimpin): ?>
+                 <div class="text-center mb-12">
+                    <div class="flex justify-center">
+                        <img src="upload/<?= htmlspecialchars($pemimpin['foto']) ?>" alt="Foto <?= htmlspecialchars($pemimpin['nama']) ?>" class="w-40 h-40 object-cover rounded-full shadow-md border-4 border-white">
+                    </div>
+                    <h3 class="mt-6 text-xl font-semibold text-gray-800"><?= htmlspecialchars($pemimpin['nama']) ?></h3>
+                    <p class="text-gray-500 mb-4"><?= htmlspecialchars($pemimpin['jabatan']) ?></p>
+                    <blockquote class="italic text-green-700 text-lg font-medium">"<?= htmlspecialchars($pemimpin['slogan']) ?>"</blockquote>
                 </div>
+                <?php else: ?>
+                    <p class="text-center text-gray-500">Data pimpinan belum tersedia.</p>
+                <?php endif; ?>
+                    
+                <?php
+                $profil = mysqli_query($koneksi, "SELECT isi FROM profil WHERE jenis = 'sambutan_kepala' LIMIT 1");
+                $data_profil = mysqli_fetch_assoc($profil);
+                $link = $data_profil['isi'] ?? '';
+
+                // Ekstrak ID dari link YouTube
+                parse_str(parse_url($link, PHP_URL_QUERY), $ytParams);
+                $videoID = $ytParams['v'] ?? null;
+                if ($videoID) {
+                echo '<div class="flex justify-center">';
+                echo '<div class="w-full max-w-2xl aspect-video">';
+                echo "<iframe class='w-full h-full' src='https://www.youtube.com/embed/$videoID' frameborder='0' allowfullscreen></iframe>";
+                echo '</div></div>';} else {echo "<p class='text-gray-500'>Link video tidak valid atau belum diisi.</p>";}
+                ?>
             </div>
         </section>
 
@@ -138,47 +143,54 @@ include 'koneksi.php';
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl font-bold text-gray-800">Visi & Misi</h2>
-                    <p class="mt-2 text-gray-600">Landasan dan tujuan Pondok Pesantren Al-Mujahidin.</p>
+                    <p class="mt-2 text-gray-600">Landasan dan tujuan Pondok Pesantren Roudlotul Quran.</p>
                 </div>
                 <div class="grid md:grid-cols-2 gap-12 items-start">
                     <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
                         <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Visi</h3>
                         <p class="text-gray-600 text-center">
-                            "Mewujudkan sumber daya manusia yang berakhlak mulia, unggul dalam prestasi, peduli, dan berbudaya ramah lingkungan."
+                           "<?= htmlspecialchars($profil_data['visi'] ?? 'Visi belum diisi.') ?>"
                         </p>
                     </div>
                     <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
                         <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Misi</h3>
-                        <ul class="list-disc list-inside space-y-3 text-gray-600">
-                            <li>Menyelenggarakan pendidikan formal dan non-formal yang berkualitas berbasis nilai-nilai Islam.</li>
-                            <li>Membina santri menjadi pribadi yang beriman, bertaqwa, dan berakhlak mulia sesuai Al-Quran dan Sunnah.</li>
-                            <li>Mengembangkan potensi santri di bidang akademik, non-akademik, dan kewirausahaan untuk berdaya saing global.</li>
-                            <li>Menanamkan kesadaran dan kepedulian terhadap kelestarian lingkungan hidup melalui kegiatan yang nyata dan berkelanjutan.</li>
-                            <li>Membangun jiwa kepemimpinan yang amanah dan bertanggung jawab pada diri santri.</li>
-                        </ul>
+                        <div class="text-gray-600 text-left space-y-2">
+                           <?php
+                           $misi_items = !empty($profil_data['misi']) ? explode("\n", $profil_data['misi']) : [];
+                           if (!empty($misi_items) && (count($misi_items) > 1 || !empty(trim($misi_items[0])))) {
+                               echo '<ul class="list-disc list-inside space-y-2">';
+                               foreach ($misi_items as $item) {
+                                   if (!empty(trim($item))) {
+                                       echo '<li>' . htmlspecialchars(trim($item)) . '</li>';
+                                   }
+                               }
+                               echo '</ul>';
+                           } else {
+                               echo '<p class="text-center">Misi belum diisi.</p>';
+                           }
+                           ?>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- BERITA SECTION -->
-        <section id="artikel" class="py-20 bg-white">
-            <div class="container mx-auto px-6 text-center">
+        <section id="artikel" class="py-20 bg-gray-50">
+             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold text-gray-800">Berita Terbaru</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Ikuti perkembangan dan kegiatan terbaru dari Pondok Pesantren Al-Mujahidin</p>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Ikuti perkembangan dan kegiatan terbaru dari Pondok Pesantren Roudlotul Quran</p>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 text-left">
                     <?php
-                    // PHP untuk mengambil artikel, sama seperti kode sebelumnya
                     $artikel_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT 3");
                     if (mysqli_num_rows($artikel_query) > 0) :
                         while ($artikel = mysqli_fetch_assoc($artikel_query)) :
                     ?>
-                    <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
                         <img src="upload/<?= htmlspecialchars($artikel['gambar_utama']) ?>" class="h-56 w-full object-cover" alt="Gambar Artikel">
                         <div class="p-6">
                             <h3 class="text-xl font-semibold mb-2 text-gray-800"><?= htmlspecialchars($artikel['judul']) ?></h3>
                             <p class="text-gray-500 text-sm mb-4">Diposting: <?= date('d F Y', strtotime($artikel['tanggal_post'])) ?></p>
-                            <a href="berita_detail.php" class="text-green-600 hover:text-green-800 font-bold">Baca Selengkapnya →</a>
+                            <a href="berita_detail.php?id=<?= $artikel['id'] ?>" class="text-green-600 hover:text-green-800 font-bold">Baca Selengkapnya →</a>
                         </div>
                     </div>
                     <?php
@@ -196,22 +208,20 @@ include 'koneksi.php';
             </div>
         </section>
 
-        <!-- GALERI SECTION -->
         <section id="galeri" class="py-20 bg-white">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold text-gray-800">Galeri Kegiatan</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Momen dan kegiatan yang terdokumentasi di Pondok Pesantren Al-Mujahidin.</p>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Momen dan kegiatan yang terdokumentasi di Pondok Pesantren Roudlotul Quran.</p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-12">
                     <?php
-                    // KODE DIPERBAIKI: Menggunakan tabel `gambar` dan kolom yang sesuai
                     $galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_upload DESC LIMIT 8");
                     if ($galeri_query && mysqli_num_rows($galeri_query) > 0) :
                         while ($foto = mysqli_fetch_assoc($galeri_query)) :
                     ?>
                     <div class="rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition-transform duration-300">
                         <a href="<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>">
-                             <img src="upload/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
+                             <img src="<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
                         </a>
                     </div>
                     <?php
@@ -221,7 +231,6 @@ include 'koneksi.php';
                     endif;
                     ?>
                 </div>
-
                 <div class="mt-12">
                     <a href="galeri.php" class="bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition-colors">
                         Lihat Semua Galeri
@@ -231,25 +240,19 @@ include 'koneksi.php';
         </section>
     </main>
 
-    <!-- FOOTER -->
     <footer class="bg-gray-800 text-gray-300">
         <div class="container mx-auto px-6 py-12">
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
                 <div class="lg:col-span-2">
                     <h4 class="text-white text-lg font-semibold mb-4">Pondok Pesantren Roudlotul Quran</h4>
                     <p class="text-gray-400">Pondok Pesantren Roudlotul Quran berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin dalam membangun peradaban yang berkualitas.</p>
-                     <div class="flex space-x-4 mt-4">
-                        <a href="#" class="text-gray-400 hover:text-white"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M..."></path></svg></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M..."></path></svg></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M..."></path></svg></a>
-                    </div>
                 </div>
                 <div>
                     <h4 class="text-white text-lg font-semibold mb-4">Kontak Kami</h4>
                     <ul class="space-y-2 text-gray-400">
                         <li>Jl. Raya Pesantren No. 123, Sidoarjo, Jawa Timur 61234</li>
                         <li>+62 31 1234 5678</li>
-                        <li>info@almujahidin.ac.id</li>
+                        <li>info@roudlotulquran.ponpes.id</li>
                     </ul>
                 </div>
                 <div>
@@ -261,7 +264,7 @@ include 'koneksi.php';
                 </div>
             </div>
             <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
-                <p>&copy; <?= date('Y') ?> Pondok Pesantren Roudlotul Quran. All rights reserved.</p>
+                <p>© <?= date('Y') ?> Pondok Pesantren Roudlotul Quran. All rights reserved.</p>
             </div>
         </div>
     </footer>
