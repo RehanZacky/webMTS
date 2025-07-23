@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 22, 2025 at 03:31 PM
+-- Generation Time: Jul 23, 2025 at 05:02 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -42,8 +42,7 @@ CREATE TABLE `berita` (
 --
 
 INSERT INTO `berita` (`id`, `judul`, `isi`, `penulis`, `tanggal_post`, `gambar_utama`, `video_youtube`) VALUES
-(1, 'test', 'test', 'test', '2025-07-08 00:00:00', 'berita_1751981795.jpg', 'https://www.youtube.com/watch?v=XpmeVNxZ-Ks&list=RDpp4YQPykBMM&index=11&ab_channel=IlleniumVEVO'),
-(2, 'tes', 'jadi gini', 'saya', '2025-07-17 00:00:00', 'berita_1752753200.jpeg', '');
+(3, 'Mencoba', 'Nshk', 'Coba', '2025-07-23 15:18:33', '6880e12913f03.jpg', NULL);
 
 -- --------------------------------------------------------
 
@@ -69,6 +68,13 @@ CREATE TABLE `gambar_beranda` (
   `id` int(11) NOT NULL,
   `nama_file` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `gambar_beranda`
+--
+
+INSERT INTO `gambar_beranda` (`id`, `nama_file`) VALUES
+(3, '6880d6d01468f.jpg');
 
 -- --------------------------------------------------------
 
@@ -134,6 +140,13 @@ CREATE TABLE `prestasi` (
   `gambar` varchar(255) DEFAULT NULL,
   `tanggal_post` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `prestasi`
+--
+
+INSERT INTO `prestasi` (`id`, `nama_prestasi`, `tingkat`, `penyelenggara`, `tahun`, `deskripsi`, `gambar`, `tanggal_post`) VALUES
+(6, 'poi', 'Kecamatan', 'poi', '2025', 'qfhoi', '6880cd44d3b7e.png', '2025-07-23 06:53:40');
 
 -- --------------------------------------------------------
 
@@ -266,7 +279,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `berita`
 --
 ALTER TABLE `berita`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `gambar`
@@ -278,7 +291,7 @@ ALTER TABLE `gambar`
 -- AUTO_INCREMENT for table `gambar_beranda`
 --
 ALTER TABLE `gambar_beranda`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `info_statistik`
@@ -290,13 +303,13 @@ ALTER TABLE `info_statistik`
 -- AUTO_INCREMENT for table `pegawai`
 --
 ALTER TABLE `pegawai`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `prestasi`
 --
 ALTER TABLE `prestasi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `profil`
