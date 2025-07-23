@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif ($_POST['action'] == 'add_gambar') {
             $nama_file = '';
             if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] == 0) {
-                $target_dir = "upload/";
+                $target_dir = "../upload/gambar_beranda/";
                 $file_extension = strtolower(pathinfo($_FILES["gambar"]["name"], PATHINFO_EXTENSION));
                 $nama_file = uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $nama_file;
@@ -61,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query = "DELETE FROM gambar_beranda WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete image file if exists
-                if ($image_data['nama_file'] && file_exists("upload/" . $image_data['nama_file'])) {
-                    unlink("upload/" . $image_data['nama_file']);
+                if ($image_data['nama_file'] && file_exists("../upload/gambar_beranda/" . $image_data['nama_file'])) {
+                    unlink("../upload/gambar_beranda/" . $image_data['nama_file']);
                 }
                 $success_message = "Gambar beranda berhasil dihapus!";
             } else {
@@ -150,7 +150,7 @@ $username = $_SESSION['username'];
                 <!-- Navigation Links -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="index.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-chart-line mr-2"></i>Dashboard
                         </a>
                         <a href="berita_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
@@ -168,8 +168,11 @@ $username = $_SESSION['username'];
                         <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-users mr-2"></i>Guru & Staff
                         </a>
-                        <a href="#" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-images mr-2"></i>Galeri
+                        </a>
+                        <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
                         </a>
                     </div>
                 </div>
@@ -183,9 +186,6 @@ $username = $_SESSION['username'];
                         </div>
                         <span class="text-sm font-medium"><?= $username ?></span>
                     </div>
-                    <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
                 </div>
 
                 <!-- Mobile menu button -->
@@ -200,7 +200,7 @@ $username = $_SESSION['username'];
         <!-- Mobile Navigation Menu -->
         <div id="mobileMenu" class="md:hidden hidden bg-green-700">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="index.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-chart-line mr-2"></i>Dashboard
                 </a>
                 <a href="berita_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
@@ -218,7 +218,7 @@ $username = $_SESSION['username'];
                 <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-users mr-2"></i>Guru & Staff
                 </a>
-                <a href="#" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-images mr-2"></i>Galeri
                 </a>
                 <div class="border-t border-green-600 pt-4">
@@ -362,7 +362,7 @@ $username = $_SESSION['username'];
                         <div class="relative group">
                         <div class="relative">
                             <?php if ($gambar['nama_file']): ?>
-                                    <img src="upload/<?= $gambar['nama_file'] ?>" alt="Gambar Beranda" class="w-full h-24 object-cover rounded-md">
+                                    <img src="../upload/gambar_beranda/<?= $gambar['nama_file'] ?>" alt="Gambar Beranda" class="w-full h-24 object-cover rounded-md">
                             <?php else: ?>
                                     <div class="w-full h-24 bg-green-100 flex items-center justify-center rounded-md">
                                         <i class="fas fa-image text-green-600 text-2xl"></i>

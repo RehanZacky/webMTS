@@ -2,8 +2,12 @@
 include 'auth.php';
 include '../koneksi.php';
 
-// Handle form submission
+// Handle form submission with POST-REDIRECT-GET pattern
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $redirect_url = $_SERVER['PHP_SELF'];
+    $message_type = '';
+    $message_text = '';
+    
     if (isset($_POST['action'])) {
         if ($_POST['action'] == 'add') {
             $nama_prestasi = mysqli_real_escape_string($koneksi, $_POST['nama_prestasi']);
@@ -15,24 +19,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $gambar = '';
             if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] == 0) {
-                $target_dir = "upload/";
-                $file_extension = strtolower(pathinfo($_FILES["gambar"]["name"], PATHINFO_EXTENSION));
-                $gambar = uniqid() . '.' . $file_extension;
-                $target_file = $target_dir . $gambar;
+                $target_dir = "../upload/gambar_prestasi/";
                 
-                if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
-                    // File uploaded successfully
+                // Create upload directory if it doesn't exist
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0755, true);
+                }
+                
+                $file_extension = strtolower(pathinfo($_FILES["gambar"]["name"], PATHINFO_EXTENSION));
+                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                
+                if (in_array($file_extension, $allowed_extensions)) {
+                    $gambar = uniqid() . '.' . $file_extension;
+                    $target_file = $target_dir . $gambar;
+                    
+                    if (!move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
+                        $gambar = '';
+                        $message_type = 'error';
+                        $message_text = 'Gagal mengupload gambar!';
+                    }
                 } else {
-                    $gambar = '';
+                    $message_type = 'error';
+                    $message_text = 'Format gambar tidak didukung! Gunakan JPG, PNG, atau GIF.';
                 }
             }
             
-            $query = "INSERT INTO prestasi (nama_prestasi, tingkat, penyelenggara, tahun, deskripsi, gambar, tanggal_post) VALUES ('$nama_prestasi', '$tingkat', '$penyelenggara', '$tahun', '$deskripsi', '$gambar', '$tanggal_post')";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Data prestasi berhasil ditambahkan!";
-            } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+            if (empty($message_text)) {
+                $stmt = mysqli_prepare($koneksi, "INSERT INTO prestasi (nama_prestasi, tingkat, penyelenggara, tahun, deskripsi, gambar, tanggal_post) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                mysqli_stmt_bind_param($stmt, "sssssss", $nama_prestasi, $tingkat, $penyelenggara, $tahun, $deskripsi, $gambar, $tanggal_post);
+                
+                if (mysqli_stmt_execute($stmt)) {
+                    $message_type = 'success';
+                    $message_text = 'Data prestasi berhasil ditambahkan!';
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Error: ' . mysqli_error($koneksi);
+                }
+                mysqli_stmt_close($stmt);
             }
+            
         } elseif ($_POST['action'] == 'edit') {
             $id = (int)$_POST['id'];
             $nama_prestasi = mysqli_real_escape_string($koneksi, $_POST['nama_prestasi']);
@@ -41,24 +66,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $tahun = mysqli_real_escape_string($koneksi, $_POST['tahun']);
             $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
             
-            $gambar_query = "";
+            $gambar_update = '';
+            $new_gambar = '';
+            
             if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] == 0) {
-                $target_dir = "upload/";
-                $file_extension = strtolower(pathinfo($_FILES["gambar"]["name"], PATHINFO_EXTENSION));
-                $gambar = uniqid() . '.' . $file_extension;
-                $target_file = $target_dir . $gambar;
+                $target_dir = "../upload/gambar_prestasi/";
                 
-                if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
-                    $gambar_query = ", gambar = '$gambar'";
+                // Create upload directory if it doesn't exist
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0755, true);
+                }
+                
+                $file_extension = strtolower(pathinfo($_FILES["gambar"]["name"], PATHINFO_EXTENSION));
+                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                
+                if (in_array($file_extension, $allowed_extensions)) {
+                    $new_gambar = uniqid() . '.' . $file_extension;
+                    $target_file = $target_dir . $new_gambar;
+                    
+                    if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
+                        // Get old image to delete it later
+                        $old_image_query = mysqli_query($koneksi, "SELECT gambar FROM prestasi WHERE id = $id");
+                        $old_image_data = mysqli_fetch_assoc($old_image_query);
+                        
+                        $gambar_update = ", gambar = '$new_gambar'";
+                        
+                        // Delete old image if exists
+                        if ($old_image_data['gambar'] && file_exists($target_dir . $old_image_data['gambar'])) {
+                            unlink($target_dir . $old_image_data['gambar']);
+                        }
+                    }
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Format gambar tidak didukung! Gunakan JPG, PNG, atau GIF.';
                 }
             }
             
-            $query = "UPDATE prestasi SET nama_prestasi = '$nama_prestasi', tingkat = '$tingkat', penyelenggara = '$penyelenggara', tahun = '$tahun', deskripsi = '$deskripsi' $gambar_query WHERE id = $id";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Data prestasi berhasil diperbarui!";
-            } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+            if (empty($message_text)) {
+                $query = "UPDATE prestasi SET nama_prestasi = '$nama_prestasi', tingkat = '$tingkat', penyelenggara = '$penyelenggara', tahun = '$tahun', deskripsi = '$deskripsi' $gambar_update WHERE id = $id";
+                
+                if (mysqli_query($koneksi, $query)) {
+                    $message_type = 'success';
+                    $message_text = 'Data prestasi berhasil diperbarui!';
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Error: ' . mysqli_error($koneksi);
+                }
             }
+            
         } elseif ($_POST['action'] == 'delete') {
             $id = (int)$_POST['id'];
             
@@ -69,14 +124,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query = "DELETE FROM prestasi WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete image file if exists
-                if ($image_data['gambar'] && file_exists("upload/" . $image_data['gambar'])) {
-                    unlink("upload/" . $image_data['gambar']);
+                if ($image_data['gambar'] && file_exists("../upload/gambar_prestasi/" . $image_data['gambar'])) {
+                    unlink("../upload/gambar_prestasi/" . $image_data['gambar']);
                 }
-                $success_message = "Data prestasi berhasil dihapus!";
+                $message_type = 'success';
+                $message_text = 'Data prestasi berhasil dihapus!';
             } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+                $message_type = 'error';
+                $message_text = 'Error: ' . mysqli_error($koneksi);
             }
         }
+        
+        // Redirect to prevent form resubmission
+        $redirect_url .= '?msg=' . urlencode($message_text) . '&type=' . $message_type;
+        header("Location: " . $redirect_url);
+        exit();
+    }
+}
+
+// Handle GET messages from redirect
+$success_message = '';
+$error_message = '';
+
+if (isset($_GET['msg']) && isset($_GET['type'])) {
+    if ($_GET['type'] == 'success') {
+        $success_message = htmlspecialchars($_GET['msg']);
+    } else {
+        $error_message = htmlspecialchars($_GET['msg']);
     }
 }
 
@@ -130,6 +204,21 @@ $username = $_SESSION['username'];
             opacity: 1;
             visibility: visible;
         }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -150,7 +239,7 @@ $username = $_SESSION['username'];
                 <!-- Navigation Links -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="index.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="dashboard_admin.php" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-chart-line mr-2"></i>Dashboard
                         </a>
                         <a href="berita_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
@@ -162,20 +251,23 @@ $username = $_SESSION['username'];
                         <a href="profil_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-school mr-2"></i>Profil Sekolah
                         </a>
-                        <a href="prestasi_edit.php" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="prestasi_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-trophy mr-2"></i>Prestasi
                         </a>
                         <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-users mr-2"></i>Guru & Staff
                         </a>
-                        <a href="#" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-images mr-2"></i>Galeri
                         </a>
+                        <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
                     </div>
                 </div>
 
                 <!-- Right side items -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center justify-end space-x-4">
                     <!-- User Info -->
                     <div class="flex items-center text-green-100">
                         <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-2">
@@ -183,7 +275,43 @@ $username = $_SESSION['username'];
                         </div>
                         <span class="text-sm font-medium"><?= $username ?></span>
                     </div>
-                    <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobileMenuBtn" class="text-green-100 hover:text-white p-2">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="md:hidden hidden bg-green-700">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-chart-line mr-2"></i>Dashboard
+                </a>
+                <a href="berita_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-newspaper mr-2"></i>Kelola Berita
+                </a>
+                <a href="statistik_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-chart-bar mr-2"></i>Statistik
+                </a>
+                <a href="profil_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-school mr-2"></i>Profil Sekolah
+                </a>
+                <a href="prestasi_edit.php" class="bg-green-800 text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-trophy mr-2"></i>Prestasi
+                </a>
+                <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-users mr-2"></i>Guru & Staff
+                </a>
+                <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-images mr-2"></i>Galeri
+                </a>
+                <div class="border-t border-green-600 pt-4">
+                    <a href="../logout.php" class="text-red-300 hover:bg-red-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                         <i class="fas fa-sign-out-alt mr-2"></i>Logout
                     </a>
                 </div>
@@ -209,7 +337,7 @@ $username = $_SESSION['username'];
         </div>
 
         <!-- Alert Messages -->
-        <?php if (isset($success_message)): ?>
+        <?php if (!empty($success_message)): ?>
         <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg animate-fade-in">
             <div class="flex items-center">
                 <i class="fas fa-check-circle mr-2"></i>
@@ -218,7 +346,7 @@ $username = $_SESSION['username'];
         </div>
         <?php endif; ?>
 
-        <?php if (isset($error_message)): ?>
+        <?php if (!empty($error_message)): ?>
         <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg animate-fade-in">
             <div class="flex items-center">
                 <i class="fas fa-exclamation-circle mr-2"></i>
@@ -241,8 +369,8 @@ $username = $_SESSION['username'];
                 <?php while ($prestasi = mysqli_fetch_assoc($prestasi_query)): ?>
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
                     <div class="relative">
-                        <?php if ($prestasi['gambar']): ?>
-                            <img src="upload/<?= $prestasi['gambar'] ?>" alt="<?= htmlspecialchars($prestasi['nama_prestasi']) ?>" class="w-full h-48 object-cover">
+                        <?php if (!empty($prestasi['gambar']) && file_exists("../upload/gambar_prestasi/" . $prestasi['gambar'])): ?>
+                            <img src="../upload/gambar_prestasi/<?= htmlspecialchars($prestasi['gambar']) ?>" alt="<?= htmlspecialchars($prestasi['nama_prestasi']) ?>" class="w-full h-48 object-cover">
                         <?php else: ?>
                         <div class="w-full h-48 bg-green-100 flex items-center justify-center">
                             <i class="fas fa-trophy text-green-600 text-4xl"></i>
@@ -262,14 +390,14 @@ $username = $_SESSION['username'];
                         
                         <h3 class="text-lg font-semibold text-gray-900 mb-2"><?= htmlspecialchars($prestasi['nama_prestasi']) ?></h3>
                         
-                        <?php if ($prestasi['tingkat']): ?>
+                        <?php if (!empty($prestasi['tingkat'])): ?>
                         <p class="text-sm text-emerald-600 mb-2">
                             <i class="fas fa-level-up-alt mr-1"></i>
                             <?= htmlspecialchars($prestasi['tingkat']) ?>
                         </p>
                         <?php endif; ?>
                         
-                        <?php if ($prestasi['penyelenggara']): ?>
+                        <?php if (!empty($prestasi['penyelenggara'])): ?>
                         <p class="text-sm text-green-600 mb-2">
                             <i class="fas fa-building mr-1"></i>
                             <?= htmlspecialchars($prestasi['penyelenggara']) ?>
@@ -279,10 +407,10 @@ $username = $_SESSION['username'];
                         <p class="text-sm text-gray-600 mb-4 line-clamp-3"><?= nl2br(htmlspecialchars($prestasi['deskripsi'])) ?></p>
                         
                         <div class="flex space-x-2">
-                            <button onclick="editPrestasi(<?= htmlspecialchars(json_encode($prestasi)) ?>)" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            <button onclick="editPrestasi(<?= htmlspecialchars(json_encode($prestasi), ENT_QUOTES) ?>)" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                 <i class="fas fa-edit mr-1"></i> Edit
                             </button>
-                            <button onclick="deletePrestasi(<?= $prestasi['id'] ?>, '<?= htmlspecialchars($prestasi['nama_prestasi']) ?>')" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            <button onclick="deletePrestasi(<?= $prestasi['id'] ?>, '<?= htmlspecialchars($prestasi['nama_prestasi'], ENT_QUOTES) ?>')" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                 <i class="fas fa-trash mr-1"></i> Hapus
                             </button>
                         </div>
@@ -313,7 +441,6 @@ $username = $_SESSION['username'];
                     </button>
                 </div>
                 
-                <form method="POST" class="space-y-4">
                 <form method="POST" enctype="multipart/form-data" class="space-y-4">
                     <input type="hidden" name="action" value="add">
                     
@@ -348,7 +475,7 @@ $username = $_SESSION['username'];
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Prestasi</label>
-                        <input type="file" name="gambar" accept="image/*" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <input type="file" name="gambar" accept="image/jpeg,image/jpg,image/png,image/gif" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                         <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal 2MB</p>
                     </div>
                     
@@ -384,7 +511,6 @@ $username = $_SESSION['username'];
                     </button>
                 </div>
                 
-                <form method="POST" class="space-y-4">
                 <form method="POST" enctype="multipart/form-data" class="space-y-4">
                     <input type="hidden" name="action" value="edit">
                     <input type="hidden" name="id" id="edit_id">
@@ -420,7 +546,7 @@ $username = $_SESSION['username'];
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Prestasi Baru (Opsional)</label>
-                        <input type="file" name="gambar" accept="image/*" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <input type="file" name="gambar" accept="image/jpeg,image/jpg,image/png,image/gif" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                         <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah gambar</p>
                     </div>
                     
@@ -473,21 +599,36 @@ $username = $_SESSION['username'];
     </div>
 
     <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            
+            // Reset form if it's add modal
+            if (modalId === 'addModal') {
+                document.querySelector('#addModal form').reset();
+            }
         }
 
         function editPrestasi(prestasi) {
             document.getElementById('edit_id').value = prestasi.id;
-            document.getElementById('edit_nama_prestasi').value = prestasi.nama_prestasi;
+            document.getElementById('edit_nama_prestasi').value = prestasi.nama_prestasi || '';
             document.getElementById('edit_tingkat').value = prestasi.tingkat || '';
             document.getElementById('edit_penyelenggara').value = prestasi.penyelenggara || '';
-            document.getElementById('edit_tahun').value = prestasi.tahun;
-            document.getElementById('edit_deskripsi').value = prestasi.deskripsi;
+            document.getElementById('edit_tahun').value = prestasi.tahun || '';
+            document.getElementById('edit_deskripsi').value = prestasi.deskripsi || '';
             openModal('editModal');
         }
 
@@ -508,17 +649,32 @@ $username = $_SESSION['username'];
             });
         }
 
-        // Add CSS for line clamp
-        const style = document.createElement('style');
-        style.textContent = `
-            .line-clamp-3 {
-                display: -webkit-box;
-                -webkit-line-clamp: 3;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = ['addModal', 'editModal', 'deleteModal'];
+                modals.forEach(modalId => {
+                    const modal = document.getElementById(modalId);
+                    if (!modal.classList.contains('hidden')) {
+                        closeModal(modalId);
+                    }
+                });
             }
-        `;
-        document.head.appendChild(style);
+        });
+
+        // Auto-hide alert messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.animate-fade-in');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease-out';
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 500);
+                }, 5000);
+            });
+        });
     </script>
 </body>
 </html>

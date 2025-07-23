@@ -352,7 +352,7 @@ $aktivitas_terbaru = [
                     </div>
                 </a>
 
-               <a href="#" class="flex flex-col items-center space-y-3 p-4 bg-cyan-50 rounded-lg hover:bg-cyan-100 transition-colors group">
+               <a href="galeri_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-cyan-50 rounded-lg hover:bg-cyan-100 transition-colors group">
                    <div class="p-3 bg-cyan-500 rounded-full group-hover:scale-110 transition-transform">
                         <i class="fas fa-images text-white text-xl"></i>
                     </div>

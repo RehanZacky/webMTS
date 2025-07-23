@@ -47,7 +47,7 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
 <header class="bg-green-700 sticky top-0 z-50 shadow-lg">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
-            <img src="upload\STK-20250718-WA0016.png" alt="Roudlotul Quran" class="h-20 w-20">
+            <img src="upload/logo/STK-20250718-WA0016.png" alt="Roudlotul Quran" class="h-20 w-20">
             <span class="text-xl font-bold text-white leading-tight">Pondok Pesantren <br> Roudlotul Quran</span>
         </a>
         <nav class="hidden md:flex items-center space-x-8">
@@ -92,7 +92,7 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
                         ?>
                         <div class="bg-gray-50 rounded-xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                             <a href="berita_detail.php?id=<?= $p['id'] ?>">
-                                <img src="upload/<?= htmlspecialchars($p['gambar_utama']) ?>" class="h-48 w-full object-cover" alt="Gambar: <?= htmlspecialchars($p['judul']) ?>">
+                                <img src="upload/gambar_prestasi/<?= htmlspecialchars($p['gambar_utama']) ?>" class="h-48 w-full object-cover" alt="Gambar: <?= htmlspecialchars($p['judul']) ?>">
                             </a>
                             <div class="p-5 flex flex-col flex-grow">
                                 <p class="text-xs text-gray-500 mb-2"><?= date('d M Y', strtotime($p['tanggal_post'])) ?></p>

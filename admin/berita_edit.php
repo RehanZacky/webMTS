@@ -7,8 +7,8 @@ if (isset($_GET['hapus'])) {
     $id = intval($_GET['hapus']);
     $cek = mysqli_query($koneksi, "SELECT gambar_utama FROM berita WHERE id = $id");
     $row = mysqli_fetch_assoc($cek);
-    if ($row && file_exists("../upload/" . $row['gambar_utama'])) {
-        unlink("../upload/" . $row['gambar_utama']);
+    if ($row && file_exists("../upload/gambar_berita/" . $row['gambar_utama'])) {
+        unlink("../upload/gambar_berita/" . $row['gambar_utama']);
     }
     mysqli_query($koneksi, "DELETE FROM berita WHERE id = $id");
     header("Location: berita_edit.php");
@@ -27,7 +27,7 @@ if (isset($_POST['tambah'])) {
     if ($_FILES['gambar']['name']) {
         $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
         $gambar_utama = "berita_" . time() . "." . $ext;
-        move_uploaded_file($_FILES['gambar']['tmp_name'], "../upload/$gambar_utama");
+        move_uploaded_file($_FILES['gambar']['tmp_name'], "../upload/gambar_berita/$gambar_utama");
     }
 
     mysqli_query($koneksi, "INSERT INTO berita (judul, isi, penulis, tanggal_post, gambar_utama, video_youtube)
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $gambar_utama = '';
             if (isset($_FILES['gambar_utama']) && $_FILES['gambar_utama']['error'] == 0) {
-                $target_dir = "upload/";
+                $target_dir = "../upload/gambar_berita/";
                 $file_extension = strtolower(pathinfo($_FILES["gambar_utama"]["name"], PATHINFO_EXTENSION));
                 $gambar_utama = uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $gambar_utama;
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $gambar_query = "";
             if (isset($_FILES['gambar_utama']) && $_FILES['gambar_utama']['error'] == 0) {
-                $target_dir = "upload/";
+                $target_dir = "../upload/gambar_berita/";
                 $file_extension = strtolower(pathinfo($_FILES["gambar_utama"]["name"], PATHINFO_EXTENSION));
                 $gambar_utama = uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $gambar_utama;
@@ -99,8 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query = "DELETE FROM berita WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete image file if exists
-                if ($image_data['gambar_utama'] && file_exists("upload/" . $image_data['gambar_utama'])) {
-                    unlink("upload/" . $image_data['gambar_utama']);
+                if ($image_data['gambar_utama'] && file_exists("../upload/gambar_berita/" . $image_data['gambar_utama'])) {
+                    unlink("../upload/gambar_berita/" . $image_data['gambar_utama']);
                 }
                 $success_message = "Berita berhasil dihapus!";
             } else {
@@ -209,6 +209,9 @@ $username = $_SESSION['username'];
                         <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-images mr-2"></i>Galeri
                         </a>
+                        <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </a>
                     </div>
                 </div>
 
@@ -221,9 +224,6 @@ $username = $_SESSION['username'];
                         </div>
                         <span class="text-sm font-medium"><?= $username ?></span>
                     </div>
-                    <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
                 </div>
 
                 <!-- Mobile menu button -->
@@ -319,7 +319,7 @@ $username = $_SESSION['username'];
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
                     <div class="relative">
                         <?php if ($berita['gambar_utama']): ?>
-                            <img src="../upload/<?= $berita['gambar_utama'] ?>" alt="<?= htmlspecialchars($berita['judul']) ?>" class="w-full h-48 object-cover">
+                            <img src="../upload/gambar_berita/<?= $berita['gambar_utama'] ?>" alt="<?= htmlspecialchars($berita['judul']) ?>" class="w-full h-48 object-cover">
                         <?php else: ?>
                             <div class="w-full h-48 bg-green-100 flex items-center justify-center">
                                 <i class="fas fa-newspaper text-green-600 text-4xl"></i>

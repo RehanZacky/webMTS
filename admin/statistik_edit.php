@@ -106,6 +106,9 @@ $username = $_SESSION['username'];
                         <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             <i class="fas fa-images mr-2"></i>Galeri
                         </a>
+                        <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </a>
                     </div>
                 </div>
 
@@ -118,9 +121,6 @@ $username = $_SESSION['username'];
                         </div>
                         <span class="text-sm font-medium"><?= $username ?></span>
                     </div>
-                    <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
                 </div>
 
                 <!-- Mobile menu button -->

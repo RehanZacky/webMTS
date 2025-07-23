@@ -78,7 +78,7 @@ $berita_lainnya = mysqli_query($koneksi, $query_lainnya);
 
             <?php if (!empty($berita['gambar_utama'])): ?>
                 <div class="mb-8">
-                    <img src="upload/<?= htmlspecialchars($berita['gambar_utama']) ?>" alt="Gambar: <?= htmlspecialchars($berita['judul']) ?>"
+                    <img src="upload/gambar_berita/<?= htmlspecialchars($berita['gambar_utama']) ?>" alt="Gambar: <?= htmlspecialchars($berita['judul']) ?>"
                          class="rounded-lg w-full max-h-[500px] object-cover shadow-md" />
                 </div>
             <?php endif; ?>
@@ -111,7 +111,7 @@ $berita_lainnya = mysqli_query($koneksi, $query_lainnya);
                     <?php if (mysqli_num_rows($berita_lainnya) > 0): ?>
                         <?php while ($lainnya = mysqli_fetch_assoc($berita_lainnya)): ?>
                             <a href="berita_detail.php?id=<?= $lainnya['id'] ?>" class="group flex items-center gap-4">
-                                <img src="upload/<?= htmlspecialchars($lainnya['gambar_utama']) ?>" alt="<?= htmlspecialchars($lainnya['judul']) ?>" class="w-20 h-20 rounded-md object-cover flex-shrink-0">
+                                <img src="upload/gambar_berita/<?= htmlspecialchars($lainnya['gambar_utama']) ?>" alt="<?= htmlspecialchars($lainnya['judul']) ?>" class="w-20 h-20 rounded-md object-cover flex-shrink-0">
                                 <div>
                                     <p class="text-sm font-semibold text-gray-800 group-hover:text-green-600 transition-colors leading-tight">
                                         <?= htmlspecialchars($lainnya['judul']) ?>
