@@ -221,7 +221,6 @@ $username = $_SESSION['username'];
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
     <!-- Top Navigation -->
     <nav class="bg-gradient-to-r from-green-600 to-emerald-600 shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -239,28 +238,28 @@ $username = $_SESSION['username'];
                 <!-- Navigation Links -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="dashboard_admin.php" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">
-                            <i class="fas fa-chart-line mr-2"></i>Dashboard
-                        </a>
-                        <a href="berita_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                            <i class="fas fa-newspaper mr-2"></i>Kelola Berita
-                        </a>
-                        <a href="statistik_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                            <i class="fas fa-chart-bar mr-2"></i>Statistik
-                        </a>
-                        <a href="profil_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                            <i class="fas fa-school mr-2"></i>Profil Sekolah
-                        </a>
-                        <a href="prestasi_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                            <i class="fas fa-trophy mr-2"></i>Prestasi
-                        </a>
-                        <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                            <i class="fas fa-users mr-2"></i>Guru & Staff
-                        </a>
-                        <a href="galeri_edit.php" class="text-green-100 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                            <i class="fas fa-images mr-2"></i>Galeri
-                        </a>
-                        <a href="../logout.php" class="text-green-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-chart-line mr-2"></i>Dashboard
+                  </a>
+                    <a href="statistik_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-chart-bar mr-2"></i>Statistik
+                  </a>
+                <a href="profil_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-school mr-2"></i>Profil
+                </a>
+                <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-users mr-2"></i>Guru/Staff
+                </a>
+                <a href="berita_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-newspaper mr-2"></i>Berita
+                </a>
+                <a href="prestasi_edit.php" class="bg-green-800 text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-trophy mr-2"></i>Prestasi
+                </a>
+                <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-images mr-2"></i>Galeri
+                </a>
+                        <a href="../logout.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                         <i class="fas fa-sign-out-alt mr-2"></i>Logout
                     </a>
                     </div>
@@ -292,20 +291,20 @@ $username = $_SESSION['username'];
                 <a href="dashboard_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-chart-line mr-2"></i>Dashboard
                 </a>
-                <a href="berita_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-newspaper mr-2"></i>Kelola Berita
-                </a>
                 <a href="statistik_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-chart-bar mr-2"></i>Statistik
                 </a>
                 <a href="profil_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-school mr-2"></i>Profil Sekolah
                 </a>
+                <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-users mr-2"></i>Guru/Staff
+                </a>
+                <a href="berita_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-newspaper mr-2"></i>Berita
+                </a>
                 <a href="prestasi_edit.php" class="bg-green-800 text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-trophy mr-2"></i>Prestasi
-                </a>
-                <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-users mr-2"></i>Guru & Staff
                 </a>
                 <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-images mr-2"></i>Galeri
