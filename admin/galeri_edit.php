@@ -266,7 +266,7 @@ $username = $_SESSION['username'];
                 <a href="prestasi_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-trophy mr-2"></i>Prestasi
                 </a>
-                <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                <a href="galeri_edit.php" class="bg-green-800 text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-images mr-2"></i>Galeri
                 </a>
                 <div class="border-t border-green-600 pt-4">

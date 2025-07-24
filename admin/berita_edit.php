@@ -251,7 +251,7 @@ $username = $_SESSION['username'];
                 <a href="pegawai_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-users mr-2"></i>Guru/Staff
                 </a>
-                <a href="berita_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                <a href="berita_edit.php" class="bg-green-800 text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-newspaper mr-2"></i>Berita
                 </a>
                 <a href="prestasi_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
