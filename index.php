@@ -188,7 +188,7 @@ $pemimpin = mysqli_fetch_assoc($pemimpin_query);
                         while ($artikel = mysqli_fetch_assoc($artikel_query)) :
                     ?>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
-                        <img src="upload/gambar_beerita/<?= htmlspecialchars($artikel['gambar_utama']) ?>" class="h-56 w-full object-cover" alt="Gambar Artikel">
+                        <img src="upload/gambar_berita/<?= htmlspecialchars($artikel['gambar_utama']) ?>" class="h-56 w-full object-cover" alt="Gambar Artikel">
                         <div class="p-6">
                             <h3 class="text-xl font-semibold mb-2 text-gray-800"><?= htmlspecialchars($artikel['judul']) ?></h3>
                             <p class="text-gray-500 text-sm mb-4">Diposting: <?= date('d F Y', strtotime($artikel['tanggal_post'])) ?></p>
@@ -223,7 +223,7 @@ $pemimpin = mysqli_fetch_assoc($pemimpin_query);
                     ?>
                     <div class="rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition-transform duration-300">
                         <a href="<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>">
-                             <img src="<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
+                             <img src="upload/g<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
                         </a>
                     </div>
                     <?php
