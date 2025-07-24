@@ -66,6 +66,7 @@ if ($semua_berita) {
             <a href="index.php" class="text-green-100 hover:text-white font-semibold">Beranda</a>
             <a href="profil.php" class="text-green-100 hover:text-white font-semibold">Profil</a>
             <a href="berita.php" class="text-white font-bold">Berita</a>
+            <a href="prestasi.php" class="text-green-100 hover:text-white font-semibold">Prestasi</a>
             <a href="galeri.php" class="text-green-100 hover:text-white font-semibold">Galeri</a>
         </nav>
 
@@ -82,6 +83,7 @@ if ($semua_berita) {
         <a href="index.php" class="block py-2 text-green-100 hover:text-white">Beranda</a>
         <a href="profil.php" class="block py-2 text-green-100 hover:text-white">Profil</a>
         <a href="berita.php" class="block py-2 text-white font-semibold">Berita</a>
+        <a href="prestasi.php" class="block py-2 text-green-100 hover:text-white">Prestasi</a>
         <a href="galeri.php" class="block py-2 text-green-100 hover:text-white">Galeri</a>
     </div>
 </header>

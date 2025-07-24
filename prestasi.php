@@ -54,7 +54,7 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
             <a href="index.php" class="text-green-100 hover:text-white font-semibold">Beranda</a>
             <a href="profil.php" class="text-green-100 hover:text-white font-semibold">Profil</a>
             <a href="berita.php" class="text-green-100 hover:text-white font-semibold">Berita</a>
-            <a href="prestasi.php" class="text-white font-bold border-b-2 border-white pb-1">Prestasi</a>
+            <a href="prestasi.php" class="text-white font-bold">Prestasi</a>
             <a href="galeri.php" class="text-green-100 hover:text-white font-semibold">Galeri</a>
         </nav>
         <div class="md:hidden">
@@ -136,7 +136,33 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
 </main>
 
 <footer class="bg-gray-800 text-gray-300 mt-16">
-    </footer>
+    <div class="container mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-2">
+                <h4 class="text-white text-lg font-semibold mb-4">Pondok Pesantren Roudlotul Quran</h4>
+                <p class="text-gray-400">Pondok Pesantren Roudlotul Quran berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin dalam membangun peradaban yang berkualitas.</p>
+            </div>
+            <div>
+                <h4 class="text-white text-lg font-semibold mb-4">Kontak Kami</h4>
+                <ul class="space-y-2 text-gray-400">
+                    <li>Jl. Raya Pesantren No. 123, Sidoarjo, Jawa Timur 61234</li>
+                    <li>+62 31 1234 5678</li>
+                    <li>info@roudlotulquran.ponpes.id</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white text-lg font-semibold mb-4">Jam Operasional</h4>
+                <ul class="space-y-2 text-gray-400">
+                    <li><span class="font-semibold">Senin - Jumat:</span> 07:00 - 16:00 WIB</li>
+                    <li><span class="font-semibold">Sabtu - Minggu:</span> 07:00 - 12:00 WIB</li>
+                </ul>
+            </div>
+        </div>
+        <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
+            <p>© <?= date('Y') ?> Pondok Pesantren Roudlotul Quran. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
 
 <script>
     document.getElementById("menu-toggle").addEventListener("click", function () {
