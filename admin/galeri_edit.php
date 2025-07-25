@@ -320,10 +320,6 @@ $username = $_SESSION['username'];
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Foto Baru
             </button>
-            <a href="../galeri.php" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center">
-                <i class="fas fa-external-link-alt mr-2"></i>
-                Lihat Galeri
-            </a>
         </div>
 
         <!-- Gallery Grid -->

@@ -275,14 +275,6 @@ $username = $_SESSION['username'];
                         <i class="fas fa-save mr-2"></i>
                         Simpan Perubahan
                     </button>
-                    
-                    <a 
-                        href="dashboard_admin.php" 
-                        class="flex-1 sm:flex-none bg-gray-100 text-gray-700 font-semibold py-3 px-8 rounded-lg hover:bg-gray-200 transition-all duration-300 flex items-center justify-center border border-gray-300"
-                    >
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        Kembali ke Dashboard
-                    </a>
                 </div>
             </form>
         </div>
