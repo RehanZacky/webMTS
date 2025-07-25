@@ -11,7 +11,7 @@ while ($row = mysqli_fetch_assoc($profil_query)) {
 
 
 // --- LOGIKA PAGINASI ---
-$per_halaman = 12;
+$per_halaman = 9;
 $halaman_aktif = isset($_GET['halaman']) ? (int)$_GET['halaman'] : 1;
 $halaman_aktif = max(1, $halaman_aktif);
 
@@ -101,18 +101,18 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
         </div>
 
         <div class="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <?php
                 if ($galeri_query && mysqli_num_rows($galeri_query) > 0) :
                     while ($foto = mysqli_fetch_assoc($galeri_query)) :
                 ?>
                 <a href="upload/<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>" class="group block rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
                      <div class="overflow-hidden">
-                        <img src="upload/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                        <img src="upload/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
                      </div>
                      <?php if (!empty($foto['deskripsi'])): ?>
                         <div class="p-3 bg-gray-50">
-                            <p class="text-xs text-center text-gray-600 truncate"><?= htmlspecialchars($foto['deskripsi']) ?></p>
+                            <p class="text-sm text-center text-gray-600 truncate"><?= htmlspecialchars($foto['deskripsi']) ?></p>
                         </div>
                      <?php endif; ?>
                 </a>
@@ -125,31 +125,88 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
             </div>
         </div>
 
-        <div class="mt-16 flex justify-center items-center pagination text-sm font-medium">
-            <?php if ($total_halaman > 1): ?>
+        <?php if ($total_halaman > 1): ?>
+        <div class="mt-16 flex flex-col items-center space-y-6">
+            <!-- Informasi Halaman -->
+            <div class="text-center">
+                <p class="text-gray-600 text-sm">
+                    Halaman <?= $halaman_aktif ?> dari <?= $total_halaman ?> 
+                    (<?= $total_gambar ?> total gambar)
+                </p>
+            </div>
+            
+            <!-- Tombol Navigasi -->
+            <div class="flex items-center space-x-4">
                 <?php if ($halaman_aktif > 1): ?>
-                    <a href="?halaman=<?= $halaman_aktif - 1 ?>">«</a>
+                    <a href="?halaman=<?= $halaman_aktif - 1 ?>" 
+                       class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Sebelumnya
+                    </a>
                 <?php else: ?>
-                    <span class="disabled">«</span>
+                    <span class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Sebelumnya
+                    </span>
                 <?php endif; ?>
-
-                <?php for ($i = 1; $i <= $total_halaman; $i++): ?>
-                    <a href="?halaman=<?= $i ?>" class="<?= ($i == $halaman_aktif) ? 'aktif' : '' ?>"><?= $i ?></a>
-                <?php endfor; ?>
+                
+                <!-- Nomor Halaman -->
+                <div class="flex items-center space-x-2">
+                    <?php
+                    $start = max(1, $halaman_aktif - 2);
+                    $end = min($total_halaman, $halaman_aktif + 2);
+                    
+                    if ($start > 1): ?>
+                        <a href="?halaman=1" class="px-3 py-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors duration-200">1</a>
+                        <?php if ($start > 2): ?>
+                            <span class="px-2 text-gray-400">...</span>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    
+                    <?php for ($i = $start; $i <= $end; $i++): ?>
+                        <a href="?halaman=<?= $i ?>" 
+                           class="px-3 py-2 rounded-md transition-colors duration-200 <?= ($i == $halaman_aktif) ? 'bg-green-600 text-white' : 'text-gray-600 hover:text-green-600 hover:bg-green-50' ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php endfor; ?>
+                    
+                    <?php if ($end < $total_halaman): ?>
+                        <?php if ($end < $total_halaman - 1): ?>
+                            <span class="px-2 text-gray-400">...</span>
+                        <?php endif; ?>
+                        <a href="?halaman=<?= $total_halaman ?>" class="px-3 py-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors duration-200"><?= $total_halaman ?></a>
+                    <?php endif; ?>
+                </div>
                 
                 <?php if ($halaman_aktif < $total_halaman): ?>
-                    <a href="?halaman=<?= $halaman_aktif + 1 ?>">»</a>
+                    <a href="?halaman=<?= $halaman_aktif + 1 ?>" 
+                       class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                        Selanjutnya
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
                 <?php else: ?>
-                    <span class="disabled">»</span>
+                    <span class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                        Selanjutnya
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </span>
                 <?php endif; ?>
-            <?php endif; ?>
+            </div>
         </div>
+        <?php endif; ?>
     </div>
 </main>
 
 <footer class="bg-gradient-to-br from-green-800 via-green-700 to-green-900 text-white relative overflow-hidden">
     <div class="absolute inset-0 opacity-10">
-       <div class="absolute top-0 left-0 w-full h-full" style="background-image: url('grain.svg');"></div>
+        <<div class="absolute top-0 left-0 w-full h-full" style="background-image: url('grain.svg');"></div>
     </div>
     
     <div class="container mx-auto px-6 py-12 relative z-10">
@@ -169,13 +226,19 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
                 
                 <div class="flex space-x-4">
                     <a href="#" class="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-300 hover:scale-110" aria-label="YouTube">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"></path></svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
                     </a>
                     <a href="#" class="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-300 hover:scale-110" aria-label="TikTok">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16.6,5.82s.51.5,0,0A4.278,4.278,0,0,1,15.54,3H12.45V15.4a2.592,2.592,0,0,1-2.59,2.59c-1.43,0-2.6-1.16-2.6-2.6s1.17-2.6,2.6-2.6c.2,0,.39.02.58.06V10.4a4.832,4.832,0,0,0-4.83,4.83c0,2.66,2.17,4.83,4.83,4.83s4.83-2.17,4.83-4.83V8.18H19.3V5.82H16.6Z"></path></svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                        </svg>
                     </a>
                     <a href="#" class="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-300 hover:scale-110" aria-label="Instagram">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,2.163c3.204,0,3.584,0.012,4.85,0.07c3.252,0.148,4.771,1.691,4.919,4.919c0.058,1.265,0.069,1.645,0.069,4.849 c0,3.205-0.012,3.584-0.069,4.849c-0.149,3.225-1.664,4.771-4.919,4.919c-1.266,0.058-1.644,0.07-4.85,0.07 c-3.204,0-3.584-0.012-4.849-0.07c-3.26-0.149-4.771-1.699-4.919-4.92c-0.058-1.265-0.07-1.644-0.07-4.849 c0-3.204,0.013-3.583,0.07-4.849c0.149-3.227,1.664-4.771,4.919-4.919C8.416,2.175,8.796,2.163,12,2.163 M12,0 C8.741,0,8.333,0.014,7.053,0.072C2.699,0.272,0.273,2.699,0.073,7.053C0.014,8.333,0,8.741,0,12c0,3.259,0.014,3.668,0.072,4.948 c0.2,4.358,2.618,6.78,6.98,6.98c1.281,0.058,1.689,0.072,4.948,0.072c3.259,0,3.668-0.014,4.948-0.072 c4.354-0.2,6.782-2.618,6.979-6.98c0.059-1.28,0.073-1.689,0.073-4.948c0-3.259-0.014-3.667-0.072-4.947 C21.382,2.699,18.956,0.272,14.6,0.072C13.317,0.014,12.91,0,12,0L12,0z M12,5.462c-3.6,0-6.538,2.939-6.538,6.538 s2.939,6.538,6.538,6.538s6.538-2.939,6.538-6.538S15.6,5.462,12,5.462z M12,16.338c-2.389,0-4.338-1.949-4.338-4.338 c0-2.389,1.949-4.338,4.338-4.338s4.338,1.949,4.338,4.338C16.338,14.389,14.389,16.338,12,16.338z M18.406,6.406 c-0.796,0-1.441,0.645-1.441,1.44s0.645,1.44,1.441,1.44c0.795,0,1.439-0.645,1.439-1.44S19.201,6.406,18.406,6.406z"></path></svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919C8.416 2.175 8.796 2.163 12 2.163M12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947C23.728 2.699 21.356.273 16.948.073 15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -250,7 +313,7 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
             </div>
         </div>
     </div>
-</footer>
+</footer>   
 
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 <script>

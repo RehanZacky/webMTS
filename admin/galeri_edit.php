@@ -323,7 +323,7 @@ $username = $_SESSION['username'];
         </div>
 
         <!-- Gallery Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php if (mysqli_num_rows($galeri_query) > 0): ?>
                 <?php while ($foto = mysqli_fetch_assoc($galeri_query)): ?>
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">

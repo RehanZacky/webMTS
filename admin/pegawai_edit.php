@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $foto = '';
                 if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                    $target_dir = "upload/gambar_pegawai/";
+                    $target_dir = "../upload/gambar_pegawai/";
                     if (!is_dir($target_dir)) {
                         mkdir($target_dir, 0777, true);
                     }
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $foto_query = "";
                 if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                    $target_dir = "upload/gambar_pegawai/";
+                    $target_dir = "../upload/gambar_pegawai/";
                     if (!is_dir($target_dir)) {
                         mkdir($target_dir, 0777, true);
                     }
@@ -82,8 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query = "DELETE FROM profil_pemimpin WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete photo file if exists
-                if ($photo_data['foto'] && file_exists("upload/gambar_pegawai/" . $photo_data['foto'])) {
-                    unlink("upload/gambar_pegawai/" . $photo_data['foto']);
+                if ($photo_data['foto'] && file_exists("../upload/gambar_pegawai/" . $photo_data['foto'])) {
+                    unlink("../upload/gambar_pegawai/" . $photo_data['foto']);
                 }
                 $success_message = "Profil pemimpin berhasil dihapus!";
             } else {
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $foto = '';
                 if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                    $target_dir = "upload/gambar_pegawai/";
+                    $target_dir = "../upload/gambar_pegawai/";
                     if (!is_dir($target_dir)) {
                         mkdir($target_dir, 0777, true);
                     }
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     
                     if (!move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
                         $foto = '';
-                        $error_message = "Gagal upload file. Pastikan folder 'upload/' ada dan punya izin tulis.";
+                        $error_message = "Gagal upload file. Pastikan folder '..upload/' ada dan punya izin tulis.";
                     }
                 }
                 
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $foto_query = "";
                 if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                    $target_dir = "upload/gambar_pegawai/";
+                    $target_dir = "../upload/gambar_pegawai/";
                     if (!is_dir($target_dir)) {
                         mkdir($target_dir, 0777, true);
                     }
@@ -171,8 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query = "DELETE FROM pegawai WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete photo file if exists
-                if ($photo_data['foto'] && file_exists("upload/gambar_pegawai/" . $photo_data['foto'])) {
-                    unlink("upload/gambar_pegawai/" . $photo_data['foto']);
+                if ($photo_data['foto'] && file_exists("../upload/gambar_pegawai/" . $photo_data['foto'])) {
+                    unlink("../upload/gambar_pegawai/" . $photo_data['foto']);
                 }
                 $success_message = "Data pegawai berhasil dihapus!";
             } else {
@@ -378,10 +378,6 @@ $username = $_SESSION['username'];
                     <i class="fas fa-plus mr-2"></i>
                     Tambah Guru/Staff Baru
                 </button>
-                <button onclick="openModal('addPemimpinModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
-                    <i class="fas fa-crown mr-2"></i>
-                    Tambah Profil Pemimpin
-                </button>
             </div>
         </div>
 
@@ -402,7 +398,7 @@ $username = $_SESSION['username'];
                             <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-100 card-hover">
                                 <div class="text-center">
                                     <?php if ($pemimpin['foto']): ?>
-                                        <img src="upload/gambar_pegawai/<?= $pemimpin['foto'] ?>" alt="<?= $pemimpin['nama'] ?>" class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-emerald-200">
+                                        <img src="../upload/gambar_pegawai/<?= $pemimpin['foto'] ?>" alt="<?= $pemimpin['nama'] ?>" class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-emerald-200">
                                     <?php else: ?>
                                         <div class="w-20 h-20 rounded-full bg-emerald-200 flex items-center justify-center mx-auto mb-4">
                                             <i class="fas fa-crown text-emerald-600 text-2xl"></i>
@@ -471,7 +467,7 @@ $username = $_SESSION['username'];
                             <tr class="hover:bg-gray-50">
                                 <td class="px-3 md:px-6 py-4 whitespace-nowrap">
                                     <?php if ($pegawai['foto']): ?>
-                                        <img src="upload/gambar_pegawai/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover">
+                                        <img src="../upload/gambar_pegawai/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover">
                                     <?php else: ?>
                                         <div class="h-10 w-10 md:h-12 md:w-12 rounded-full bg-green-100 flex items-center justify-center">
                                             <i class="fas fa-user text-green-600 text-sm md:text-base"></i>
@@ -536,7 +532,7 @@ $username = $_SESSION['username'];
                         <div class="flex items-start space-x-3">
                             <div class="flex-shrink-0">
                                 <?php if ($pegawai['foto']): ?>
-                                    <img src="upload/gambar_pegawai/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-12 w-12 rounded-full object-cover">
+                                    <img src="../upload/gambar_pegawai/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-12 w-12 rounded-full object-cover">
                                 <?php else: ?>
                                     <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
                                         <i class="fas fa-user text-green-600"></i>
