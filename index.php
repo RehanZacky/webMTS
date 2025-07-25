@@ -86,24 +86,47 @@ $pemimpin = mysqli_fetch_assoc($pemimpin_query);
         </div>
         </section>
 
-        <section class="py-16 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                    <?php
-                    $data_statistik = mysqli_query($koneksi, "SELECT * FROM info_statistik ORDER BY id ASC LIMIT 4");
-                    while ($row = mysqli_fetch_assoc($data_statistik)) :
-                    ?>
-                    <div class="flex flex-col items-center">
-                        <div class="bg-green-100 text-green-600 rounded-full p-4 mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-9.998 12.078 12.078 0 01.665-6.479L12 14z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-9.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222 4 2.222V20M1 12l11 6 9-6" /></svg>
-                        </div>
-                        <p class="text-4xl font-bold text-gray-800"><?= htmlspecialchars($row['nilai']) ?></p>
-                        <p class="text-gray-500"><?= htmlspecialchars($row['label']) ?></p>
-                    </div>
-                    <?php endwhile; ?>
+      <section class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <?php
+            $data_statistik = mysqli_query($koneksi, "SELECT * FROM info_statistik ORDER BY id ASC LIMIT 4");
+            while ($row = mysqli_fetch_assoc($data_statistik)) :
+                $label = strtolower($row['label']);
+                $icon_path = '';
+
+                switch ($label) {
+                    case 'siswa aktif':
+                        $icon_path = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20h6M4 20h5v-2a4 4 0 00-3-3.87M12 11a4 4 0 100-8 4 4 0 000 8z" />';
+                        break;
+                    case 'akreditasi':
+                        $icon_path = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4-4m1-6H6a2 2 0 00-2 2v16l7-3l7 3V5a2 2 0 00-2-2z" />';
+                        break;
+                    case 'jumlah kelas':
+                        $icon_path = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />';
+                        break;
+                    case 'guru & staff':
+                        $icon_path = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A4 4 0 016 16h12a4 4 0 01.879 1.804M15 11a3 3 0 100-6 3 3 0 000 6zM9 11a3 3 0 100-6 3 3 0 000 6z" />';
+                        break;
+                    default:
+                        $icon_path = '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />';
+                        break;
+                }
+            ?>
+            <div class="flex flex-col items-center">
+                <div class="bg-green-100 text-green-600 rounded-full p-4 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <?= $icon_path ?>
+                    </svg>
                 </div>
+                <p class="text-4xl font-bold text-gray-800"><?= htmlspecialchars($row['nilai']) ?></p>
+                <p class="text-gray-500"><?= htmlspecialchars($row['label']) ?></p>
             </div>
-        </section>
+            <?php endwhile; ?>
+        </div>
+    </div>
+</section>
+
 
         <section id="profil-video" class="py-20 bg-green-50">
             <div class="container mx-auto px-6">
