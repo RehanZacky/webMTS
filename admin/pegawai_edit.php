@@ -6,53 +6,71 @@ include '../koneksi.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         if ($_POST['action'] == 'add_pemimpin') {
-            $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-            $jabatan = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
-            $slogan = mysqli_real_escape_string($koneksi, $_POST['slogan']);
+            $nama = mysqli_real_escape_string($koneksi, trim($_POST['nama']));
+            $jabatan = mysqli_real_escape_string($koneksi, trim($_POST['jabatan']));
+            $slogan = mysqli_real_escape_string($koneksi, trim($_POST['slogan']));
             
-            $foto = '';
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "upload/";
-                $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
-                $foto = uniqid() . '.' . $file_extension;
-                $target_file = $target_dir . $foto;
-                
-                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
-                    // File uploaded successfully
-                } else {
-                    $foto = '';
-                }
-            }
-            
-            $query = "INSERT INTO profil_pemimpin (nama, jabatan, foto, slogan) VALUES ('$nama', '$jabatan', '$foto', '$slogan')";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Profil pemimpin berhasil ditambahkan!";
+            // Cek duplikasi pemimpin berdasarkan nama dan jabatan
+            $check_duplicate = mysqli_query($koneksi, "SELECT id FROM profil_pemimpin WHERE nama = '$nama' AND jabatan = '$jabatan'");
+            if (mysqli_num_rows($check_duplicate) > 0) {
+                $error_message = "Profil pemimpin dengan nama dan jabatan yang sama sudah ada!";
             } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+                $foto = '';
+                if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                    $target_dir = "upload/gambar_pegawai/";
+                    if (!is_dir($target_dir)) {
+                        mkdir($target_dir, 0777, true);
+                    }
+                    
+                    $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
+                    $foto = uniqid() . '.' . $file_extension;
+                    $target_file = $target_dir . $foto;
+                    
+                    if (!move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+                        $foto = '';
+                    }
+                }
+                
+                $query = "INSERT INTO profil_pemimpin (nama, jabatan, foto, slogan) VALUES ('$nama', '$jabatan', '$foto', '$slogan')";
+                if (mysqli_query($koneksi, $query)) {
+                    $success_message = "Profil pemimpin berhasil ditambahkan!";
+                } else {
+                    $error_message = "Error: " . mysqli_error($koneksi);
+                }
             }
         } elseif ($_POST['action'] == 'edit_pemimpin') {
             $id = (int)$_POST['id'];
-            $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-            $jabatan = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
-            $slogan = mysqli_real_escape_string($koneksi, $_POST['slogan']);
+            $nama = mysqli_real_escape_string($koneksi, trim($_POST['nama']));
+            $jabatan = mysqli_real_escape_string($koneksi, trim($_POST['jabatan']));
+            $slogan = mysqli_real_escape_string($koneksi, trim($_POST['slogan']));
             
-            $foto_query = "";
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "upload/";
-                $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
-                $foto = uniqid() . '.' . $file_extension;
-                $target_file = $target_dir . $foto;
-                
-                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
-                    $foto_query = ", foto = '$foto'";
-                }
-            }
-            
-            $query = "UPDATE profil_pemimpin SET nama = '$nama', jabatan = '$jabatan', slogan = '$slogan' $foto_query WHERE id = $id";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Profil pemimpin berhasil diperbarui!";
+            // Cek duplikasi pemimpin berdasarkan nama dan jabatan (kecuali data yang sedang diedit)
+            $check_duplicate = mysqli_query($koneksi, "SELECT id FROM profil_pemimpin WHERE nama = '$nama' AND jabatan = '$jabatan' AND id != $id");
+            if (mysqli_num_rows($check_duplicate) > 0) {
+                $error_message = "Profil pemimpin dengan nama dan jabatan yang sama sudah ada!";
             } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+                $foto_query = "";
+                if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                    $target_dir = "upload/gambar_pegawai/";
+                    if (!is_dir($target_dir)) {
+                        mkdir($target_dir, 0777, true);
+                    }
+                    
+                    $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
+                    $foto = uniqid() . '.' . $file_extension;
+                    $target_file = $target_dir . $foto;
+                    
+                    if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+                        $foto_query = ", foto = '$foto'";
+                    }
+                }
+                
+                $query = "UPDATE profil_pemimpin SET nama = '$nama', jabatan = '$jabatan', slogan = '$slogan' $foto_query WHERE id = $id";
+                if (mysqli_query($koneksi, $query)) {
+                    $success_message = "Profil pemimpin berhasil diperbarui!";
+                } else {
+                    $error_message = "Error: " . mysqli_error($koneksi);
+                }
             }
         } elseif ($_POST['action'] == 'delete_pemimpin') {
             $id = (int)$_POST['id'];
@@ -64,63 +82,84 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query = "DELETE FROM profil_pemimpin WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete photo file if exists
-                if ($photo_data['foto'] && file_exists("upload/" . $photo_data['foto'])) {
-                    unlink("upload/" . $photo_data['foto']);
+                if ($photo_data['foto'] && file_exists("upload/gambar_pegawai/" . $photo_data['foto'])) {
+                    unlink("upload/gambar_pegawai/" . $photo_data['foto']);
                 }
                 $success_message = "Profil pemimpin berhasil dihapus!";
             } else {
                 $error_message = "Error: " . mysqli_error($koneksi);
             }
         } elseif ($_POST['action'] == 'add') {
-            $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-            $jabatan = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
-            $pengalaman_kerja = mysqli_real_escape_string($koneksi, $_POST['pengalaman_kerja']);
+            $nama = mysqli_real_escape_string($koneksi, trim($_POST['nama']));
+            $jabatan = mysqli_real_escape_string($koneksi, trim($_POST['jabatan']));
+            $pengalaman_kerja = mysqli_real_escape_string($koneksi, trim($_POST['pengalaman_kerja']));
             $urutan = (int)$_POST['urutan'];
             
-            $foto = '';
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "upload/";
-                $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
-                $foto = uniqid() . '.' . $file_extension;
-                $target_file = $target_dir . $foto;
-                
-                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
-                    // File uploaded successfully
-                } else {
-                    $foto = '';
-                }
-            }
-            
-            $query = "INSERT INTO pegawai (nama, jabatan, foto, urutan, pengalaman_kerja) VALUES ('$nama', '$jabatan', '$foto', $urutan, '$pengalaman_kerja')";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Data pegawai berhasil ditambahkan!";
+            // Cek duplikasi pegawai berdasarkan nama dan jabatan
+            $check_duplicate = mysqli_query($koneksi, "SELECT id FROM pegawai WHERE nama = '$nama' AND jabatan = '$jabatan'");
+            if (mysqli_num_rows($check_duplicate) > 0) {
+                $error_message = "Data pegawai dengan nama dan jabatan yang sama sudah ada!";
             } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+                $foto = '';
+                if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                    $target_dir = "upload/gambar_pegawai/";
+                    if (!is_dir($target_dir)) {
+                        mkdir($target_dir, 0777, true);
+                    }
+                    
+                    $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
+                    $foto = uniqid() . '.' . $file_extension;
+                    $target_file = $target_dir . $foto;
+                    
+                    if (!move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+                        $foto = '';
+                        $error_message = "Gagal upload file. Pastikan folder 'upload/' ada dan punya izin tulis.";
+                    }
+                }
+                
+                if (!isset($error_message)) {
+                    $query = "INSERT INTO pegawai (nama, jabatan, foto, urutan, pengalaman_kerja) VALUES ('$nama', '$jabatan', '$foto', $urutan, '$pengalaman_kerja')";
+                    if (mysqli_query($koneksi, $query)) {
+                        $success_message = "Data pegawai berhasil ditambahkan!";
+                    } else {
+                        $error_message = "Error: " . mysqli_error($koneksi);
+                    }
+                }
             }
         } elseif ($_POST['action'] == 'edit') {
             $id = (int)$_POST['id'];
-            $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-            $jabatan = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
-            $pengalaman_kerja = mysqli_real_escape_string($koneksi, $_POST['pengalaman_kerja']);
+            $nama = mysqli_real_escape_string($koneksi, trim($_POST['nama']));
+            $jabatan = mysqli_real_escape_string($koneksi, trim($_POST['jabatan']));
+            $pengalaman_kerja = mysqli_real_escape_string($koneksi, trim($_POST['pengalaman_kerja']));
             $urutan = (int)$_POST['urutan'];
             
-            $foto_query = "";
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "upload/";
-                $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
-                $foto = uniqid() . '.' . $file_extension;
-                $target_file = $target_dir . $foto;
-                
-                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
-                    $foto_query = ", foto = '$foto'";
-                }
-            }
-            
-            $query = "UPDATE pegawai SET nama = '$nama', jabatan = '$jabatan', pengalaman_kerja = '$pengalaman_kerja', urutan = $urutan $foto_query WHERE id = $id";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Data pegawai berhasil diperbarui!";
+            // Cek duplikasi pegawai berdasarkan nama dan jabatan (kecuali data yang sedang diedit)
+            $check_duplicate = mysqli_query($koneksi, "SELECT id FROM pegawai WHERE nama = '$nama' AND jabatan = '$jabatan' AND id != $id");
+            if (mysqli_num_rows($check_duplicate) > 0) {
+                $error_message = "Data pegawai dengan nama dan jabatan yang sama sudah ada!";
             } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+                $foto_query = "";
+                if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                    $target_dir = "upload/gambar_pegawai/";
+                    if (!is_dir($target_dir)) {
+                        mkdir($target_dir, 0777, true);
+                    }
+                    
+                    $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
+                    $foto = uniqid() . '.' . $file_extension;
+                    $target_file = $target_dir . $foto;
+                    
+                    if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+                        $foto_query = ", foto = '$foto'";
+                    }
+                }
+                
+                $query = "UPDATE pegawai SET nama = '$nama', jabatan = '$jabatan', pengalaman_kerja = '$pengalaman_kerja', urutan = $urutan $foto_query WHERE id = $id";
+                if (mysqli_query($koneksi, $query)) {
+                    $success_message = "Data pegawai berhasil diperbarui!";
+                } else {
+                    $error_message = "Error: " . mysqli_error($koneksi);
+                }
             }
         } elseif ($_POST['action'] == 'delete') {
             $id = (int)$_POST['id'];
@@ -132,8 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query = "DELETE FROM pegawai WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete photo file if exists
-                if ($photo_data['foto'] && file_exists("upload/" . $photo_data['foto'])) {
-                    unlink("upload/" . $photo_data['foto']);
+                if ($photo_data['foto'] && file_exists("upload/gambar_pegawai/" . $photo_data['foto'])) {
+                    unlink("upload/gambar_pegawai/" . $photo_data['foto']);
                 }
                 $success_message = "Data pegawai berhasil dihapus!";
             } else {
@@ -198,6 +237,7 @@ $username = $_SESSION['username'];
         }
     </style>
 </head>
+<body class="bg-gray-50">
     <!-- Top Navigation -->
     <nav class="bg-gradient-to-r from-green-600 to-emerald-600 shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -338,6 +378,10 @@ $username = $_SESSION['username'];
                     <i class="fas fa-plus mr-2"></i>
                     Tambah Guru/Staff Baru
                 </button>
+                <button onclick="openModal('addPemimpinModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
+                    <i class="fas fa-crown mr-2"></i>
+                    Tambah Profil Pemimpin
+                </button>
             </div>
         </div>
 
@@ -358,7 +402,7 @@ $username = $_SESSION['username'];
                             <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-100 card-hover">
                                 <div class="text-center">
                                     <?php if ($pemimpin['foto']): ?>
-                                        <img src="upload/<?= $pemimpin['foto'] ?>" alt="<?= $pemimpin['nama'] ?>" class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-emerald-200">
+                                        <img src="upload/gambar_pegawai/<?= $pemimpin['foto'] ?>" alt="<?= $pemimpin['nama'] ?>" class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-emerald-200">
                                     <?php else: ?>
                                         <div class="w-20 h-20 rounded-full bg-emerald-200 flex items-center justify-center mx-auto mb-4">
                                             <i class="fas fa-crown text-emerald-600 text-2xl"></i>
@@ -427,7 +471,7 @@ $username = $_SESSION['username'];
                             <tr class="hover:bg-gray-50">
                                 <td class="px-3 md:px-6 py-4 whitespace-nowrap">
                                     <?php if ($pegawai['foto']): ?>
-                                        <img src="upload/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover">
+                                        <img src="upload/gambar_pegawai/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover">
                                     <?php else: ?>
                                         <div class="h-10 w-10 md:h-12 md:w-12 rounded-full bg-green-100 flex items-center justify-center">
                                             <i class="fas fa-user text-green-600 text-sm md:text-base"></i>
@@ -467,7 +511,6 @@ $username = $_SESSION['username'];
                                     <div class="flex flex-col items-center">
                                         <i class="fas fa-users text-4xl mb-2 text-gray-300"></i>
                                         <p class="text-sm">Belum ada data guru atau staff</p>
-                                    </button>
                                         <button onclick="openModal('addModal')" class="mt-2 text-green-600 hover:text-green-800 text-sm">
                                             <i class="fas fa-plus mr-1"></i>Tambah Data Pertama
                                         </button>
@@ -493,7 +536,7 @@ $username = $_SESSION['username'];
                         <div class="flex items-start space-x-3">
                             <div class="flex-shrink-0">
                                 <?php if ($pegawai['foto']): ?>
-                                    <img src="upload/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-12 w-12 rounded-full object-cover">
+                                    <img src="upload/gambar_pegawai/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-12 w-12 rounded-full object-cover">
                                 <?php else: ?>
                                     <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
                                         <i class="fas fa-user text-green-600"></i>
@@ -588,8 +631,6 @@ $username = $_SESSION['username'];
                 </form>
             </div>
         </div>
-    </div>
-    </main>
     </div>
 
     <!-- Edit Modal -->

@@ -110,7 +110,7 @@ $pegawai_result = mysqli_query($koneksi, $query_pegawai);
 
     <footer class="bg-gradient-to-br from-green-800 via-green-700 to-green-900 text-white relative overflow-hidden">
     <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-0 left-0 w-full h-full" style="background-image: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><defs><pattern id=\"grain\" width=\"100\" height=\"100\" patternUnits=\"userSpaceOnUse\"><circle cx=\"50\" cy=\"50\" r=\"1\" fill=\"white\" opacity=\"0.1\"/></pattern></defs><rect width=\"100\" height=\"100\" fill=\"url(%23grain)\"/></svg>');"></div>
+       <div class="absolute top-0 left-0 w-full h-full" style="background-image: url('grain.svg');"></div>
     </div>
     
     <div class="container mx-auto px-6 py-12 relative z-10">
