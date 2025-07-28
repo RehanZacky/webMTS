@@ -12,13 +12,12 @@ $jumlah_statistik = mysqli_fetch_assoc($statistik)['total'];
 
 $username = $_SESSION['username'];
 
-// Mock data untuk aktivitas terbaru
-$aktivitas_terbaru = [
-    ['aksi' => 'Berita baru ditambahkan', 'waktu' => '2 jam yang lalu', 'tipe' => 'berita'],
-    ['aksi' => 'Statistik siswa diperbarui', 'waktu' => '5 jam yang lalu', 'tipe' => 'statistik'],
-    ['aksi' => 'Profil sekolah diedit', 'waktu' => '1 hari yang lalu', 'tipe' => 'profil'],
-    ['aksi' => 'Admin baru login', 'waktu' => '2 hari yang lalu', 'tipe' => 'auth']
-];
+// Ambil data statistik sekolah dari database
+$statistik_query = mysqli_query($koneksi, "SELECT * FROM info_statistik WHERE id IN (1,2,3,4,5,6) ORDER BY id ASC");
+$statistik_data = [];
+while ($row = mysqli_fetch_assoc($statistik_query)) {
+    $statistik_data[$row['id']] = $row;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -98,6 +97,32 @@ $aktivitas_terbaru = [
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
+        }
+
+        .statistik-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .statistik-card:hover {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-color: #10b981;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(16, 185, 129, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-icon-bg {
+            background: linear-gradient(135deg, #10b981, #059669);
         }
     </style>
 </head>
@@ -215,6 +240,7 @@ $aktivitas_terbaru = [
                 </div>
             </div>
         </div>
+        
         <!-- Content Sections -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <!-- Recent News -->
@@ -227,19 +253,20 @@ $aktivitas_terbaru = [
                     <?php
                     $berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT 5");                            
                     if (mysqli_num_rows($berita_query) > 0): ?>
-                        <?php while ($b = mysqli_fetch_assoc($berita_query)) : ?>
-                            <?php if (!empty($b['gambar_utama'])): ?>
+                        <?php while ($berita = mysqli_fetch_assoc($berita_query)) : ?>
+                            <?php if (!empty($berita['gambar_utama'])): ?>
                                 <div class="inline-block w-80 flex-shrink-0 bg-gray-50 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                                    <a href="../berita_detail.php?id=<?= $b['id'] ?>">
+                                    <a href="../berita_detail.php?id=<?= $berita['id'] ?>">
+                                        <img src="../upload/gambar_berita/<?= htmlspecialchars($berita['gambar_utama']) ?>" alt="Gambar: <?= htmlspecialchars($berita['judul']) ?>"
                                     </a>
                                     <div class="p-4">
                                         <p class="text-sm text-gray-500 mb-1 flex items-center">
                                             <i class="fas fa-calendar-alt mr-1"></i>
-                                            <?= date('d M Y', strtotime($b['tanggal_post'])) ?>
+                                            <?= date('d M Y', strtotime($berita['tanggal_post'])) ?>
                                         </p>
-                                        <h4 class="font-semibold text-gray-800 mb-2 line-clamp-2"><?= $b['judul'] ?></h4>
-                                        <p class="text-sm text-gray-600 line-clamp-2"><?= substr(strip_tags($b['isi']), 0, 100) ?>...</p>
-                                        <a href="berita_detail.php?id=<?= $b['id'] ?>" class="text-sm text-green-600 hover:underline mt-2 inline-block">Baca Selengkapnya</a>
+                                        <h4 class="font-semibold text-gray-800 mb-2 line-clamp-2"><?= $berita['judul'] ?></h4>
+                                        <p class="text-sm text-gray-600 line-clamp-2"><?= substr(strip_tags($berita['isi']), 0, 100) ?>...</p>
+                                        <a href="../berita_detail.php?id=<?= $berita['id'] ?>" class="text-sm text-green-600 hover:underline mt-2 inline-block">Baca Selengkapnya</a>
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -262,45 +289,58 @@ $aktivitas_terbaru = [
                 </div>
             </div>
 
-            <!-- Recent Activities -->
-            <div class="bg-white rounded-xl shadow-lg p-6 animate-fade-in" style="animation-delay: 0.5s;">
+            <!-- Statistik Sekolah -->
+            <div class="bg-white rounded-xl shadow-lg p-6 animate-fade-in">
                 <h3 class="text-lg font-semibold mb-4 flex items-center">
-                    <i class="fas fa-clock text-green-500 mr-2"></i>
-                    Aktivitas Terbaru
+                    <i class="fas fa-chart-bar text-green-500 mr-2"></i>
+                    Statistik Sekolah
                 </h3>
-                <div class="space-y-4">
-                    <?php foreach($aktivitas_terbaru as $index => $aktivitas): ?>
-                    <div class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                        <div class="flex-shrink-0">
-                            <?php 
-                            $iconClass = '';
-                            $colorClass = '';
-                            switch($aktivitas['tipe']) {
-                                case 'berita':
-                                    $iconClass = 'fas fa-newspaper';
-                                   $colorClass = 'text-green-500';
-                                    break;
-                                case 'statistik':
-                                    $iconClass = 'fas fa-chart-bar';
-                                   $colorClass = 'text-emerald-500';
-                                    break;
-                                case 'profil':
-                                    $iconClass = 'fas fa-school';
-                                   $colorClass = 'text-teal-500';
-                                    break;
-                                default:
-                                    $iconClass = 'fas fa-user';
-                                    $colorClass = 'text-orange-500';
-                            }
-                            ?>
-                            <i class="<?= $iconClass ?> <?= $colorClass ?>"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm text-gray-800"><?= $aktivitas['aksi'] ?></p>
-                            <p class="text-xs text-gray-500"><?= $aktivitas['waktu'] ?></p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <?php 
+                    $statistik_labels = [
+                        1 => ['label' => 'Siswa Aktif', 'icon' => 'fas fa-user-graduate', 'color' => 'text-blue-500', 'suffix' => ' Siswa'],
+                        2 => ['label' => 'Akreditasi', 'icon' => 'fas fa-medal', 'color' => 'text-yellow-500', 'suffix' => ''],
+                        3 => ['label' => 'Jumlah Kelas', 'icon' => 'fas fa-door-open', 'color' => 'text-purple-500', 'suffix' => ' Kelas'],
+                        4 => ['label' => 'Guru & Staff', 'icon' => 'fas fa-users', 'color' => 'text-green-500', 'suffix' => ' Orang'],
+                        5 => ['label' => 'Alumni', 'icon' => 'fas fa-user-tie', 'color' => 'text-indigo-500', 'suffix' => ' Alumni'],
+                        6 => ['label' => 'Mata Pelajaran', 'icon' => 'fas fa-book', 'color' => 'text-red-500', 'suffix' => ' Mapel']
+                    ];
+                    
+                    foreach ($statistik_labels as $id => $info): 
+                        $data = isset($statistik_data[$id]) ? $statistik_data[$id] : null;
+                        $nilai = $data ? $data['nilai'] : '0';
+                        $label = $data ? $data['label'] : $info['label'];
+                    ?>
+                    <div class="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="stat-icon-bg p-2 rounded-full">
+                                    <i class="<?= $info['icon'] ?> text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-700 text-sm"><?= $label ?></h4>
+                                    <div class="flex items-baseline space-x-1">
+                                        <span class="stat-value stat-number"><?= $nilai ?></span>
+                                        <?php if (!empty($info['suffix']) && is_numeric($nilai)): ?>
+                                            <span class="text-xs text-gray-500"><?= $info['suffix'] ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <?php endforeach; ?>
+                </div>
+                        
+                
+                <div class="mt-4">
+                    <div class="flex space-x-3">
+                        <a href="statistik_edit.php" class="flex items-center justify-center flex-1 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                            <i class="fas fa-edit mr-2"></i>
+                            Update Statistik
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
