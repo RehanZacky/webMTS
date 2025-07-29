@@ -133,7 +133,7 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
 </section>
 
 
-        <section id="profil-video" class="py-20 bg-green-50">
+        <section id="profil-video" class="py-20 bg-green-100">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl font-bold text-gray-800">Profil Pondok</h2>
@@ -176,13 +176,13 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                     <p class="mt-2 text-gray-600">Landasan dan tujuan Pondok Pesantren Roudlotul Quran.</p>
                 </div>
                 <div class="grid md:grid-cols-2 gap-12 items-start">
-                    <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+                    <div class="bg-green-50 p-8 rounded-lg shadow-sm">
                         <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Visi</h3>
                         <p class="text-gray-600 text-center">
                            "<?= htmlspecialchars($profil_data['visi'] ?? 'Visi belum diisi.') ?>"
                         </p>
                     </div>
-                    <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+                    <div class="bg-green-50 p-8 rounded-lg shadow-sm">
                         <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Misi</h3>
                         <div class="text-gray-600 text-left space-y-2">
                            <?php
@@ -209,9 +209,9 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
              <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold text-gray-800">Berita Terbaru</h2>
                 <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Ikuti perkembangan dan kegiatan terbaru dari Pondok Pesantren Roudlotul Quran</p>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 text-left">
+                <div class="grid md:grid-cols-2 gap-8 mt-12 text-left">
                     <?php
-                    $artikel_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT 3");
+                    $artikel_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT 2");
                     if (mysqli_num_rows($artikel_query) > 0) :
                         while ($artikel = mysqli_fetch_assoc($artikel_query)) :
                     ?>
@@ -243,9 +243,9 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                 <h2 class="text-3xl font-bold text-gray-800">Galeri Kegiatan</h2>
                 <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Momen dan kegiatan yang terdokumentasi di Pondok Pesantren Roudlotul Quran.</p>
                 
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-12">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12">
                     <?php
-                    $galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_upload DESC LIMIT 8");
+                    $galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_upload DESC LIMIT 6");
                     if ($galeri_query && mysqli_num_rows($galeri_query) > 0) :
                         while ($foto = mysqli_fetch_assoc($galeri_query)) :
                     ?>
