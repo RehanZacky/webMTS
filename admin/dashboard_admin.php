@@ -244,7 +244,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
         <!-- Content Sections -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <!-- Recent News -->
-            <div class="bg-white rounded-xl shadow-lg p-6 animate-fade-in" style="animation-delay: 0.4s;">
+            <div class="bg-white rounded-xl shadow-lg p-6" style="animation-delay: 0.4s;">
                 <h3 class="text-lg font-semibold mb-4 flex items-center">
                    <i class="fas fa-newspaper text-green-500 mr-2"></i>
                     Berita Terbaru
@@ -290,7 +290,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
             </div>
 
             <!-- Statistik Sekolah -->
-            <div class="bg-white rounded-xl shadow-lg p-6 animate-fade-in">
+            <div class="bg-white rounded-xl shadow-lg p-6">
                 <h3 class="text-lg font-semibold mb-4 flex items-center">
                     <i class="fas fa-chart-bar text-green-500 mr-2"></i>
                     Statistik Sekolah
@@ -346,7 +346,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
         </div>
 
         <!-- Quick Actions -->
-        <div class="bg-white rounded-xl shadow-lg p-6 animate-fade-in" style="animation-delay: 0.6s;">
+        <div class="bg-white rounded-xl shadow-lg p-6" style="animation-delay: 0.6s;">
             <h3 class="text-lg font-semibold mb-4 flex items-center">
                <i class="fas fa-bolt text-green-500 mr-2"></i>
                 Aksi Cepat
