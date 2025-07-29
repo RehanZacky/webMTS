@@ -8,41 +8,23 @@ while ($row = mysqli_fetch_assoc($profil_query)) {
     $profil_data[$row['jenis']] = $row['isi'];
 }
 
-// --- LOGIKA BARU YANG LEBIH EFISIEN ---
-$semua_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC");
+// --- LOGIKA PAGINASI UNTUK BERITA ---
+$per_halaman = 9;
+$halaman_aktif = isset($_GET['halaman']) ? (int)$_GET['halaman'] : 1;
+$halaman_aktif = max(1, $halaman_aktif);
 
-$kegiatan_html = [];
-$prestasi_html = [];
+// Query untuk menghitung total data dari tabel berita
+$query_total = "SELECT COUNT(*) as total FROM berita";
+$hasil_total = mysqli_query($koneksi, $query_total);
+$data_total = mysqli_fetch_assoc($hasil_total);
+$total_berita = $data_total['total'];
 
-if ($semua_berita) {
-    while ($b = mysqli_fetch_assoc($semua_berita)) {
-        $is_prestasi = (stripos($b['judul'], 'prestasi') !== false || stripos($b['isi'], 'prestasi') !== false);
-        
-        ob_start();
-        ?>
-        <div class="bg-gray-50 rounded-xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-            <a href="berita_detail.php?id=<?= $b['id'] ?>">
-                <img src="upload/gambar_berita/<?= htmlspecialchars($b['gambar_utama']) ?>" class="h-48 w-full object-cover" alt="Gambar: <?= htmlspecialchars($b['judul']) ?>">
-            </a>
-            <div class="p-5 flex flex-col flex-grow">
-                <p class="text-xs text-gray-500 mb-2"><?= date('d M Y', strtotime($b['tanggal_post'])) ?></p>
-                <h3 class="text-md font-bold text-gray-800 mb-2 flex-grow">
-                    <a href="berita_detail.php?id=<?= $b['id'] ?>" class="hover:text-green-600">
-                        <?= htmlspecialchars($b['judul']) ?>
-                    </a>
-                </h3>
-                <a href="berita_detail.php?id=<?= $b['id'] ?>" class="text-sm font-semibold text-green-600 hover:underline mt-2 self-start">Baca Selengkapnya →</a>
-            </div>
-        </div>
-        <?php
-        $kartu_html = ob_get_clean();
-        if ($is_prestasi) {
-            $prestasi_html[] = $kartu_html;
-        } else {
-            $kegiatan_html[] = $kartu_html;
-        }
-    }
-}
+$total_halaman = ceil($total_berita / $per_halaman);
+$offset = ($halaman_aktif - 1) * $per_halaman;
+
+// Query untuk mengambil data berita dengan pagination
+$query_berita = "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT $per_halaman OFFSET $offset";
+$berita_result = mysqli_query($koneksi, $query_berita);
 ?>
 
 <!DOCTYPE html>
@@ -58,6 +40,13 @@ if ($semua_berita) {
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-fadeInDown { animation: fadeInDown 0.6s ease-out forwards; }
+        /* Style untuk paginasi */
+        .pagination a, .pagination span {
+            padding: 8px 16px; margin: 0 4px; border-radius: 6px; transition: background-color 0.3s; border: 1px solid #d1d5db;
+        }
+        .pagination a:hover { background-color: #f3f4f6; }
+        .pagination .aktif { background-color: #16a34a; color: white; border-color: #16a34a; }
+        .pagination .disabled { color: #9ca3af; cursor: not-allowed; background-color: #f9fafb; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans">
@@ -108,28 +97,89 @@ if ($semua_berita) {
         </div>
 
         <div class="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-            
-            <section>
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Kegiatan Madrasah</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <?php
-                    if (!empty($kegiatan_html)) {
-                        foreach ($kegiatan_html as $kartu) {
-                            echo $kartu;
-                        }
-                    } else {
-                        echo "<p class='col-span-full text-center text-gray-500'>Belum ada berita kegiatan madrasah.</p>";
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <?php
+                if ($berita_result && mysqli_num_rows($berita_result) > 0) {
+                    while ($b = mysqli_fetch_assoc($berita_result)) {
+                        ?>
+                        <div class="bg-gray-50 rounded-xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                            <a href="berita_detail.php?id=<?= $b['id'] ?>">
+                                <img src="upload/gambar_berita/<?= htmlspecialchars($b['gambar_utama']) ?>" class="h-48 w-full object-cover" alt="Gambar: <?= htmlspecialchars($b['judul']) ?>">
+                            </a>
+                            <div class="p-5 flex flex-col flex-grow">
+                                <p class="text-xs text-gray-500 mb-2"><?= date('d M Y', strtotime($b['tanggal_post'])) ?></p>
+                                <h3 class="text-md font-bold text-gray-800 mb-2 flex-grow">
+                                    <a href="berita_detail.php?id=<?= $b['id'] ?>" class="hover:text-green-600">
+                                        <?= htmlspecialchars($b['judul']) ?>
+                                    </a>
+                                </h3>
+                                <a href="berita_detail.php?id=<?= $b['id'] ?>" class="text-sm font-semibold text-green-600 hover:underline mt-2 self-start">Baca Selengkapnya →</a>
+                            </div>
+                        </div>
+                        <?php
                     }
-                    ?>
-                </div>
-            </section>
+                } else {
+                    echo "<p class='col-span-full text-center text-gray-500'>Belum ada berita yang ditambahkan.</p>";
+                }
+                ?>
+            </div>
         </div>
+
+        <!-- Pagination Navigation -->
+        <?php if ($total_halaman > 1): ?>
+        <div class="mt-16 flex justify-center items-center gap-6">
+            <!-- Previous Button -->
+            <?php if ($halaman_aktif > 1): ?>
+                <a href="?halaman=<?= $halaman_aktif - 1 ?>" 
+                   class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Sebelumnya
+                </a>
+            <?php else: ?>
+                <button disabled class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Sebelumnya
+                </button>
+            <?php endif; ?>
+
+            <!-- Page Info -->
+            <div class="bg-white rounded-lg px-6 py-3 shadow-md border border-gray-200">
+                <span class="text-gray-600 font-semibold">
+                    Halaman <?= $halaman_aktif ?> dari <?= $total_halaman ?>
+                </span>
+            </div>
+
+            <!-- Next Button -->
+            <?php if ($halaman_aktif < $total_halaman): ?>
+                <a href="?halaman=<?= $halaman_aktif + 1 ?>" 
+                   class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                    Selanjutnya
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            <?php else: ?>
+                <button disabled class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                    Selanjutnya
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
+       
     </div>
 </main>
 
 <footer class="bg-gradient-to-br from-green-800 via-green-700 to-green-900 text-white relative overflow-hidden">
     <div class="absolute inset-0 opacity-10">
-        <<div class="absolute top-0 left-0 w-full h-full" style="background-image: url('grain.svg');"></div>
+        <div class="absolute top-0 left-0 w-full h-full" style="background-image: url('grain.svg');"></div>
     </div>
     
     <div class="container mx-auto px-6 py-12 relative z-10">
@@ -237,6 +287,7 @@ if ($semua_berita) {
         </div>
     </div>
 </footer>      
+
 
 <script>
     document.getElementById("menu-toggle").addEventListener("click", function () {

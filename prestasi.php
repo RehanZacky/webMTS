@@ -119,8 +119,53 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
             </div>
         </div>
 
-        <div class="mt-16 flex justify-center items-center pagination text-sm font-medium">
+         <?php if ($total_halaman > 1): ?>
+        <div class="mt-16 flex justify-center items-center gap-6">
+            <!-- Previous Button -->
+            <?php if ($halaman_aktif > 1): ?>
+                <a href="?halaman=<?= $halaman_aktif - 1 ?>" 
+                   class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Sebelumnya
+                </a>
+            <?php else: ?>
+                <button disabled class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Sebelumnya
+                </button>
+            <?php endif; ?>
+
+            <!-- Page Info -->
+            <div class="bg-white rounded-lg px-6 py-3 shadow-md border border-gray-200">
+                <span class="text-gray-600 font-semibold">
+                    Halaman <?= $halaman_aktif ?> dari <?= $total_halaman ?>
+                </span>
             </div>
+
+            <!-- Next Button -->
+            <?php if ($halaman_aktif < $total_halaman): ?>
+                <a href="?halaman=<?= $halaman_aktif + 1 ?>" 
+                   class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                    Selanjutnya
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            <?php else: ?>
+                <button disabled class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                    Selanjutnya
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+    </div>
     </div>
 </main>
 
@@ -232,6 +277,35 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
                     </p>
                 </div>
             </div>
+        </div>
+        
+        <!-- Info halaman -->
+        <div class="mt-8 text-center">
+            <div class="inline-flex items-center gap-4 bg-white rounded-lg px-6 py-3 shadow-md border border-gray-200">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-sm font-semibold text-gray-600">
+                        Menampilkan <?= min($per_halaman, $total_prestasi - $offset) ?> dari <?= $total_prestasi ?> prestasi
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>   
+
+<script>
+    document.getElementById("menu-toggle").addEventListener("click", function () {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+    });
+</script>
+
+</body>
+</html>
+            <p>
+                Menampilkan <?= min($per_halaman, $total_prestasi - $offset) ?> dari <?= $total_prestasi ?> prestasi
+                (Halaman <?= $halaman_aktif ?> dari <?= $total_halaman ?>)
+            </p>
         </div>
     </div>
 </footer>   

@@ -126,79 +126,49 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
         </div>
 
         <?php if ($total_halaman > 1): ?>
-        <div class="mt-16 flex flex-col items-center space-y-6">
-            <!-- Informasi Halaman -->
-            <div class="text-center">
-                <p class="text-gray-600 text-sm">
-                    Halaman <?= $halaman_aktif ?> dari <?= $total_halaman ?> 
-                    (<?= $total_gambar ?> total gambar)
-                </p>
+        <div class="mt-16 flex justify-center items-center gap-6">
+            <!-- Previous Button -->
+            <?php if ($halaman_aktif > 1): ?>
+                <a href="?halaman=<?= $halaman_aktif - 1 ?>" 
+                   class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Sebelumnya
+                </a>
+            <?php else: ?>
+                <button disabled class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Sebelumnya
+                </button>
+            <?php endif; ?>
+
+            <!-- Page Info -->
+            <div class="bg-white rounded-lg px-6 py-3 shadow-md border border-gray-200">
+                <span class="text-gray-600 font-semibold">
+                    Halaman <?= $halaman_aktif ?> dari <?= $total_halaman ?>
+                </span>
             </div>
-            
-            <!-- Tombol Navigasi -->
-            <div class="flex items-center space-x-4">
-                <?php if ($halaman_aktif > 1): ?>
-                    <a href="?halaman=<?= $halaman_aktif - 1 ?>" 
-                       class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                        Sebelumnya
-                    </a>
-                <?php else: ?>
-                    <span class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                        Sebelumnya
-                    </span>
-                <?php endif; ?>
-                
-                <!-- Nomor Halaman -->
-                <div class="flex items-center space-x-2">
-                    <?php
-                    $start = max(1, $halaman_aktif - 2);
-                    $end = min($total_halaman, $halaman_aktif + 2);
-                    
-                    if ($start > 1): ?>
-                        <a href="?halaman=1" class="px-3 py-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors duration-200">1</a>
-                        <?php if ($start > 2): ?>
-                            <span class="px-2 text-gray-400">...</span>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                    
-                    <?php for ($i = $start; $i <= $end; $i++): ?>
-                        <a href="?halaman=<?= $i ?>" 
-                           class="px-3 py-2 rounded-md transition-colors duration-200 <?= ($i == $halaman_aktif) ? 'bg-green-600 text-white' : 'text-gray-600 hover:text-green-600 hover:bg-green-50' ?>">
-                            <?= $i ?>
-                        </a>
-                    <?php endfor; ?>
-                    
-                    <?php if ($end < $total_halaman): ?>
-                        <?php if ($end < $total_halaman - 1): ?>
-                            <span class="px-2 text-gray-400">...</span>
-                        <?php endif; ?>
-                        <a href="?halaman=<?= $total_halaman ?>" class="px-3 py-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors duration-200"><?= $total_halaman ?></a>
-                    <?php endif; ?>
-                </div>
-                
-                <?php if ($halaman_aktif < $total_halaman): ?>
-                    <a href="?halaman=<?= $halaman_aktif + 1 ?>" 
-                       class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
-                        Selanjutnya
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                <?php else: ?>
-                    <span class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
-                        Selanjutnya
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                <?php endif; ?>
-            </div>
+
+            <!-- Next Button -->
+            <?php if ($halaman_aktif < $total_halaman): ?>
+                <a href="?halaman=<?= $halaman_aktif + 1 ?>" 
+                   class="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                    Selanjutnya
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            <?php else: ?>
+                <button disabled class="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                    Selanjutnya
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
     </div>
@@ -314,6 +284,21 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
         </div>
     </div>
 </footer>   
+
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<script>
+  Fancybox.bind("[data-fancybox]", {});
+</script>
+
+<script>
+    document.getElementById("menu-toggle").addEventListener("click", function () {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+    });
+</script>
+
+</body>
+</html>
 
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 <script>
