@@ -243,47 +243,92 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
         
         <!-- Content Sections -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <!-- Recent News -->
-            <div class="bg-white rounded-xl shadow-lg p-6" style="animation-delay: 0.4s;">
+                        <!-- Berita Terbaru -->
+            <div class="bg-white rounded-xl shadow-lg p-6 animate-fade-in" style="animation-delay: 0.4s;">
                 <h3 class="text-lg font-semibold mb-4 flex items-center">
                    <i class="fas fa-newspaper text-green-500 mr-2"></i>
                     Berita Terbaru
                 </h3>
-                <div class="overflow-x-auto whitespace-nowrap space-x-4 flex pb-4">
-                    <?php
-                    $berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT 5");                            
-                    if (mysqli_num_rows($berita_query) > 0): ?>
-                        <?php while ($berita = mysqli_fetch_assoc($berita_query)) : ?>
-                            <?php if (!empty($berita['gambar_utama'])): ?>
-                                <div class="inline-block w-80 flex-shrink-0 bg-gray-50 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                                    <a href="../berita_detail.php?id=<?= $berita['id'] ?>">
-                                        <img src="../upload/gambar_berita/<?= htmlspecialchars($berita['gambar_utama']) ?>" alt="Gambar: <?= htmlspecialchars($berita['judul']) ?>"
-                                    </a>
+                
+                <div class="overflow-x-auto">
+                    <div class="flex space-x-4 pb-4">
+                        <?php
+                        $berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT 5");                            
+                        if (mysqli_num_rows($berita_query) > 0): ?>
+                            <?php while ($berita = mysqli_fetch_assoc($berita_query)) : ?>
+                                <div class="flex-shrink-0 w-64 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-all duration-300 hover:border-green-300 group">
+                                    <!-- Gambar Preview (Persegi) -->
+                                    <?php if (!empty($berita['gambar_utama'])): ?>
+                                        <div class="w-full h-40">
+                                            <img src="../upload/gambar_berita/<?= htmlspecialchars($berita['gambar_utama']) ?>" 
+                                                 alt="<?= htmlspecialchars($berita['judul']) ?>"
+                                                 class="w-full h-full object-cover rounded-t-lg">
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="w-full h-40 bg-gradient-to-br from-green-400 to-green-600 rounded-t-lg flex items-center justify-center">
+                                            <i class="fas fa-newspaper text-white text-3xl"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                    <!-- Konten Berita -->
                                     <div class="p-4">
-                                        <p class="text-sm text-gray-500 mb-1 flex items-center">
-                                            <i class="fas fa-calendar-alt mr-1"></i>
-                                            <?= date('d M Y', strtotime($berita['tanggal_post'])) ?>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <p class="text-xs text-gray-500 flex items-center">
+                                                <i class="fas fa-calendar-alt mr-1"></i>
+                                                <?= date('d M Y', strtotime($berita['tanggal_post'])) ?>
+                                            </p>
+                                        </div>
+                                        
+                                        <h4 class="font-semibold text-gray-800 mb-2 text-sm leading-tight line-clamp-2 group-hover:text-green-700 transition-colors">
+                                            <?= htmlspecialchars($berita['judul']) ?>
+                                        </h4>
+                                        
+                                        <p class="text-xs text-gray-600 leading-relaxed line-clamp-3 mb-3">
+                                            <?= substr(strip_tags($berita['isi']), 0, 100) ?>...
                                         </p>
-                                        <h4 class="font-semibold text-gray-800 mb-2 line-clamp-2"><?= $berita['judul'] ?></h4>
-                                        <p class="text-sm text-gray-600 line-clamp-2"><?= substr(strip_tags($berita['isi']), 0, 100) ?>...</p>
-                                        <a href="../berita_detail.php?id=<?= $berita['id'] ?>" class="text-sm text-green-600 hover:underline mt-2 inline-block">Baca Selengkapnya</a>
+                                        
+                                        <div class="flex items-center justify-between">
+                                            <a href="../berita_detail.php?id=<?= $berita['id'] ?>" 
+                                               class="text-xs text-green-600 hover:text-green-700 font-medium hover:underline transition-colors">
+                                                Baca Selengkapnya
+                                            </a>
+                                            <a href="berita_edit.php?id=<?= $berita['id'] ?>" 
+                                               class="text-xs text-blue-600 hover:text-blue-700 transition-colors p-1 rounded hover:bg-blue-50" 
+                                               title="Edit Berita">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            <?php endif; ?>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <div class="text-center py-8">
-                            <i class="fas fa-newspaper text-gray-300 text-4xl mb-4"></i>
-                            <p class="text-gray-500">Belum ada berita yang dipublikasikan</p>
-                        </div>
-                    <?php endif; ?>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <div class="w-full text-center py-12">
+                                <div class="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-newspaper text-gray-400 text-2xl"></i>
+                                </div>
+                                <h4 class="text-gray-600 font-medium mb-2">Belum ada berita</h4>
+                                <p class="text-gray-500 text-sm">Mulai publikasikan berita pertama Anda</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
                 
-                <div class="mt-6">
-                    <div class="flex space-x-3">
-                        <a href="berita_edit.php" class="flex items-center justify-center flex-1 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                <!-- Footer Actions -->
+                <div class="mt-6 pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i class="fas fa-list-ul mr-2"></i>
+                            Total: <?= mysqli_num_rows(mysqli_query($koneksi, "SELECT id FROM berita")) ?> berita
+                        </div>
+                        <a href="../berita.php" class="text-sm text-green-600 hover:text-green-700 font-medium">
+                            Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="grid gap-3">
+                        <a href="berita_edit.php" class="flex items-center justify-center px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
                             <i class="fas fa-plus mr-2"></i>
-                            Tambah Berita Baru
+                            Tambah Berita
                         </a>
                     </div>
                 </div>
@@ -312,7 +357,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                         $nilai = $data ? $data['nilai'] : '0';
                         $label = $data ? $data['label'] : $info['label'];
                     ?>
-                    <div class="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-all duration-300">
+                    <div class="bg-gray-50 rounded-lg p-8 hover:shadow-md transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
                                 <div class="stat-icon-bg p-2 rounded-full">
