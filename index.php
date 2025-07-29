@@ -13,6 +13,11 @@ while ($row = mysqli_fetch_assoc($profil_query)) {
 $pemimpin_query = mysqli_query($koneksi, "SELECT * FROM profil_pemimpin LIMIT 1");
 $pemimpin = mysqli_fetch_assoc($pemimpin_query);
 
+// Mengambil gambar beranda dari database
+$gambar_beranda_query = mysqli_query($koneksi, "SELECT nama_file FROM gambar_beranda ORDER BY id DESC LIMIT 1");
+$gambar_beranda = mysqli_fetch_assoc($gambar_beranda_query);
+$gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/gambar_beranda/' . $gambar_beranda['nama_file'] : 'gambar_beranda/UBS00415.JPG';
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -71,7 +76,7 @@ $pemimpin = mysqli_fetch_assoc($pemimpin_query);
 
     <main>
         <section class="relative h-screen flex items-center justify-center text-white text-center overflow-hidden">
-        <div class="absolute inset-0 z-0" style="background-image: url('gambar_beranda/UBS00415.JPG'); background-size: cover; background-position: center;">
+        <div class="absolute inset-0 z-0" style="background-image: url('<?= $gambar_beranda_url ?>'); background-size: cover; background-position: center;">
     <div class="absolute inset-0 bg-black/70"></div>
         </div>
         <div class="relative z-10 max-w-3xl px-4">

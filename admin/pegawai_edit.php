@@ -519,58 +519,7 @@ $username = $_SESSION['username'];
             </div>
         </div>
 
-        <!-- Mobile Card View (Alternative for very small screens) -->
-        <div class="block sm:hidden mt-6">
-            <div class="space-y-4">
-                <?php 
-                // Reset query for mobile view
-                $pegawai_query_mobile = mysqli_query($koneksi, "SELECT * FROM pegawai ORDER BY urutan ASC, nama ASC");
-                if (mysqli_num_rows($pegawai_query_mobile) > 0): 
-                ?>
-                    <?php while ($pegawai = mysqli_fetch_assoc($pegawai_query_mobile)): ?>
-                    <div class="bg-white rounded-lg shadow-md p-4 border border-gray-200">
-                        <div class="flex items-start space-x-3">
-                            <div class="flex-shrink-0">
-                                <?php if ($pegawai['foto']): ?>
-                                    <img src="../upload/gambar_pegawai/<?= $pegawai['foto'] ?>" alt="<?= $pegawai['nama'] ?>" class="h-12 w-12 rounded-full object-cover">
-                                <?php else: ?>
-                                    <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
-                                        <i class="fas fa-user text-green-600"></i>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="text-sm font-medium text-gray-900 truncate"><?= htmlspecialchars($pegawai['nama']) ?></h3>
-                                <p class="text-xs text-gray-500"><?= htmlspecialchars($pegawai['jabatan']) ?></p>
-                                <p class="text-xs text-gray-400 mt-1"><?= htmlspecialchars($pegawai['pengalaman_kerja']) ?></p>
-                                <div class="flex items-center justify-between mt-2">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                        Urutan: <?= $pegawai['urutan'] ?>
-                                    </span>
-                                    <div class="flex space-x-2">
-                                        <button onclick="editStaff(<?= htmlspecialchars(json_encode($pegawai)) ?>)" class="text-green-600 hover:text-green-900 text-xs">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="deleteStaff(<?= $pegawai['id'] ?>, '<?= htmlspecialchars($pegawai['nama']) ?>')" class="text-red-600 hover:text-red-900 text-xs">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <div class="text-center py-8 bg-white rounded-lg shadow-md">
-                        <i class="fas fa-users text-gray-300 text-4xl mb-4"></i>
-                        <p class="text-gray-500 mb-4">Belum ada data guru atau staff</p>
-                        <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
-                            <i class="fas fa-plus mr-2"></i>Tambah Data Pertama
-                        </button>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
+
     </main>
 
     <!-- Add Modal -->

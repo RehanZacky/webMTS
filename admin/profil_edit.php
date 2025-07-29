@@ -25,48 +25,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $error_message = "Error: " . mysqli_error($koneksi);
             }
-        } elseif ($_POST['action'] == 'add_gambar') {
+        } elseif ($_POST['action'] == 'update_gambar') {
             $nama_file = '';
             if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] == 0) {
                 $target_dir = "../upload/gambar_beranda/";
+                
+                // Create directory if it doesn't exist
+                if (!is_dir($target_dir)) {
+                    mkdir($target_dir, 0755, true);
+                }
+                
                 $file_extension = strtolower(pathinfo($_FILES["gambar"]["name"], PATHINFO_EXTENSION));
                 $nama_file = uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $nama_file;
                 
-                if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
-                    // File uploaded successfully
+                // Check if file is an image
+                $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+                if (in_array($file_extension, $allowed_types)) {
+                    if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
+                        // Delete old image if exists
+                        $old_image_query = mysqli_query($koneksi, "SELECT nama_file FROM gambar_beranda LIMIT 1");
+                        if ($old_image = mysqli_fetch_assoc($old_image_query)) {
+                            if ($old_image['nama_file'] && file_exists($target_dir . $old_image['nama_file'])) {
+                                unlink($target_dir . $old_image['nama_file']);
+                            }
+                        }
+                        
+                        // Update or insert new image
+                        $check_query = mysqli_query($koneksi, "SELECT id FROM gambar_beranda LIMIT 1");
+                        if (mysqli_num_rows($check_query) > 0) {
+                            $query = "UPDATE gambar_beranda SET nama_file = '$nama_file' LIMIT 1";
+                        } else {
+                            $query = "INSERT INTO gambar_beranda (nama_file) VALUES ('$nama_file')";
+                        }
+                        
+                        if (mysqli_query($koneksi, $query)) {
+                            $success_message = "Gambar beranda berhasil diperbarui!";
+                        } else {
+                            $error_message = "Error: " . mysqli_error($koneksi);
+                        }
+                    } else {
+                        $error_message = "Gagal mengupload gambar!";
+                    }
                 } else {
-                    $nama_file = '';
+                    $error_message = "Format file tidak didukung! Gunakan JPG, JPEG, PNG, atau GIF.";
                 }
-            }
-            
-            if ($nama_file) {
-                $query = "INSERT INTO gambar_beranda (nama_file) VALUES ('$nama_file')";
             } else {
-                $error_message = "Gagal mengupload gambar!";
-            }
-            
-            if ($nama_file && mysqli_query($koneksi, $query)) {
-                $success_message = "Gambar beranda berhasil ditambahkan!";
-            } elseif (!isset($error_message)) {
-                $error_message = "Error: " . mysqli_error($koneksi);
-            }
-        } elseif ($_POST['action'] == 'delete_gambar') {
-            $id = (int)$_POST['id'];
-            
-            // Get image filename to delete
-            $get_image = mysqli_query($koneksi, "SELECT nama_file FROM gambar_beranda WHERE id = $id");
-            $image_data = mysqli_fetch_assoc($get_image);
-            
-            $query = "DELETE FROM gambar_beranda WHERE id = $id";
-            if (mysqli_query($koneksi, $query)) {
-                // Delete image file if exists
-                if ($image_data['nama_file'] && file_exists("../upload/gambar_beranda/" . $image_data['nama_file'])) {
-                    unlink("../upload/gambar_beranda/" . $image_data['nama_file']);
-                }
-                $success_message = "Gambar beranda berhasil dihapus!";
-            } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+                $error_message = "Tidak ada file yang dipilih atau terjadi kesalahan upload!";
             }
         }
     }
@@ -80,7 +85,8 @@ while ($row = mysqli_fetch_assoc($profil_query)) {
 }
 
 // Get gambar beranda data
-$gambar_query = mysqli_query($koneksi, "SELECT * FROM gambar_beranda ORDER BY id DESC");
+$gambar_query = mysqli_query($koneksi, "SELECT * FROM gambar_beranda LIMIT 1");
+$gambar_beranda = mysqli_fetch_assoc($gambar_query);
 
 $username = $_SESSION['username'];
 ?>
@@ -349,103 +355,77 @@ $username = $_SESSION['username'];
                         <h3 class="text-lg font-semibold flex items-center text-green-700">
                             <i class="fas fa-images mr-2"></i>Gambar Beranda
                         </h3>
-                        <button onclick="openModal('addGambarModal')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
-                            <i class="fas fa-plus mr-2"></i>Tambah
+                        <button onclick="openModal('updateGambarModal')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
+                            <i class="fas fa-edit mr-2"></i>Ganti Gambar Beranda
                         </button>
                     </div>
 
-                    <!-- Images Grid -->
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <?php if (mysqli_num_rows($gambar_query) > 0): ?>
-                    <?php while ($gambar = mysqli_fetch_assoc($gambar_query)): ?>
-                        <div class="relative group">
-                        <div class="relative">
-                            <?php if ($gambar['nama_file']): ?>
-                                    <img src="../upload/gambar_beranda/<?= $gambar['nama_file'] ?>" alt="Gambar Beranda" class="w-full h-24 object-cover rounded-md">
-                            <?php else: ?>
-                                    <div class="w-full h-24 bg-green-100 flex items-center justify-center rounded-md">
-                                        <i class="fas fa-image text-green-600 text-2xl"></i>
+                    <!-- Current Image Preview -->
+                    <div class="mb-4">
+                        <?php if ($gambar_beranda && $gambar_beranda['nama_file']): ?>
+                            <div class="relative">
+                                <img src="../upload/gambar_beranda/<?= $gambar_beranda['nama_file'] ?>" alt="Gambar Beranda Saat Ini" class="w-full h-48 object-cover rounded-md shadow-sm">
+                                <div class="absolute top-2 left-2 bg-green-600 text-white px-2 py-1 rounded text-xs font-medium">
+                                    Gambar Aktif
                                 </div>
-                            <?php endif; ?>
-                                <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-md flex items-center justify-center">
-                                    <button onclick="deleteGambar(<?= $gambar['id'] ?>)" class="text-white hover:text-red-300 p-2">
-                                        <i class="fas fa-trash text-lg"></i>
-                                    </button>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2">Gambar beranda saat ini. Klik "Ganti Gambar Beranda" untuk mengubahnya.</p>
+                        <?php else: ?>
+                            <div class="w-full h-48 bg-gray-100 flex items-center justify-center rounded-md border-2 border-dashed border-gray-300">
+                                <div class="text-center">
+                                    <i class="fas fa-image text-gray-400 text-3xl mb-2"></i>
+                                    <p class="text-gray-500 text-sm">Belum ada gambar beranda</p>
+                                    <p class="text-gray-400 text-xs">Klik "Ganti Gambar Beranda" untuk menambahkan</p>
                                 </div>
-                        </div>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                        <div class="col-span-full text-center py-8">
-                            <i class="fas fa-images text-gray-300 text-3xl mb-2"></i>
-                            <p class="text-gray-500 text-sm">Belum ada gambar</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
-            </div>
                 </div>
         </div>
     </main>
 
-    <!-- Add Gambar Modal -->
-    <div id="addGambarModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <!-- Update Gambar Modal -->
+    <div id="updateGambarModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-medium text-gray-900 flex items-center">
-                        <i class="fas fa-plus text-green-600 mr-2"></i>
-                        Tambah Gambar Beranda
+                        <i class="fas fa-edit text-green-600 mr-2"></i>
+                        Ganti Gambar Beranda
                     </h3>
-                    <button onclick="closeModal('addGambarModal')" class="text-gray-400 hover:text-gray-600">
+                    <button onclick="closeModal('updateGambarModal')" class="text-gray-400 hover:text-gray-600">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 
                 <form method="POST" enctype="multipart/form-data" class="space-y-4">
-                    <input type="hidden" name="action" value="add_gambar">
+                    <input type="hidden" name="action" value="update_gambar">
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Gambar</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Gambar Baru</label>
                         <input type="file" name="gambar" accept="image/*" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal 2MB</p>
+                        <p class="text-xs text-gray-500 mt-1">Format: JPG, JPEG, PNG, GIF. Maksimal 2MB</p>
+                    </div>
+                    
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                        <div class="flex">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 mt-0.5 mr-2"></i>
+                            <div>
+                                <p class="text-sm text-yellow-800 font-medium">Perhatian!</p>
+                                <p class="text-xs text-yellow-700 mt-1">
+                                    Gambar beranda yang lama akan diganti dengan gambar baru. 
+                                    Tindakan ini tidak dapat dibatalkan.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="flex justify-end space-x-3 pt-4">
-                        <button type="button" onclick="closeModal('addGambarModal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        <button type="button" onclick="closeModal('updateGambarModal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
                             Batal
                         </button>
                         <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                            <i class="fas fa-save mr-2"></i>Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Delete Gambar Modal -->
-    <div id="deleteGambarModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-md shadow-lg rounded-md bg-white">
-            <div class="mt-3 text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
-                    <i class="fas fa-exclamation-triangle text-red-600"></i>
-                </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Konfirmasi Hapus</h3>
-                <p class="text-sm text-gray-500 mb-4">
-                    Apakah Anda yakin ingin menghapus gambar ini?
-                    <br>Tindakan ini tidak dapat dibatalkan.
-                </p>
-                
-                <form method="POST" class="inline">
-                    <input type="hidden" name="action" value="delete_gambar">
-                    <input type="hidden" name="id" id="delete_gambar_id">
-                    
-                    <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-3">
-                        <button type="button" onclick="closeModal('deleteGambarModal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                            Batal
-                        </button>
-                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
-                            <i class="fas fa-trash mr-2"></i>Hapus
+                            <i class="fas fa-save mr-2"></i>Ganti Gambar
                         </button>
                     </div>
                 </form>
@@ -464,7 +444,6 @@ $username = $_SESSION['username'];
             });
         }
 
-
         // Modal functions
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
@@ -476,15 +455,9 @@ $username = $_SESSION['username'];
             document.body.style.overflow = 'auto';
         }
 
-
-        function deleteGambar(id) {
-            document.getElementById('delete_gambar_id').value = id;
-            openModal('deleteGambarModal');
-        }
-
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modals = ['addGambarModal', 'deleteGambarModal'];
+            const modals = ['updateGambarModal'];
             modals.forEach(modalId => {
                 const modal = document.getElementById(modalId);
                 if (event.target === modal) {
