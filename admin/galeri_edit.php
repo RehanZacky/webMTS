@@ -178,6 +178,20 @@ $username = $_SESSION['username'];
             background-color: #f0fdf4;
             transform: scale(1.02);
         }
+
+        /* Desktop: 3 kolom × 2 baris, rasio 16:9 */
+@media (min-width: 768px) {
+    #gallery-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    #gallery-container img {
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        width: 100%;
+        height: auto;
+    }
+}
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -322,61 +336,84 @@ $username = $_SESSION['username'];
             </button>
         </div>
 
-        <!-- Gallery Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php if (mysqli_num_rows($galeri_query) > 0): ?>
-                <?php while ($foto = mysqli_fetch_assoc($galeri_query)): ?>
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                    <div class="relative">
-                        <?php if ($foto['file_path']): ?>
-                            <img src="../upload/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['nama']) ?>" class="w-full h-48 object-cover">
-                        <?php else: ?>
-                            <div class="w-full h-48 bg-green-100 flex items-center justify-center">
-                                <i class="fas fa-image text-green-600 text-4xl"></i>
-                            </div>
-                        <?php endif; ?>
-                        
-                        <div class="absolute top-2 right-2">
-                            <button onclick="viewImage('../upload/<?= htmlspecialchars($foto['file_path']) ?>', '<?= htmlspecialchars($foto['nama']) ?>')" class="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-2 rounded-full transition-all">
-                                <i class="fas fa-eye text-sm"></i>
-                            </button>
+       <!-- Gallery Grid -->
+<?php
+$per_page = 6; // 6 gambar per halaman
+$total = mysqli_num_rows($galeri_query);
+$total_pages = ceil($total / $per_page);
+$page = isset($_GET['page']) ? max(1, min($total_pages, intval($_GET['page']))) : 1;
+$offset = ($page - 1) * $per_page;
+
+$galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_upload DESC LIMIT $per_page OFFSET $offset");
+?>
+
+<div id="gallery-container" class="grid grid-cols-2 gap-4 md:grid-cols-3">
+    <?php if (mysqli_num_rows($galeri_query) > 0): ?>
+        <?php while ($foto = mysqli_fetch_assoc($galeri_query)): ?>
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                <div class="relative">
+                    <?php if ($foto['file_path']): ?>
+                        <img src="../upload/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['nama']) ?>" class="w-full h-32 object-cover">
+                    <?php else: ?>
+                        <div class="w-full h-32 bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-image text-green-600 text-2xl"></i>
                         </div>
-                    </div>
-                    
-                    <div class="p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-gray-500">
-                                <i class="fas fa-calendar-alt mr-1"></i>
-                                <?= date('d M Y', strtotime($foto['tanggal_upload'])) ?>
-                            </span>
-                        </div>
-                        
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"><?= htmlspecialchars($foto['nama']) ?></h3>
-                        
-                        <p class="text-sm text-gray-600 mb-4 line-clamp-3"><?= htmlspecialchars($foto['deskripsi']) ?></p>
-                        
-                        <div class="flex space-x-2">
-                            <button onclick="editFoto(<?= htmlspecialchars(json_encode($foto)) ?>)" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                <i class="fas fa-edit mr-1"></i> Edit
-                            </button>
-                            <button onclick="deleteFoto(<?= $foto['id'] ?>, '<?= htmlspecialchars($foto['nama']) ?>')" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                <i class="fas fa-trash mr-1"></i> Hapus
-                            </button>
-                        </div>
+                    <?php endif; ?>
+                    <div class="absolute top-1 right-1">
+                        <button onclick="viewImage('../upload/<?= htmlspecialchars($foto['file_path']) ?>', '<?= htmlspecialchars($foto['nama']) ?>')" class="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-1 rounded-full">
+                            <i class="fas fa-eye text-xs"></i>
+                        </button>
                     </div>
                 </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div class="col-span-full text-center py-16">
-                    <i class="fas fa-images text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada foto</h3>
-                    <p class="text-gray-500 mb-4">Mulai tambahkan foto ke galeri sekolah Anda</p>
-                    <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
-                        <i class="fas fa-plus mr-2"></i>Tambah Foto Pertama
-                    </button>
+                <div class="p-2">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-1 truncate"><?= htmlspecialchars($foto['nama']) ?></h3>
+                    <p class="text-xs text-gray-600 truncate"><?= htmlspecialchars($foto['deskripsi']) ?></p>
+                    <div class="mt-2 flex space-x-1">
+                        <button onclick="editFoto(<?= htmlspecialchars(json_encode($foto)) ?>)" class="flex-1 bg-green-600 text-white text-xs px-2 py-1 rounded">Edit</button>
+                        <button onclick="deleteFoto(<?= $foto['id'] ?>, '<?= htmlspecialchars($foto['nama']) ?>')" class="flex-1 bg-red-600 text-white text-xs px-2 py-1 rounded">Hapus</button>
+                    </div>
                 </div>
-            <?php endif; ?>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <div class="col-span-full text-center py-16">
+            <i class="fas fa-images text-gray-300 text-4xl mb-2"></i>
+            <h3 class="text-md font-medium text-gray-900">Belum ada foto</h3>
+            <button onclick="openModal('addModal')" class="bg-green-600 text-white px-3 py-1 rounded text-xs mt-2">Tambah Foto</button>
         </div>
+    <?php endif; ?>
+</div>
+
+<!-- Pagination dengan Kotak -->
+<?php if ($total_pages > 1): ?>
+    <div class="flex justify-center items-center mt-6 space-x-2 text-sm font-normal">
+        <?php if ($page > 1): ?>
+            <a href="?page=<?= $page - 1 ?>" class="flex items-center px-4 py-3 sm:px-6 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                &lt; Sebelumnya
+            </a>
+        <?php else: ?>
+            <span class="flex items-center px-4 py-3 sm:px-6 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                &lt; Sebelumnya
+            </span>
+        <?php endif; ?>
+
+        <span class="bg-white rounded-lg px-4 py-3 sm:px-6 shadow-md border border-gray-200">
+            Halaman <?= $page ?> dari <?= $total_pages ?>
+        </span>
+
+        <?php if ($page < $total_pages): ?>
+            <a href="?page=<?= $page + 1 ?>" class="flex items-center px-4 py-3 sm:px-6 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                Selanjutnya &gt;
+            </a>
+        <?php else: ?>
+            <span class="flex items-center px-4 py-3 sm:px-6 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                Selanjutnya &gt;
+            </span>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+
+
     </main>
 
     <!-- Add Modal -->
