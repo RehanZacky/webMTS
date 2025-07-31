@@ -154,8 +154,17 @@ if (isset($_GET['msg']) && isset($_GET['type'])) {
     }
 }
 
-// Get all prestasi data
-$prestasi_query = mysqli_query($koneksi, "SELECT * FROM prestasi ORDER BY tahun DESC, tanggal_post DESC");
+// Pagination Setup - 6 prestasi per halaman
+$per_page = 6;
+$count_query = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM prestasi");
+$count_result = mysqli_fetch_assoc($count_query);
+$total = $count_result['total'];
+$total_pages = ceil($total / $per_page);
+$page = isset($_GET['page']) ? max(1, min($total_pages, intval($_GET['page']))) : 1;
+$offset = ($page - 1) * $per_page;
+
+// Get prestasi data with pagination
+$prestasi_query = mysqli_query($koneksi, "SELECT * FROM prestasi ORDER BY tahun DESC, tanggal_post DESC LIMIT $per_page OFFSET $offset");
 
 $username = $_SESSION['username'];
 ?>
@@ -362,39 +371,37 @@ $username = $_SESSION['username'];
             </button>
         </div>
 
-        <!-- Prestasi Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Prestasi Grid - Responsif 2x3 untuk desktop, 2x untuk tablet, 1x untuk mobile -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <?php if (mysqli_num_rows($prestasi_query) > 0): ?>
                 <?php while ($prestasi = mysqli_fetch_assoc($prestasi_query)): ?>
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
                     <div class="relative">
                         <?php if (!empty($prestasi['gambar']) && file_exists("../upload/gambar_prestasi/" . $prestasi['gambar'])): ?>
-                            <img src="../upload/gambar_prestasi/<?= htmlspecialchars($prestasi['gambar']) ?>" alt="<?= htmlspecialchars($prestasi['nama_prestasi']) ?>" class="w-full h-48 object-cover">
+                            <img src="../upload/gambar_prestasi/<?= htmlspecialchars($prestasi['gambar']) ?>" 
+                                 alt="<?= htmlspecialchars($prestasi['nama_prestasi']) ?>" 
+                                 class="w-full h-48 object-cover">
                         <?php else: ?>
                         <div class="w-full h-48 bg-green-100 flex items-center justify-center">
                             <i class="fas fa-trophy text-green-600 text-4xl"></i>
                         </div>
                         <?php endif; ?>
+                        <div class="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                            <?= htmlspecialchars($prestasi['tahun']) ?>
+                        </div>
                     </div>
                     
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-2">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                <?= htmlspecialchars($prestasi['tahun']) ?>
+                                <?= htmlspecialchars($prestasi['tingkat']) ?>
                             </span>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
                                 <?= date('d M Y', strtotime($prestasi['tanggal_post'])) ?>
                             </span>
                         </div>
                         
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2"><?= htmlspecialchars($prestasi['nama_prestasi']) ?></h3>
-                        
-                        <?php if (!empty($prestasi['tingkat'])): ?>
-                        <p class="text-sm text-emerald-600 mb-2">
-                            <i class="fas fa-level-up-alt mr-1"></i>
-                            <?= htmlspecialchars($prestasi['tingkat']) ?>
-                        </p>
-                        <?php endif; ?>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"><?= htmlspecialchars($prestasi['nama_prestasi']) ?></h3>
                         
                         <?php if (!empty($prestasi['penyelenggara'])): ?>
                         <p class="text-sm text-green-600 mb-2">
@@ -406,10 +413,12 @@ $username = $_SESSION['username'];
                         <p class="text-sm text-gray-600 mb-4 line-clamp-3"><?= nl2br(htmlspecialchars($prestasi['deskripsi'])) ?></p>
                         
                         <div class="flex space-x-2">
-                            <button onclick="editPrestasi(<?= htmlspecialchars(json_encode($prestasi), ENT_QUOTES) ?>)" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            <button onclick="editPrestasi(<?= htmlspecialchars(json_encode($prestasi), ENT_QUOTES) ?>)" 
+                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                 <i class="fas fa-edit mr-1"></i> Edit
                             </button>
-                            <button onclick="deletePrestasi(<?= $prestasi['id'] ?>, '<?= htmlspecialchars($prestasi['nama_prestasi'], ENT_QUOTES) ?>')" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            <button onclick="deletePrestasi(<?= $prestasi['id'] ?>, '<?= htmlspecialchars($prestasi['nama_prestasi'], ENT_QUOTES) ?>')" 
+                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                 <i class="fas fa-trash mr-1"></i> Hapus
                             </button>
                         </div>
@@ -419,13 +428,46 @@ $username = $_SESSION['username'];
             <?php else: ?>
                 <div class="col-span-full text-center py-16">
                     <i class="fas fa-trophy text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada prestasi</h3>
-                    <p class="text-gray-500">Mulai tambahkan prestasi sekolah Anda</p>
+                    <h3 class="text-xl font-medium text-gray-900 mb-2">Belum ada prestasi</h3>
+                    <p class="text-gray-600 mb-4">Mulai dengan menambahkan prestasi pertama sekolah Anda</p>
+                    <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Tambah Prestasi
+                    </button>
                 </div>
             <?php endif; ?>
         </div>
+
+<!-- Pagination -->
+<?php if ($total_pages > 1): ?>
+    <div class="flex justify-center items-center mt-6 space-x-2 text-sm font-normal">
+        <?php if ($page > 1): ?>
+            <a href="?page=<?= $page - 1 ?>" class="flex items-center px-4 py-3 sm:px-6 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                &lt; Sebelumnya
+            </a>
+        <?php else: ?>
+            <span class="flex items-center px-4 py-3 sm:px-6 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                &lt; Sebelumnya
+            </span>
+        <?php endif; ?>
+
+        <span class="bg-white rounded-lg px-4 py-3 sm:px-6 shadow-md border border-gray-200">
+            Halaman <?= $page ?> dari <?= $total_pages ?>
+        </span>
+
+        <?php if ($page < $total_pages): ?>
+            <a href="?page=<?= $page + 1 ?>" class="flex items-center px-4 py-3 sm:px-6 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md hover:shadow-lg">
+                Selanjutnya &gt;
+            </a>
+        <?php else: ?>
+            <span class="flex items-center px-4 py-3 sm:px-6 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                Selanjutnya &gt;
+            </span>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
     </main>
 
+    
     <!-- Add Modal -->
     <div id="addModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">

@@ -114,6 +114,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC");
 
 $username = $_SESSION['username'];
+//Pagination Setup
+$per_page = 6;
+$total = mysqli_num_rows($berita_query);
+$total_pages = ceil($total / $per_page);
+$page = isset($_GET['page']) ? max(1, min($total_pages, intval($_GET['page']))) : 1;
+$offset = ($page - 1) * $per_page;
+
+$berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT $per_page OFFSET $offset");
 ?>
 
 <!DOCTYPE html>
@@ -317,51 +325,58 @@ $username = $_SESSION['username'];
             </button>
         </div>
 
-        <!-- News Grid -->
-        <!-- Pagination Setup -->
-<?php
-$per_page = 6;
-$total = mysqli_num_rows($berita_query);
-$total_pages = ceil($total / $per_page);
-$page = isset($_GET['page']) ? max(1, min($total_pages, intval($_GET['page']))) : 1;
-$offset = ($page - 1) * $per_page;
-
-$berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT $per_page OFFSET $offset");
-?>
-
-<!-- Berita Grid Responsif -->
-<div class="grid grid-cols-3 gap-4">
-    <?php if (mysqli_num_rows($berita_query) > 0): ?>
-        <?php while ($berita = mysqli_fetch_assoc($berita_query)): ?>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                <div class="relative">
-                    <?php if ($berita['gambar_utama']): ?>
-                        <img src="../upload/gambar_berita/<?= $berita['gambar_utama'] ?>" alt="<?= htmlspecialchars($berita['judul']) ?>" class="w-full aspect-[16/9] object-cover">
-                    <?php else: ?>
-                        <div class="w-full aspect-[16/9] bg-green-100 flex items-center justify-center">
-                            <i class="fas fa-newspaper text-green-600 text-2xl"></i>
+<!-- Berita Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <?php if (mysqli_num_rows($berita_query) > 0): ?>
+                <?php while ($berita = mysqli_fetch_assoc($berita_query)): ?>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                    <div class="relative">
+                        <?php if (!empty($berita['gambar_utama']) && file_exists("../upload/gambar_berita/" . $berita['gambar_utama'])): ?>
+                            <img src="../upload/gambar_berita/<?= htmlspecialchars($berita['gambar_utama']) ?>" 
+                                 alt="<?= htmlspecialchars($berita['judul']) ?>" 
+                                 class="w-full h-48 object-cover">
+                        <?php else: ?>
+                        <div class="w-full h-48 bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-trophy text-green-600 text-4xl"></i>
                         </div>
-                    <?php endif; ?>
-                </div>
-
-                <div class="p-3">
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1 truncate"><?= htmlspecialchars($berita['judul']) ?></h3>
-                    <p class="text-xs text-gray-600 truncate"><?= strip_tags(substr($berita['isi'], 0, 80)) ?>...</p>
-                    <div class="mt-2 flex space-x-1">
-                        <button onclick="editBerita(<?= htmlspecialchars(json_encode($berita)) ?>)" class="flex-1 bg-green-600 text-white text-xs px-2 py-1 rounded">Edit</button>
-                        <a href="berita_edit.php?hapus=<?= $berita['id'] ?>" onclick="return confirm('Yakin hapus?')" class="flex-1 bg-red-600 text-white text-xs px-2 py-1 rounded text-center">Hapus</a>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                <?= date('d M Y', strtotime($berita['tanggal_post'])) ?>
+                            </span>
+                        </div>
+                        
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"><?= htmlspecialchars($berita['judul']) ?></h3>
+                        
+                        <p class="text-sm text-gray-600 mb-4 line-clamp-3"><?= nl2br(htmlspecialchars($berita['isi'])) ?></p>
+                        
+                        <div class="flex space-x-2">
+                            <button onclick="editBerita(<?= htmlspecialchars(json_encode($berita), ENT_QUOTES) ?>)" 
+                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                <i class="fas fa-edit mr-1"></i> Edit
+                            </button>
+                            <button onclick="deleteBerita(<?= $berita['id'] ?>, '<?= htmlspecialchars($berita['judul'], ENT_QUOTES) ?>')" 
+                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                <i class="fas fa-trash mr-1"></i> Hapus
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <div class="col-span-full text-center py-16">
-            <i class="fas fa-newspaper text-gray-300 text-4xl mb-2"></i>
-            <h3 class="text-md font-medium text-gray-900">Belum ada berita</h3>
-            <button onclick="openModal('addModal')" class="bg-green-600 text-white px-3 py-1 rounded text-xs mt-2">Tambah Berita</button>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <div class="col-span-full text-center py-16">
+                    <i class="fas fa-trophy text-gray-300 text-6xl mb-4"></i>
+                    <h3 class="text-xl font-medium text-gray-900 mb-2">Belum ada berita</h3>
+                    <p class="text-gray-600 mb-4">Mulai dengan menambahkan berita pertama sekolah Anda</p>
+                    <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Tambah Berita
+                    </button>
+                </div>
+            <?php endif; ?>
         </div>
-    <?php endif; ?>
-</div>
 
 <!-- Pagination -->
 <?php if ($total_pages > 1): ?>

@@ -5,12 +5,12 @@ include '../koneksi.php';
 // Hapus foto
 if (isset($_GET['hapus'])) {
     $id = intval($_GET['hapus']);
-    $cek = mysqli_query($koneksi, "SELECT file_path FROM gambar WHERE id = $id");
+    $cek = mysqli_query($koneksi, "SELECT file_path FROM galeri WHERE id = $id");
     $row = mysqli_fetch_assoc($cek);
-    if ($row && file_exists("../upload/" . $row['file_path'])) {
-        unlink("../upload/" . $row['file_path']);
+    if ($row && file_exists("../upload/gambar_galeri/" . $row['file_path'])) {
+        unlink("../upload/gambar_galeri/" . $row['file_path']);
     }
-    mysqli_query($koneksi, "DELETE FROM gambar WHERE id = $id");
+    mysqli_query($koneksi, "DELETE FROM galeri WHERE id = $id");
     $success_message = "Foto berhasil dihapus dari galeri.";
 }
 
@@ -24,10 +24,10 @@ if (isset($_POST['tambah'])) {
     if ($_FILES['foto']['name']) {
         $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
         $file_path = "galeri_" . time() . "." . $ext;
-        move_uploaded_file($_FILES['foto']['tmp_name'], "../upload/$file_path");
+        move_uploaded_file($_FILES['foto']['tmp_name'], "../upload/gambar_galeri/$file_path");
     }
 
-    mysqli_query($koneksi, "INSERT INTO gambar (nama, deskripsi, file_path, tanggal_upload)
+    mysqli_query($koneksi, "INSERT INTO galeri (nama, deskripsi, file_path, tanggal_post)
         VALUES ('$nama', '$deskripsi', '$file_path', '$tanggal')");
     $success_message = "Foto berhasil ditambahkan ke galeri.";
 }
@@ -38,11 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($_POST['action'] == 'add') {
             $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
             $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
-            $tanggal_upload = date('Y-m-d H:i:s');
+            $tanggal_post = date('Y-m-d H:i:s');
             
             $file_path = '';
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "../upload/";
+                $target_dir = "../upload/gambar_galeri/";
                 $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
                 $file_path = "galeri_" . uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $file_path;
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
             
-            $query = "INSERT INTO gambar (nama, deskripsi, file_path, tanggal_upload) VALUES ('$nama', '$deskripsi', '$file_path', '$tanggal_upload')";
+            $query = "INSERT INTO galeri (nama, deskripsi, file_path, tanggal_post) VALUES ('$nama', '$deskripsi', '$file_path', '$tanggal_post')";
             if (mysqli_query($koneksi, $query)) {
                 $success_message = "Foto berhasil ditambahkan ke galeri!";
             } else {
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $file_query = "";
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $target_dir = "../upload/";
+                $target_dir = "../upload/gambar_galeri/";
                 $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
                 $file_path = "galeri_" . uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $file_path;
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
             
-            $query = "UPDATE gambar SET nama = '$nama', deskripsi = '$deskripsi' $file_query WHERE id = $id";
+            $query = "UPDATE galeri SET nama = '$nama', deskripsi = '$deskripsi' $file_query WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 $success_message = "Foto berhasil diperbarui!";
             } else {
@@ -87,14 +87,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $id = (int)$_POST['id'];
             
             // Get image filename to delete
-            $get_image = mysqli_query($koneksi, "SELECT file_path FROM gambar WHERE id = $id");
+            $get_image = mysqli_query($koneksi, "SELECT file_path FROM galeri WHERE id = $id");
             $image_data = mysqli_fetch_assoc($get_image);
             
-            $query = "DELETE FROM gambar WHERE id = $id";
+            $query = "DELETE FROM galeri WHERE id = $id";
             if (mysqli_query($koneksi, $query)) {
                 // Delete image file if exists
-                if ($image_data['file_path'] && file_exists("../upload/" . $image_data['file_path'])) {
-                    unlink("../upload/" . $image_data['file_path']);
+                if ($image_data['file_path'] && file_exists("../upload/gambar_galeri/" . $image_data['file_path'])) {
+                    unlink("../upload/gambar_galeri/" . $image_data['file_path']);
                 }
                 $success_message = "Foto berhasil dihapus dari galeri!";
             } else {
@@ -105,9 +105,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Get all gallery data
-$galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_upload DESC");
+$galeri_query = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY tanggal_post DESC");
 
 $username = $_SESSION['username'];
+//page setup
+$per_page = 6; // 6 gambar per halaman
+$total = mysqli_num_rows($galeri_query);
+$total_pages = ceil($total / $per_page);
+$page = isset($_GET['page']) ? max(1, min($total_pages, intval($_GET['page']))) : 1;
+$offset = ($page - 1) * $per_page;
+
+$galeri_query = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY tanggal_post DESC LIMIT $per_page OFFSET $offset");
 ?>
 
 <!DOCTYPE html>
@@ -336,55 +344,60 @@ $username = $_SESSION['username'];
             </button>
         </div>
 
-       <!-- Gallery Grid -->
-<?php
-$per_page = 6; // 6 gambar per halaman
-$total = mysqli_num_rows($galeri_query);
-$total_pages = ceil($total / $per_page);
-$page = isset($_GET['page']) ? max(1, min($total_pages, intval($_GET['page']))) : 1;
-$offset = ($page - 1) * $per_page;
-
-$galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_upload DESC LIMIT $per_page OFFSET $offset");
-?>
-
-<div id="gallery-container" class="grid grid-cols-2 gap-4 md:grid-cols-3">
-    <?php if (mysqli_num_rows($galeri_query) > 0): ?>
-        <?php while ($foto = mysqli_fetch_assoc($galeri_query)): ?>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                <div class="relative">
-                    <?php if ($foto['file_path']): ?>
-                        <img src="../upload/gambar_galeri/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['nama']) ?>" class="w-full h-32 object-cover">
-                    <?php else: ?>
-                        <div class="w-full h-32 bg-green-100 flex items-center justify-center">
-                            <i class="fas fa-image text-green-600 text-2xl"></i>
+       <!-- Galeri Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <?php if (mysqli_num_rows($galeri_query) > 0): ?>
+                <?php while ($galeri = mysqli_fetch_assoc($galeri_query)): ?>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                    <div class="relative">
+                        <?php if (!empty($galeri['file_path']) && file_exists("../upload/gambar_galeri/" . $galeri['file_path'])): ?>
+                            <img src="../upload/gambar_galeri/<?= htmlspecialchars($galeri['file_path']) ?>" 
+                                 alt="<?= htmlspecialchars($galeri['nama']) ?>" 
+                                 class="w-full h-48 object-cover">
+                        <?php else: ?>
+                        <div class="w-full h-48 bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-trophy text-green-600 text-4xl"></i>
                         </div>
-                    <?php endif; ?>
-                    <div class="absolute top-1 right-1">
-                        <button onclick="viewImage('../upload/<?= htmlspecialchars($foto['file_path']) ?>', '<?= htmlspecialchars($foto['nama']) ?>')" class="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-1 rounded-full">
-                            <i class="fas fa-eye text-xs"></i>
-                        </button>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                <?= date('d M Y', strtotime($galeri['tanggal_post'])) ?>
+                            </span>
+                        </div>
+                        
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"><?= htmlspecialchars($galeri['nama']) ?></h3>
+                        
+                        <p class="text-sm text-gray-600 mb-4 line-clamp-3"><?= nl2br(htmlspecialchars($galeri['deskripsi'])) ?></p>
+                        
+                        <div class="flex space-x-2">
+                            <button onclick="editGaleri(<?= htmlspecialchars(json_encode($galeri), ENT_QUOTES) ?>)" 
+                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                <i class="fas fa-edit mr-1"></i> Edit
+                            </button>
+                            <button onclick="deleteGaleri(<?= $galeri['id'] ?>, '<?= htmlspecialchars($galeri['nama'], ENT_QUOTES) ?>')" 
+                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                <i class="fas fa-trash mr-1"></i> Hapus
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="p-2">
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1 truncate"><?= htmlspecialchars($foto['nama']) ?></h3>
-                    <p class="text-xs text-gray-600 truncate"><?= htmlspecialchars($foto['deskripsi']) ?></p>
-                    <div class="mt-2 flex space-x-1">
-                        <button onclick="editFoto(<?= htmlspecialchars(json_encode($foto)) ?>)" class="flex-1 bg-green-600 text-white text-xs px-2 py-1 rounded">Edit</button>
-                        <button onclick="deleteFoto(<?= $foto['id'] ?>, '<?= htmlspecialchars($foto['nama']) ?>')" class="flex-1 bg-red-600 text-white text-xs px-2 py-1 rounded">Hapus</button>
-                    </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <div class="col-span-full text-center py-16">
+                    <i class="fas fa-trophy text-gray-300 text-6xl mb-4"></i>
+                    <h3 class="text-xl font-medium text-gray-900 mb-2">Belum ada gambaar</h3>
+                    <p class="text-gray-600 mb-4">Mulai dengan menambahkan gambar pertama sekolah Anda</p>
+                    <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Tambah Gambar
+                    </button>
                 </div>
-            </div>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <div class="col-span-full text-center py-16">
-            <i class="fas fa-images text-gray-300 text-4xl mb-2"></i>
-            <h3 class="text-md font-medium text-gray-900">Belum ada foto</h3>
-            <button onclick="openModal('addModal')" class="bg-green-600 text-white px-3 py-1 rounded text-xs mt-2">Tambah Foto</button>
+            <?php endif; ?>
         </div>
-    <?php endif; ?>
-</div>
 
-<!-- Pagination dengan Kotak -->
+<!-- Pagination -->
 <?php if ($total_pages > 1): ?>
     <div class="flex justify-center items-center mt-6 space-x-2 text-sm font-normal">
         <?php if ($page > 1): ?>
@@ -412,8 +425,6 @@ $galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_up
         <?php endif; ?>
     </div>
 <?php endif; ?>
-
-
     </main>
 
     <!-- Add Modal -->
@@ -584,14 +595,14 @@ $galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_up
             document.body.style.overflow = 'auto';
         }
 
-        function editFoto(foto) {
+        function editGaleri(foto) {
             document.getElementById('edit_id').value = foto.id;
             document.getElementById('edit_nama').value = foto.nama;
             document.getElementById('edit_deskripsi').value = foto.deskripsi || '';
             openModal('editModal');
         }
 
-        function deleteFoto(id, nama) {
+        function deleteGaleri(id, nama) {
             document.getElementById('delete_id').value = id;
             document.getElementById('delete_name').textContent = nama;
             openModal('deleteModal');
