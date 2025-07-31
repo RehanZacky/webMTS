@@ -353,7 +353,7 @@ $galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_up
             <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
                 <div class="relative">
                     <?php if ($foto['file_path']): ?>
-                        <img src="../upload/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['nama']) ?>" class="w-full h-32 object-cover">
+                        <img src="../upload/gambar_galeri/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['nama']) ?>" class="w-full h-32 object-cover">
                     <?php else: ?>
                         <div class="w-full h-32 bg-green-100 flex items-center justify-center">
                             <i class="fas fa-image text-green-600 text-2xl"></i>
