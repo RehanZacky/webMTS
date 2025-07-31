@@ -169,7 +169,41 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
             </div>
         </section>
 
-        <section id="visi-misi" class="py-20 bg-white">
+       <section id="sejarah" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-800">Sejarah Pondok</h2>
+            <p class="mt-2 text-gray-600">Mengenal perjalanan dan perkembangan Pondok Pesantren Roudlotul Quran.</p>
+        </div>
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-green-50 p-8 rounded-lg shadow-sm">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="bg-green-100 text-green-600">
+                        <!-- Icon or image can be placed here if needed -->
+                    </div>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed max-w-prose mx-auto overflow-wrap break-words text-justify">
+                    <?php if (!empty($profil_data['sejarah'])): ?>
+                        <?php 
+                        $sejarah_paragraphs = explode("\n", $profil_data['sejarah']);
+                        foreach ($sejarah_paragraphs as $paragraph) {
+                            $paragraph = trim($paragraph);
+                            if (!empty($paragraph)) {
+                                echo '<p class="mb-4">' . htmlspecialchars($paragraph) . '</p>';
+                            }
+                        }
+                        ?>
+                    <?php else: ?>
+                        <p class="text-center text-gray-500 italic">Sejarah pondok pesantren belum diisi. Silakan hubungi administrator untuk informasi lebih lanjut.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+        <section id="visi-misi" class="py-20 bg-gray-50">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl font-bold text-gray-800">Visi & Misi</h2>
@@ -205,7 +239,7 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
             </div>
         </section>
 
-        <section id="artikel" class="py-20 bg-gray-50">
+        <section id="artikel" class="py-20 bg-white">
              <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold text-gray-800">Berita Terbaru</h2>
                 <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Ikuti perkembangan dan kegiatan terbaru dari Pondok Pesantren Roudlotul Quran</p>
@@ -238,7 +272,7 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
             </div>
         </section>
 
-        <section id="galeri" class="py-20 bg-white">
+        <section id="galeri" class="py-20 bg-gray-50">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold text-gray-800">Galeri Kegiatan</h2>
                 <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Momen dan kegiatan yang terdokumentasi di Pondok Pesantren Roudlotul Quran.</p>
@@ -272,7 +306,7 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
 
 <footer class="bg-gradient-to-br from-green-800 via-green-700 to-green-900 text-white relative overflow-hidden">
     <div class="absolute inset-0 opacity-10">
-        <<div class="absolute top-0 left-0 w-full h-full" style="background-image: url('grain.svg');"></div>
+        <div class="absolute top-0 left-0 w-full h-full" style="background-image: url('grain.svg');"></div>
     </div>
     
     <div class="container mx-auto px-6 py-12 relative z-10">
