@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 23, 2025 at 05:02 PM
+-- Generation Time: Jul 31, 2025 at 04:44 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -33,29 +33,21 @@ CREATE TABLE `berita` (
   `isi` text DEFAULT NULL,
   `penulis` varchar(100) DEFAULT NULL,
   `tanggal_post` datetime DEFAULT current_timestamp(),
-  `gambar_utama` varchar(255) DEFAULT NULL,
-  `video_youtube` varchar(255) DEFAULT NULL
+  `gambar_utama` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `berita`
---
-
-INSERT INTO `berita` (`id`, `judul`, `isi`, `penulis`, `tanggal_post`, `gambar_utama`, `video_youtube`) VALUES
-(3, 'Mencoba', 'Nshk', 'Coba', '2025-07-23 15:18:33', '6880e12913f03.jpg', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `gambar`
+-- Table structure for table `galeri`
 --
 
-CREATE TABLE `gambar` (
+CREATE TABLE `galeri` (
   `id` int(11) NOT NULL,
   `nama` varchar(100) DEFAULT NULL,
   `deskripsi` text DEFAULT NULL,
   `file_path` varchar(255) DEFAULT NULL,
-  `tanggal_upload` datetime DEFAULT current_timestamp()
+  `tanggal_post` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -74,7 +66,7 @@ CREATE TABLE `gambar_beranda` (
 --
 
 INSERT INTO `gambar_beranda` (`id`, `nama_file`) VALUES
-(3, '6880d6d01468f.jpg');
+(3, '688b531944c76.jpg');
 
 -- --------------------------------------------------------
 
@@ -93,7 +85,7 @@ CREATE TABLE `info_statistik` (
 --
 
 INSERT INTO `info_statistik` (`id`, `label`, `nilai`) VALUES
-(1, 'Siswa Aktif', '352312'),
+(1, 'Siswa Aktif', '35'),
 (2, 'Akreditasi', 'A'),
 (3, 'Jumlah Kelas', '12'),
 (4, 'Guru & Staff', '25'),
@@ -120,9 +112,8 @@ CREATE TABLE `pegawai` (
 --
 
 INSERT INTO `pegawai` (`id`, `nama`, `jabatan`, `foto`, `urutan`, `pengalaman_kerja`) VALUES
-(1, 'Dr. Ahmad Fauzi, M.Pd.', 'Kepala Sekolah', 'naruto.jpg', 3, 'Berpengalaman lebih dari 15 tahun di dunia pendidikan. Mengajar bidang studi Fiqih dan Sejarah Islam.'),
-(2, 'Siti Aminah, S.Pd.', 'Guru Bahasa Indonesia', 'upload/pegawai/siti_aminah.jpg', 2, 'Lulusan terbaik Universitas Negeri Sidoarjo. Telah mengajar selama 5 tahun.'),
-(6, 'mantap', 'mantap', '687e35e7c5364.png', 1, 'tidak ada');
+(9, 'ghj', 'hjk', '6888afb6026a1.png', 1, 'hjk'),
+(10, 'kmlcs', 'kmcs', '688b7f84133ee.png', 1, 'nkcm');
 
 -- --------------------------------------------------------
 
@@ -141,13 +132,6 @@ CREATE TABLE `prestasi` (
   `tanggal_post` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `prestasi`
---
-
-INSERT INTO `prestasi` (`id`, `nama_prestasi`, `tingkat`, `penyelenggara`, `tahun`, `deskripsi`, `gambar`, `tanggal_post`) VALUES
-(6, 'poi', 'Kecamatan', 'poi', '2025', 'qfhoi', '6880cd44d3b7e.png', '2025-07-23 06:53:40');
-
 -- --------------------------------------------------------
 
 --
@@ -165,11 +149,11 @@ CREATE TABLE `profil` (
 --
 
 INSERT INTO `profil` (`id`, `jenis`, `isi`) VALUES
-(1, 'visi', 'mencoba dulu'),
-(2, 'misi', 'masih coba coba'),
-(3, 'sejarah', 'masih baru sekolahnya'),
+(1, 'visi', 'Ini visi sekolah'),
+(2, 'misi', 'ini misi sekolah'),
+(3, 'sejarah', 'ini sejarah sekolah'),
 (4, 'sambutan_kepala', 'https://www.youtube.com/watch?v=pp4YQPykBMM&list=RDpp4YQPykBMM&start_radio=1&ab_channel=IlleniumVEVO'),
-(5, 'tag_line', 'bersama kita bisa');
+(5, 'tag_line', 'ini tag line sekolah');
 
 -- --------------------------------------------------------
 
@@ -190,7 +174,7 @@ CREATE TABLE `profil_pemimpin` (
 --
 
 INSERT INTO `profil_pemimpin` (`id`, `nama`, `jabatan`, `foto`, `slogan`) VALUES
-(1, 'Pentolman', 'Juragan Pentol', 'test.jpg', 'anjay');
+(3, 'mencoba', 'coba lagi', '6888af9a637f9.png', 'mantap jiwa');
 
 -- --------------------------------------------------------
 
@@ -224,9 +208,9 @@ ALTER TABLE `berita`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `gambar`
+-- Indexes for table `galeri`
 --
-ALTER TABLE `gambar`
+ALTER TABLE `galeri`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -279,19 +263,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `berita`
 --
 ALTER TABLE `berita`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT for table `gambar`
+-- AUTO_INCREMENT for table `galeri`
 --
-ALTER TABLE `gambar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `galeri`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `gambar_beranda`
 --
 ALTER TABLE `gambar_beranda`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `info_statistik`
@@ -303,13 +287,13 @@ ALTER TABLE `info_statistik`
 -- AUTO_INCREMENT for table `pegawai`
 --
 ALTER TABLE `pegawai`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `prestasi`
 --
 ALTER TABLE `prestasi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `profil`
@@ -321,7 +305,7 @@ ALTER TABLE `profil`
 -- AUTO_INCREMENT for table `profil_pemimpin`
 --
 ALTER TABLE `profil_pemimpin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
