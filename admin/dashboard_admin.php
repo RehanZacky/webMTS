@@ -33,82 +33,18 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
         
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        
         .card-hover:hover {
-            transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .stat-number {
-            animation: countUp 2s ease-out;
-        }
-        
-        @keyframes countUp {
-            from { transform: scale(0.5); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .progress-bar {
-            animation: progressLoad 2s ease-out;
-        }
-        
-        @keyframes progressLoad {
-            from { width: 0%; }
-            to { width: var(--progress-width); }
-        }
-
-        .nav-item {
-            transition: all 0.3s ease;
-        }
-
-        .nav-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .dropdown {
-            transition: all 0.3s ease;
-        }
-
-        .dropdown:hover .dropdown-content {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-content {
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
         }
 
         .statistik-card {
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
         }
 
         .statistik-card:hover {
             background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
             border-color: #10b981;
-            transform: translateY(-2px);
             box-shadow: 0 8px 25px -5px rgba(16, 185, 129, 0.1);
         }
 
@@ -243,8 +179,8 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
         
         <!-- Content Sections -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                        <!-- Berita Terbaru -->
-            <div class="bg-white rounded-xl shadow-lg p-6 animate-fade-in" style="animation-delay: 0.4s;">
+            <!-- Berita Terbaru -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
                 <h3 class="text-lg font-semibold mb-4 flex items-center">
                    <i class="fas fa-newspaper text-green-500 mr-2"></i>
                     Berita Terbaru
@@ -256,7 +192,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                         $berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_post DESC LIMIT 5");                            
                         if (mysqli_num_rows($berita_query) > 0): ?>
                             <?php while ($berita = mysqli_fetch_assoc($berita_query)) : ?>
-                                <div class="flex-shrink-0 w-64 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-all duration-300 hover:border-green-300 group">
+                                <div class="flex-shrink-0 w-64 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md hover:border-green-300 group">
                                     <!-- Gambar Preview (Persegi) -->
                                     <?php if (!empty($berita['gambar_utama'])): ?>
                                         <div class="w-full h-40">
@@ -279,7 +215,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                                             </p>
                                         </div>
                                         
-                                        <h4 class="font-semibold text-gray-800 mb-2 text-sm leading-tight line-clamp-2 group-hover:text-green-700 transition-colors">
+                                        <h4 class="font-semibold text-gray-800 mb-2 text-sm leading-tight line-clamp-2 group-hover:text-green-700">
                                             <?= htmlspecialchars($berita['judul']) ?>
                                         </h4>
                                         
@@ -289,11 +225,11 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                                         
                                         <div class="flex items-center justify-between">
                                             <a href="../berita_detail.php?id=<?= $berita['id'] ?>" 
-                                               class="text-xs text-green-600 hover:text-green-700 font-medium hover:underline transition-colors">
+                                               class="text-xs text-green-600 hover:text-green-700 font-medium hover:underline">
                                                 Baca Selengkapnya
                                             </a>
                                             <a href="berita_edit.php?id=<?= $berita['id'] ?>" 
-                                               class="text-xs text-blue-600 hover:text-blue-700 transition-colors p-1 rounded hover:bg-blue-50" 
+                                               class="text-xs text-blue-600 hover:text-blue-700 p-1 rounded hover:bg-blue-50" 
                                                title="Edit Berita">
                                                 <i class="fas fa-edit"></i>
                                             </a>
@@ -326,7 +262,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                     </div>
                     
                     <div class="grid gap-3">
-                        <a href="berita_edit.php" class="flex items-center justify-center px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                        <a href="berita_edit.php" class="flex items-center justify-center px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100">
                             <i class="fas fa-plus mr-2"></i>
                             Tambah Berita
                         </a>
@@ -357,7 +293,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                         $nilai = $data ? $data['nilai'] : '0';
                         $label = $data ? $data['label'] : $info['label'];
                     ?>
-                    <div class="bg-gray-50 rounded-lg p-8 hover:shadow-md transition-all duration-300">
+                    <div class="bg-gray-50 rounded-lg p-8 hover:shadow-md">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
                                 <div class="stat-icon-bg p-2 rounded-full">
@@ -366,7 +302,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                                 <div>
                                     <h4 class="font-medium text-gray-700 text-sm"><?= $label ?></h4>
                                     <div class="flex items-baseline space-x-1">
-                                        <span class="stat-value stat-number"><?= $nilai ?></span>
+                                        <span class="stat-value"><?= $nilai ?></span>
                                         <?php if (!empty($info['suffix']) && is_numeric($nilai)): ?>
                                             <span class="text-xs text-gray-500"><?= $info['suffix'] ?></span>
                                         <?php endif; ?>
@@ -381,7 +317,7 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                 
                 <div class="mt-4">
                     <div class="flex space-x-3">
-                        <a href="statistik_edit.php" class="flex items-center justify-center flex-1 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                        <a href="statistik_edit.php" class="flex items-center justify-center flex-1 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100">
                             <i class="fas fa-edit mr-2"></i>
                             Update Statistik
                         </a>
@@ -391,14 +327,14 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
         </div>
 
         <!-- Quick Actions -->
-        <div class="bg-white rounded-xl shadow-lg p-6" style="animation-delay: 0.6s;">
+        <div class="bg-white rounded-xl shadow-lg p-6">
             <h3 class="text-lg font-semibold mb-4 flex items-center">
                <i class="fas fa-bolt text-green-500 mr-2"></i>
                 Aksi Cepat
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-               <a href="berita_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors group">
-                   <div class="p-3 bg-green-500 rounded-full group-hover:scale-110 transition-transform">
+               <a href="berita_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-green-50 rounded-lg hover:bg-green-100 group">
+                   <div class="p-3 bg-green-500 rounded-full">
                         <i class="fas fa-plus text-white text-xl"></i>
                     </div>
                     <div class="text-center">
@@ -407,8 +343,8 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                     </div>
                 </a>
                 
-               <a href="statistik_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors group">
-                   <div class="p-3 bg-emerald-500 rounded-full group-hover:scale-110 transition-transform">
+               <a href="statistik_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-emerald-50 rounded-lg hover:bg-emerald-100 group">
+                   <div class="p-3 bg-emerald-500 rounded-full">
                         <i class="fas fa-chart-bar text-white text-xl"></i>
                     </div>
                     <div class="text-center">
@@ -417,8 +353,8 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                     </div>
                 </a>
                 
-               <a href="profil_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-teal-50 rounded-lg hover:bg-teal-100 transition-colors group">
-                   <div class="p-3 bg-teal-500 rounded-full group-hover:scale-110 transition-transform">
+               <a href="profil_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-teal-50 rounded-lg hover:bg-teal-100 group">
+                   <div class="p-3 bg-teal-500 rounded-full">
                         <i class="fas fa-school text-white text-xl"></i>
                     </div>
                     <div class="text-center">
@@ -427,8 +363,8 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                     </div>
                 </a>
 
-               <a href="prestasi_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-lime-50 rounded-lg hover:bg-lime-100 transition-colors group">
-                   <div class="p-3 bg-lime-500 rounded-full group-hover:scale-110 transition-transform">
+               <a href="prestasi_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-lime-50 rounded-lg hover:bg-lime-100 group">
+                   <div class="p-3 bg-lime-500 rounded-full">
                         <i class="fas fa-trophy text-white text-xl"></i>
                     </div>
                     <div class="text-center">
@@ -437,8 +373,8 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                     </div>
                 </a>
 
-               <a href="galeri_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-cyan-50 rounded-lg hover:bg-cyan-100 transition-colors group">
-                   <div class="p-3 bg-cyan-500 rounded-full group-hover:scale-110 transition-transform">
+               <a href="galeri_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-cyan-50 rounded-lg hover:bg-cyan-100 group">
+                   <div class="p-3 bg-cyan-500 rounded-full">
                         <i class="fas fa-images text-white text-xl"></i>
                     </div>
                     <div class="text-center">
@@ -447,8 +383,8 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                     </div>
                 </a>
                 
-               <a href="pegawai_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors group">
-                   <div class="p-3 bg-slate-500 rounded-full group-hover:scale-110 transition-transform">
+               <a href="pegawai_edit.php" class="flex flex-col items-center space-y-3 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 group">
+                   <div class="p-3 bg-slate-500 rounded-full">
                         <i class="fas fa-user text-white text-xl"></i>
                     </div>
                     <div class="text-center">
@@ -480,41 +416,14 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                 hour: '2-digit',
                 minute: '2-digit'
             });
-            document.getElementById('currentTime').textContent = timeString;
+            const timeElement = document.getElementById('currentTime');
+            if (timeElement) {
+                timeElement.textContent = timeString;
+            }
         }
 
         setInterval(updateTime, 1000);
         updateTime();
-
-        // Animate numbers on load
-        document.addEventListener('DOMContentLoaded', function() {
-            const numbers = document.querySelectorAll('.stat-number');
-            numbers.forEach(number => {
-                const finalNumber = parseInt(number.textContent);
-                let currentNumber = 0;
-                const increment = finalNumber / 50;
-                
-                const timer = setInterval(() => {
-                    currentNumber += increment;
-                    if (currentNumber >= finalNumber) {
-                        number.textContent = finalNumber;
-                        clearInterval(timer);
-                    } else {
-                        number.textContent = Math.floor(currentNumber);
-                    }
-                }, 40);
-            });
-        });
-
-        // Add click effects to cards
-        document.querySelectorAll('.card-hover').forEach(card => {
-            card.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'translateY(-5px)';
-                }, 150);
-            });
-        });
 
         // Add CSS for line clamp
         const style = document.createElement('style');
@@ -522,6 +431,12 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
             .line-clamp-2 {
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .line-clamp-3 {
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
             }
