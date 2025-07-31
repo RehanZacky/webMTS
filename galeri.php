@@ -15,13 +15,13 @@ $per_halaman = 6;
 $halaman_aktif = isset($_GET['halaman']) ? (int)$_GET['halaman'] : 1;
 $halaman_aktif = max(1, $halaman_aktif);
 
-$hasil_total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM gambar");
+$hasil_total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM galeri");
 $data_total = mysqli_fetch_assoc($hasil_total);
 $total_gambar = $data_total['total'];
 $total_halaman = ceil($total_gambar / $per_halaman);
 
 $offset = ($halaman_aktif - 1) * $per_halaman;
-$query_gambar = "SELECT * FROM gambar ORDER BY tanggal_upload DESC LIMIT $per_halaman OFFSET $offset";
+$query_gambar = "SELECT * FROM galeri ORDER BY tanggal_post DESC LIMIT $per_halaman OFFSET $offset";
 $galeri_query = mysqli_query($koneksi, $query_gambar);
 ?>
 <!DOCTYPE html>

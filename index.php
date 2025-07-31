@@ -279,7 +279,7 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                 
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12">
                     <?php
-                    $galeri_query = mysqli_query($koneksi, "SELECT * FROM gambar ORDER BY tanggal_upload DESC LIMIT 6");
+                    $galeri_query = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY tanggal_post DESC LIMIT 6");
                     if ($galeri_query && mysqli_num_rows($galeri_query) > 0) :
                         while ($foto = mysqli_fetch_assoc($galeri_query)) :
                     ?>
