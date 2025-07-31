@@ -251,7 +251,7 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                     ?>
                     <div class="rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition-transform duration-300">
                         <a href="<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>">
-                             <img src="upload/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
+                             <img src="upload/gambar_galeri/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
                         </a>
                     </div>
                     <?php
