@@ -2,38 +2,12 @@
 include 'auth.php';
 include '../koneksi.php';
 
-// Hapus foto
-if (isset($_GET['hapus'])) {
-    $id = intval($_GET['hapus']);
-    $cek = mysqli_query($koneksi, "SELECT file_path FROM galeri WHERE id = $id");
-    $row = mysqli_fetch_assoc($cek);
-    if ($row && file_exists("../upload/gambar_galeri/" . $row['file_path'])) {
-        unlink("../upload/gambar_galeri/" . $row['file_path']);
-    }
-    mysqli_query($koneksi, "DELETE FROM galeri WHERE id = $id");
-    $success_message = "Foto berhasil dihapus dari galeri.";
-}
-
-// Tambah foto
-if (isset($_POST['tambah'])) {
-    $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-    $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
-    $tanggal = date("Y-m-d");
-
-    $file_path = "";
-    if ($_FILES['foto']['name']) {
-        $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-        $file_path = "galeri_" . time() . "." . $ext;
-        move_uploaded_file($_FILES['foto']['tmp_name'], "../upload/gambar_galeri/$file_path");
-    }
-
-    mysqli_query($koneksi, "INSERT INTO galeri (nama, deskripsi, file_path, tanggal_post)
-        VALUES ('$nama', '$deskripsi', '$file_path', '$tanggal')");
-    $success_message = "Foto berhasil ditambahkan ke galeri.";
-}
-
-// Handle form submission
+// Handle form submission with POST-REDIRECT-GET pattern
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $redirect_url = $_SERVER['PHP_SELF'];
+    $message_type = '';
+    $message_text = '';
+    
     if (isset($_POST['action'])) {
         if ($_POST['action'] == 'add') {
             $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
@@ -43,46 +17,97 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $file_path = '';
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
                 $target_dir = "../upload/gambar_galeri/";
+                
+                // Create upload directory if it doesn't exist
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0755, true);
+                }
+                
                 $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
-                $file_path = "galeri_" . uniqid() . '.' . $file_extension;
+                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                
+                if (in_array($file_extension, $allowed_extensions)) {
+                    $file_path = "galeri_" . uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $file_path;
                 
-                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
-                    // File uploaded successfully
-                } else {
+                    if (!move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
                     $file_path = '';
+                        $message_type = 'error';
+                        $message_text = 'Gagal mengupload gambar!';
+                    }
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Format gambar tidak didukung! Gunakan JPG, PNG, atau GIF.';
                 }
             }
             
-            $query = "INSERT INTO galeri (nama, deskripsi, file_path, tanggal_post) VALUES ('$nama', '$deskripsi', '$file_path', '$tanggal_post')";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Foto berhasil ditambahkan ke galeri!";
-            } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+            if (empty($message_text)) {
+                $stmt = mysqli_prepare($koneksi, "INSERT INTO galeri (nama, deskripsi, file_path, tanggal_post) VALUES (?, ?, ?, ?)");
+                mysqli_stmt_bind_param($stmt, "ssss", $nama, $deskripsi, $file_path, $tanggal_post);
+                
+                if (mysqli_stmt_execute($stmt)) {
+                    $message_type = 'success';
+                    $message_text = 'Foto berhasil ditambahkan ke galeri!';
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Error: ' . mysqli_error($koneksi);
+                }
+                mysqli_stmt_close($stmt);
             }
+            
         } elseif ($_POST['action'] == 'edit') {
             $id = (int)$_POST['id'];
             $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
             $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
             
-            $file_query = "";
+            $file_update = '';
+            $new_file = '';
+            
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
                 $target_dir = "../upload/gambar_galeri/";
+                
+                // Create upload directory if it doesn't exist
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0755, true);
+                }
+                
                 $file_extension = strtolower(pathinfo($_FILES["foto"]["name"], PATHINFO_EXTENSION));
-                $file_path = "galeri_" . uniqid() . '.' . $file_extension;
+                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                
+                if (in_array($file_extension, $allowed_extensions)) {
+                    $new_file = "galeri_" . uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $file_path;
                 
-                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
-                    $file_query = ", file_path = '$file_path'";
+                    if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+                        // Get old image to delete it later
+                        $old_image_query = mysqli_query($koneksi, "SELECT file_path FROM galeri WHERE id = $id");
+                        $old_image_data = mysqli_fetch_assoc($old_image_query);
+                        
+                        $file_update = ", file_path = '$new_file'";
+                        
+                        // Delete old image if exists
+                        if ($old_image_data['file_path'] && file_exists($target_dir . $old_image_data['file_path'])) {
+                            unlink($target_dir . $old_image_data['file_path']);
+                        }
+                    }
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Format gambar tidak didukung! Gunakan JPG, PNG, atau GIF.';
                 }
             }
             
-            $query = "UPDATE galeri SET nama = '$nama', deskripsi = '$deskripsi' $file_query WHERE id = $id";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Foto berhasil diperbarui!";
-            } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+            if (empty($message_text)) {
+                $query = "UPDATE galeri SET nama = '$nama', deskripsi = '$deskripsi' $file_update WHERE id = $id";
+                
+                if (mysqli_query($koneksi, $query)) {
+                    $message_type = 'success';
+                    $message_text = 'Foto berhasil diperbarui!';
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Error: ' . mysqli_error($koneksi);
+                }
             }
+            
         } elseif ($_POST['action'] == 'delete') {
             $id = (int)$_POST['id'];
             
@@ -96,11 +121,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($image_data['file_path'] && file_exists("../upload/gambar_galeri/" . $image_data['file_path'])) {
                     unlink("../upload/gambar_galeri/" . $image_data['file_path']);
                 }
-                $success_message = "Foto berhasil dihapus dari galeri!";
+                $message_type = 'success';
+                $message_text = 'Foto berhasil dihapus dari galeri!';
             } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+                $message_type = 'error';
+                $message_text = 'Error: ' . mysqli_error($koneksi);
             }
         }
+        
+        // Redirect to prevent form resubmission
+        $redirect_url .= '?msg=' . urlencode($message_text) . '&type=' . $message_type;
+        header("Location: " . $redirect_url);
+        exit();
+    }
+}
+
+// Handle GET messages from redirect
+$success_message = '';
+$error_message = '';
+
+if (isset($_GET['msg']) && isset($_GET['type'])) {
+    if ($_GET['type'] == 'success') {
+        $success_message = htmlspecialchars($_GET['msg']);
+    } else {
+        $error_message = htmlspecialchars($_GET['msg']);
     }
 }
 
@@ -318,7 +362,7 @@ $galeri_query = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY tanggal_po
         </div>
 
         <!-- Alert Messages -->
-        <?php if (isset($success_message)): ?>
+        <?php if (!empty($success_message)): ?>
         <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg animate-fade-in">
             <div class="flex items-center">
                 <i class="fas fa-check-circle mr-2"></i>
@@ -327,7 +371,7 @@ $galeri_query = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY tanggal_po
         </div>
         <?php endif; ?>
 
-        <?php if (isset($error_message)): ?>
+        <?php if (!empty($error_message)): ?>
         <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg animate-fade-in">
             <div class="flex items-center">
                 <i class="fas fa-exclamation-circle mr-2"></i>

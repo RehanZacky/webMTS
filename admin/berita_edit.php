@@ -2,42 +2,12 @@
 include 'auth.php';
 include '../koneksi.php';
 
-// Hapus berita
-if (isset($_GET['hapus'])) {
-    $id = intval($_GET['hapus']);
-    $cek = mysqli_query($koneksi, "SELECT gambar_utama FROM berita WHERE id = $id");
-    $row = mysqli_fetch_assoc($cek);
-    if ($row && file_exists("../upload/gambar_berita/" . $row['gambar_utama'])) {
-        unlink("../upload/gambar_berita/" . $row['gambar_utama']);
-    }
-    mysqli_query($koneksi, "DELETE FROM berita WHERE id = $id");
-    header("Location: berita_edit.php");
-    exit;
-}
-
-// Tambah berita
-if (isset($_POST['tambah'])) {
-    $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
-    $isi = mysqli_real_escape_string($koneksi, $_POST['isi']);
-    $penulis = mysqli_real_escape_string($koneksi, $_POST['penulis']);
-    $video_youtube = mysqli_real_escape_string($koneksi, $_POST['video_youtube']);
-    $tanggal = date("Y-m-d");
-
-    $gambar_utama = "";
-    if ($_FILES['gambar']['name']) {
-        $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
-        $gambar_utama = "berita_" . time() . "." . $ext;
-        move_uploaded_file($_FILES['gambar']['tmp_name'], "../upload/gambar_berita/$gambar_utama");
-    }
-
-    mysqli_query($koneksi, "INSERT INTO berita (judul, isi, penulis, tanggal_post, gambar_utama, video_youtube)
-        VALUES ('$judul', '$isi', '$penulis', '$tanggal', '$gambar_utama', '$video_youtube')");
-    header("Location: berita_edit.php");
-    exit;
-}
-
-// Handle form submission
+// Handle form submission with POST-REDIRECT-GET pattern
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $redirect_url = $_SERVER['PHP_SELF'];
+    $message_type = '';
+    $message_text = '';
+    
     if (isset($_POST['action'])) {
         if ($_POST['action'] == 'add') {
             $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
@@ -48,47 +18,98 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $gambar_utama = '';
             if (isset($_FILES['gambar_utama']) && $_FILES['gambar_utama']['error'] == 0) {
                 $target_dir = "../upload/gambar_berita/";
+                
+                // Create upload directory if it doesn't exist
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0755, true);
+                }
+                
                 $file_extension = strtolower(pathinfo($_FILES["gambar_utama"]["name"], PATHINFO_EXTENSION));
-                $gambar_utama = uniqid() . '.' . $file_extension;
+                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                
+                if (in_array($file_extension, $allowed_extensions)) {
+                    $gambar_utama = "berita_" . uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $gambar_utama;
                 
-                if (move_uploaded_file($_FILES["gambar_utama"]["tmp_name"], $target_file)) {
-                    // File uploaded successfully
-                } else {
+                    if (!move_uploaded_file($_FILES["gambar_utama"]["tmp_name"], $target_file)) {
                     $gambar_utama = '';
+                        $message_type = 'error';
+                        $message_text = 'Gagal mengupload gambar!';
+                    }
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Format gambar tidak didukung! Gunakan JPG, PNG, atau GIF.';
                 }
             }
             
-            $query = "INSERT INTO berita (judul, isi, penulis, gambar_utama, tanggal_post) VALUES ('$judul', '$isi', '$penulis',  '$gambar_utama', '$tanggal_post')";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Berita berhasil ditambahkan!";
-            } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+            if (empty($message_text)) {
+                $stmt = mysqli_prepare($koneksi, "INSERT INTO berita (judul, isi, penulis, gambar_utama, tanggal_post) VALUES (?, ?, ?, ?, ?)");
+                mysqli_stmt_bind_param($stmt, "sssss", $judul, $isi, $penulis, $gambar_utama, $tanggal_post);
+                
+                if (mysqli_stmt_execute($stmt)) {
+                    $message_type = 'success';
+                    $message_text = 'Berita berhasil ditambahkan!';
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Error: ' . mysqli_error($koneksi);
+                }
+                mysqli_stmt_close($stmt);
             }
+            
         } elseif ($_POST['action'] == 'edit') {
             $id = (int)$_POST['id'];
             $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
             $isi = mysqli_real_escape_string($koneksi, $_POST['isi']);
             $penulis = mysqli_real_escape_string($koneksi, $_POST['penulis']);
             
-            $gambar_query = "";
+            $gambar_update = '';
+            $new_gambar = '';
+            
             if (isset($_FILES['gambar_utama']) && $_FILES['gambar_utama']['error'] == 0) {
                 $target_dir = "../upload/gambar_berita/";
+                
+                // Create upload directory if it doesn't exist
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0755, true);
+                }
+                
                 $file_extension = strtolower(pathinfo($_FILES["gambar_utama"]["name"], PATHINFO_EXTENSION));
-                $gambar_utama = uniqid() . '.' . $file_extension;
+                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                
+                if (in_array($file_extension, $allowed_extensions)) {
+                    $new_gambar = "berita_" . uniqid() . '.' . $file_extension;
                 $target_file = $target_dir . $gambar_utama;
                 
-                if (move_uploaded_file($_FILES["gambar_utama"]["tmp_name"], $target_file)) {
-                    $gambar_query = ", gambar_utama = '$gambar_utama'";
+                    if (move_uploaded_file($_FILES["gambar_utama"]["tmp_name"], $target_file)) {
+                        // Get old image to delete it later
+                        $old_image_query = mysqli_query($koneksi, "SELECT gambar_utama FROM berita WHERE id = $id");
+                        $old_image_data = mysqli_fetch_assoc($old_image_query);
+                        
+                        $gambar_update = ", gambar_utama = '$new_gambar'";
+                        
+                        // Delete old image if exists
+                        if ($old_image_data['gambar_utama'] && file_exists($target_dir . $old_image_data['gambar_utama'])) {
+                            unlink($target_dir . $old_image_data['gambar_utama']);
+                        }
+                    }
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Format gambar tidak didukung! Gunakan JPG, PNG, atau GIF.';
                 }
             }
             
-            $query = "UPDATE berita SET judul = '$judul', isi = '$isi', penulis = '$penulis' $gambar_query WHERE id = $id";
-            if (mysqli_query($koneksi, $query)) {
-                $success_message = "Berita berhasil diperbarui!";
-            } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+            if (empty($message_text)) {
+                $query = "UPDATE berita SET judul = '$judul', isi = '$isi', penulis = '$penulis' $gambar_update WHERE id = $id";
+                
+                if (mysqli_query($koneksi, $query)) {
+                    $message_type = 'success';
+                    $message_text = 'Berita berhasil diperbarui!';
+                } else {
+                    $message_type = 'error';
+                    $message_text = 'Error: ' . mysqli_error($koneksi);
+                }
             }
+            
         } elseif ($_POST['action'] == 'delete') {
             $id = (int)$_POST['id'];
             
@@ -102,11 +123,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($image_data['gambar_utama'] && file_exists("../upload/gambar_berita/" . $image_data['gambar_utama'])) {
                     unlink("../upload/gambar_berita/" . $image_data['gambar_utama']);
                 }
-                $success_message = "Berita berhasil dihapus!";
+                $message_type = 'success';
+                $message_text = 'Berita berhasil dihapus!';
             } else {
-                $error_message = "Error: " . mysqli_error($koneksi);
+                $message_type = 'error';
+                $message_text = 'Error: ' . mysqli_error($koneksi);
             }
         }
+        
+        // Redirect to prevent form resubmission
+        $redirect_url .= '?msg=' . urlencode($message_text) . '&type=' . $message_type;
+        header("Location: " . $redirect_url);
+        exit();
+    }
+}
+
+// Handle GET messages from redirect
+$success_message = '';
+$error_message = '';
+
+if (isset($_GET['msg']) && isset($_GET['type'])) {
+    if ($_GET['type'] == 'success') {
+        $success_message = htmlspecialchars($_GET['msg']);
+    } else {
+        $error_message = htmlspecialchars($_GET['msg']);
     }
 }
 
@@ -299,7 +339,7 @@ $berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_po
         </div>
 
         <!-- Alert Messages -->
-        <?php if (isset($success_message)): ?>
+        <?php if (!empty($success_message)): ?>
         <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg animate-fade-in">
             <div class="flex items-center">
                 <i class="fas fa-check-circle mr-2"></i>
@@ -308,7 +348,7 @@ $berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_po
         </div>
         <?php endif; ?>
 
-        <?php if (isset($error_message)): ?>
+        <?php if (!empty($error_message)): ?>
         <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg animate-fade-in">
             <div class="flex items-center">
                 <i class="fas fa-exclamation-circle mr-2"></i>
