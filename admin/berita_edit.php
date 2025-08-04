@@ -365,58 +365,101 @@ $berita_query = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY tanggal_po
             </button>
         </div>
 
-<!-- Berita Grid -->
-        <div class="grid grid-cols-1 grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <?php if (mysqli_num_rows($berita_query) > 0): ?>
-                <?php while ($berita = mysqli_fetch_assoc($berita_query)): ?>
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                    <div class="relative">
-                        <?php if (!empty($berita['gambar_utama']) && file_exists("../upload/gambar_berita/" . $berita['gambar_utama'])): ?>
-                            <img src="../upload/gambar_berita/<?= htmlspecialchars($berita['gambar_utama']) ?>" 
-                                 alt="<?= htmlspecialchars($berita['judul']) ?>" 
-                                 class="w-full h-48 object-cover">
-                        <?php else: ?>
-                        <div class="w-full h-48 bg-green-100 flex items-center justify-center">
-                            <i class="fas fa-trophy text-green-600 text-4xl"></i>
-                        </div>
-                        <?php endif; ?>
+<!-- Grid Berita - Mobile Optimized: Horizontal layout untuk mobile, vertical untuk desktop -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+    <?php if (mysqli_num_rows($berita_query) > 0): ?>
+        <?php while ($berita = mysqli_fetch_assoc($berita_query)): ?>
+        <div class="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden card-hover">
+            <!-- Mobile: Horizontal layout, Desktop: Vertical layout -->
+            <div class="flex sm:block">
+                <!-- Image Section -->
+                <div class="relative flex-shrink-0 w-28 h-20 sm:w-full sm:h-48">
+                    <?php if (!empty($berita['gambar_utama']) && file_exists("../upload/gambar_berita/" . $berita['gambar_utama'])): ?>
+                        <a href="../berita_detail.php?id=<?= $berita['id'] ?>">
+                        <img src="../upload/gambar_berita/<?= htmlspecialchars($berita['gambar_utama']) ?>" 
+                            alt="<?= htmlspecialchars($berita['judul']) ?>" 
+                            class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition">
+                        </a>
+                    <?php else: ?>
+                    <div class="w-full h-full bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-image text-green-600 text-lg sm:text-4xl"></i>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Content Section -->
+                <div class="flex-1 p-3 sm:p-6">
+                    <!-- Badges Row -->
+                    <div class="flex items-center justify-between mb-1 sm:mb-2 gap-1">
+                        <!-- Title -->
+                        <h3 class="text-sm sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 line-clamp-1 sm:line-clamp-2">
+                        <?= htmlspecialchars($berita['judul']) ?>
+                        </h3>
+                        <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-emerald-100 text-emerald-800 hidden sm:inline-flex">
+                            <?= date('d M Y', strtotime($berita['tanggal_post'])) ?>
+                        </span>
+                        <!-- Mobile: Show shorter date -->
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800 sm:hidden">
+                            <?= date('M Y', strtotime($berita['tanggal_post'])) ?>
+                        </span>
                     </div>
                     
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                                <?= date('d M Y', strtotime($berita['tanggal_post'])) ?>
-                            </span>
-                        </div>
+                    <!-- Description - Shortened for both mobile and desktop -->
+                    <?php if (!empty($berita['isi'])): ?>
+                        <?php
+                        // Function to create excerpt from text
+                        $excerpt = strip_tags($berita['isi']);
+                        $excerpt = str_replace(array("\r", "\n"), ' ', $excerpt);
+                        $excerpt = preg_replace('/\s+/', ' ', $excerpt);
+                        $excerpt = trim($excerpt);
                         
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"><?= htmlspecialchars($berita['judul']) ?></h3>
-                        
-                        <p class="text-sm text-gray-600 mb-4 line-clamp-3"><?= nl2br(htmlspecialchars($berita['isi'])) ?></p>
-                        
-                        <div class="flex space-x-2">
-                            <button onclick="editBerita(<?= htmlspecialchars(json_encode($berita), ENT_QUOTES) ?>)" 
-                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                <i class="fas fa-edit mr-1"></i> Edit
-                            </button>
-                            <button onclick="deleteBerita(<?= $berita['id'] ?>, '<?= htmlspecialchars($berita['judul'], ENT_QUOTES) ?>')" 
-                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                <i class="fas fa-trash mr-1"></i> Hapus
-                            </button>
-                        </div>
+                        // Different lengths for mobile and desktop
+                        $mobile_length = 40;
+                        $desktop_length = 100;
+                        ?>
+                        <!-- Desktop version -->
+                        <p class="text-sm text-gray-600 mb-2 sm:mb-4 hidden sm:block">
+                            <?= htmlspecialchars(substr($excerpt, 0, $desktop_length)) ?><?= strlen($excerpt) > $desktop_length ? '...' : '' ?>
+                        </p>
+                        <!-- Mobile version -->
+                        <p class="text-xs text-gray-500 mb-2 sm:hidden">
+                            <?= htmlspecialchars(substr($excerpt, 0, $mobile_length)) ?><?= strlen($excerpt) > $mobile_length ? '...' : '' ?>
+                        </p>
+                    <?php else: ?>
+                        <!-- If no content, just show date on mobile -->
+                        <p class="text-xs text-gray-500 mb-2 sm:hidden">
+                            <?= date('d M Y', strtotime($berita['tanggal_post'])) ?>
+                        </p>
+                    <?php endif; ?>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-1 sm:space-x-2">
+                        <button onclick="editBerita(<?= htmlspecialchars(json_encode($berita), ENT_QUOTES) ?>)" 
+                                class="flex-1 bg-green-600 hover:bg-green-700 text-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors">
+                            <i class="fas fa-edit mr-1"></i> 
+                            <span class="hidden sm:inline">Edit</span>
+                        </button>
+                        <button onclick="deleteBerita(<?= $berita['id'] ?>, '<?= htmlspecialchars($berita['judul'], ENT_QUOTES) ?>')" 
+                                class="flex-1 bg-red-600 hover:bg-red-700 text-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors">
+                            <i class="fas fa-trash mr-1"></i> 
+                            <span class="hidden sm:inline">Hapus</span>
+                        </button>
                     </div>
                 </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div class="col-span-full text-center py-16">
-                    <i class="fas fa-trophy text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-xl font-medium text-gray-900 mb-2">Belum ada berita</h3>
-                    <p class="text-gray-600 mb-4">Mulai dengan menambahkan berita pertama sekolah Anda</p>
-                    <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors">
-                        <i class="fas fa-plus mr-2"></i>Tambah Berita
-                    </button>
-                </div>
-            <?php endif; ?>
+            </div>
         </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <div class="col-span-full text-center py-8 sm:py-16">
+            <i class="fas fa-newspaper text-gray-300 text-4xl sm:text-6xl mb-4"></i>
+            <h3 class="text-lg sm:text-xl font-medium text-gray-900 mb-2">Belum ada berita</h3>
+            <p class="text-gray-600 mb-4 text-sm sm:text-base">Mulai dengan menambahkan berita pertama sekolah Anda</p>
+            <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors text-sm sm:text-base">
+                <i class="fas fa-plus mr-2"></i>Tambah Berita
+            </button>
+        </div>
+    <?php endif; ?>
+</div>
 
 <!-- Pagination -->
 <?php if ($total_pages > 1): ?>

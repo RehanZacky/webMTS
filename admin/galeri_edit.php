@@ -170,79 +170,144 @@ $galeri_query = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY tanggal_po
     <title>Kelola Galeri - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-        
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+<style>
+/* Galeri Mobile Horizontal Layout CSS - Tambahkan atau ganti di bagian <style> */
 
-        .modal {
-            transition: all 0.3s ease;
-        }
+/* Base card hover effects */
+.card-hover {
+    transition: all 0.3s ease;
+}
 
-        .modal.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
 
-        .modal:not(.hidden) {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .line-clamp-3 {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .upload-area {
-            transition: all 0.3s ease;
-            border: 2px dashed #d1d5db;
-        }
-
-        .upload-area:hover {
-            border-color: #10b981;
-            background-color: #f0fdf4;
-        }
-
-        .upload-area.dragover {
-            border-color: #10b981;
-            background-color: #f0fdf4;
-            transform: scale(1.02);
-        }
-
-        /* Desktop: 3 kolom × 2 baris, rasio 16:9 */
-@media (min-width: 768px) {
-    #gallery-container {
-        grid-template-columns: repeat(3, 1fr);
+/* Desktop hover effects */
+@media (min-width: 1024px) {
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
+}
 
-    #gallery-container img {
+/* Line clamp utilities */
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Mobile specific optimizations */
+@media (max-width: 640px) {
+    /* Ensure consistent card height */
+    .card-hover > div {
+        min-height: 5rem; /* 80px - consistent dengan gambar */
+    }
+    
+    /* Image container optimizations */
+    .card-hover img {
+        transition: transform 0.2s ease;
+    }
+    
+    .card-hover:hover img {
+        transform: scale(1.05);
+    }
+    
+    /* Button optimizations */
+    .card-hover button {
+        font-weight: 500;
+    }
+    
+    /* Compact spacing */
+    .grid {
+        gap: 0.75rem; /* Lebih compact untuk mobile */
+    }
+}
+
+/* Tablet and desktop optimizations */
+@media (min-width: 641px) {
+    /* Standard desktop layout dengan aspect ratio */
+    .card-hover .sm\\:h-48 {
         aspect-ratio: 16 / 9;
-        object-fit: cover;
-        width: 100%;
         height: auto;
     }
+    
+    .card-hover img {
+        object-position: center;
+    }
+}
+
+/* Image modal optimizations */
+.image-modal-overlay {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* Badge positioning */
+.card-hover .absolute {
+    z-index: 10;
+}
+
+/* Custom font sizes for ultra-small screens */
+@media (max-width: 360px) {
+    .text-xs {
+        font-size: 0.65rem; /* 10.4px */
+    }
+    
+    .text-sm {
+        font-size: 0.75rem; /* 12px */
+    }
+    
+    /* Smaller padding for very small screens */
+    .card-hover .p-3 {
+        padding: 0.5rem; /* 8px */
+    }
+    
+    /* Tighter button spacing */
+    .card-hover .space-x-1 > * + * {
+        margin-left: 0.25rem; /* 4px */
+    }
+}
+
+/* Loading state untuk images */
+.card-hover img {
+    background-color: #f3f4f6;
+    background-image: linear-gradient(45deg, #f9fafb 25%, transparent 25%), 
+                      linear-gradient(-45deg, #f9fafb 25%, transparent 25%), 
+                      linear-gradient(45deg, transparent 75%, #f9fafb 75%), 
+                      linear-gradient(-45deg, transparent 75%, #f9fafb 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+/* Accessibility improvements */
+.card-hover:focus-within {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+}
+
+.card-hover button:focus {
+    outline: 2px solid #10b981;
+    outline-offset: 1px;
 }
     </style>
 </head>
@@ -388,58 +453,89 @@ $galeri_query = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY tanggal_po
             </button>
         </div>
 
-       <!-- Galeri Grid -->
-        <div class="grid grid-cols-1 grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <?php if (mysqli_num_rows($galeri_query) > 0): ?>
-                <?php while ($galeri = mysqli_fetch_assoc($galeri_query)): ?>
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                    <div class="relative">
-                        <?php if (!empty($galeri['file_path']) && file_exists("../upload/gambar_galeri/" . $galeri['file_path'])): ?>
-                            <img src="../upload/gambar_galeri/<?= htmlspecialchars($galeri['file_path']) ?>" 
-                                 alt="<?= htmlspecialchars($galeri['nama']) ?>" 
-                                 class="w-full h-48 object-cover">
-                        <?php else: ?>
-                        <div class="w-full h-48 bg-green-100 flex items-center justify-center">
-                            <i class="fas fa-trophy text-green-600 text-4xl"></i>
-                        </div>
-                        <?php endif; ?>
+       <!-- Galeri Grid - Mobile Optimized: Horizontal layout untuk mobile, vertical untuk desktop -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+    <?php if (mysqli_num_rows($galeri_query) > 0): ?>
+        <?php while ($galeri = mysqli_fetch_assoc($galeri_query)): ?>
+        <div class="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden card-hover">
+            <!-- Mobile: Horizontal layout, Desktop: Vertical layout -->
+            <div class="flex sm:block">
+                <!-- Image Section -->
+                <div class="relative flex-shrink-0 w-28 h-20 sm:w-full sm:h-48">
+                    <?php if (!empty($galeri['file_path']) && file_exists("../upload/gambar_galeri/" . $galeri['file_path'])): ?>
+                        <img src="../upload/gambar_galeri/<?= htmlspecialchars($galeri['file_path']) ?>" 
+                             alt="<?= htmlspecialchars($galeri['nama']) ?>" 
+                             class="w-full h-full object-cover cursor-pointer"
+                             onclick="viewImage('../upload/gambar_galeri/<?= htmlspecialchars($galeri['file_path']) ?>', '<?= htmlspecialchars($galeri['nama'], ENT_QUOTES) ?>')">
+                    <?php else: ?>
+                    <div class="w-full h-full bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-image text-green-600 text-lg sm:text-4xl"></i>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Content Section -->
+                <div class="flex-1 p-3 sm:p-6">
+                    <!-- Badges Row -->
+                    <div class="flex items-center justify-between mb-1 sm:mb-2 gap-1">
+                        <!-- Title -->
+                        <h3 class="text-sm sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 line-clamp-1 sm:line-clamp-2">
+                        <?= htmlspecialchars($galeri['nama']) ?>
+                        </h3>
+                        <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-emerald-100 text-emerald-800 hidden sm:inline-flex">
+                            <?= date('d M Y', strtotime($galeri['tanggal_post'])) ?>
+                        </span>
+                        <!-- Mobile: Show shorter date -->
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800 sm:hidden">
+                            <?= date('M Y', strtotime($galeri['tanggal_post'])) ?>
+                        </span>
                     </div>
                     
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                                <?= date('d M Y', strtotime($galeri['tanggal_post'])) ?>
-                            </span>
-                        </div>
-                        
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"><?= htmlspecialchars($galeri['nama']) ?></h3>
-                        
-                        <p class="text-sm text-gray-600 mb-4 line-clamp-3"><?= nl2br(htmlspecialchars($galeri['deskripsi'])) ?></p>
-                        
-                        <div class="flex space-x-2">
-                            <button onclick="editGaleri(<?= htmlspecialchars(json_encode($galeri), ENT_QUOTES) ?>)" 
-                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                <i class="fas fa-edit mr-1"></i> Edit
-                            </button>
-                            <button onclick="deleteGaleri(<?= $galeri['id'] ?>, '<?= htmlspecialchars($galeri['nama'], ENT_QUOTES) ?>')" 
-                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                <i class="fas fa-trash mr-1"></i> Hapus
-                            </button>
-                        </div>
+
+                    
+                    <!-- Description - Hidden on mobile for space, visible on desktop -->
+                    <?php if (!empty($galeri['deskripsi'])): ?>
+                    <p class="text-sm text-gray-600 mb-2 sm:mb-4 line-clamp-1 sm:line-clamp-3 hidden sm:block">
+                        <?= nl2br(htmlspecialchars($galeri['deskripsi'])) ?>
+                    </p>
+                    <?php endif; ?>
+                    
+                    <!-- Mobile: Show short description or date -->
+                    <p class="text-xs text-gray-500 mb-2 line-clamp-1 sm:hidden">
+                        <?= date('d M Y', strtotime($galeri['tanggal_post'])) ?>
+                        <?php if (!empty($galeri['deskripsi'])): ?>
+                        • <?= htmlspecialchars(substr($galeri['deskripsi'], 0, 30)) ?><?= strlen($galeri['deskripsi']) > 30 ? '...' : '' ?>
+                        <?php endif; ?>
+                    </p>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-1 sm:space-x-2">
+                        <button onclick="editGaleri(<?= htmlspecialchars(json_encode($galeri), ENT_QUOTES) ?>)" 
+                                class="flex-1 bg-green-600 hover:bg-green-700 text-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors">
+                            <i class="fas fa-edit mr-1"></i> 
+                            <span class="hidden sm:inline">Edit</span>
+                        </button>
+                        <button onclick="deleteGaleri(<?= $galeri['id'] ?>, '<?= htmlspecialchars($galeri['nama'], ENT_QUOTES) ?>')" 
+                                class="flex-1 bg-red-600 hover:bg-red-700 text-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors">
+                            <i class="fas fa-trash mr-1"></i> 
+                            <span class="hidden sm:inline">Hapus</span>
+                        </button>
                     </div>
                 </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div class="col-span-full text-center py-16">
-                    <i class="fas fa-trophy text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-xl font-medium text-gray-900 mb-2">Belum ada gambaar</h3>
-                    <p class="text-gray-600 mb-4">Mulai dengan menambahkan gambar pertama sekolah Anda</p>
-                    <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors">
-                        <i class="fas fa-plus mr-2"></i>Tambah Gambar
-                    </button>
-                </div>
-            <?php endif; ?>
+            </div>
         </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <div class="col-span-full text-center py-8 sm:py-16">
+            <i class="fas fa-images text-gray-300 text-4xl sm:text-6xl mb-4"></i>
+            <h3 class="text-lg sm:text-xl font-medium text-gray-900 mb-2">Belum ada gambar</h3>
+            <p class="text-gray-600 mb-4 text-sm sm:text-base">Mulai dengan menambahkan gambar pertama sekolah Anda</p>
+            <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors text-sm sm:text-base">
+                <i class="fas fa-plus mr-2"></i>Tambah Gambar
+            </button>
+        </div>
+    <?php endif; ?>
+</div>
 
 <!-- Pagination -->
 <?php if ($total_pages > 1): ?>

@@ -425,10 +425,6 @@ $username = $_SESSION['username'];
                         <i class="fas fa-trophy text-green-600 text-lg sm:text-4xl"></i>
                     </div>
                     <?php endif; ?>
-                    <!-- Year badge - positioned for mobile -->
-                    <div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-green-600 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-[10px] sm:text-xs">
-                        <?= htmlspecialchars($prestasi['tahun']) ?>
-                    </div>
                 </div>
                 
                 <!-- Content Section -->
