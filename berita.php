@@ -263,8 +263,7 @@ $berita_result = mysqli_query($koneksi, $query_berita);
             </div>
         </div>
     </div>
-</footer>       
-
+</footer> 
 <script>
     document.getElementById("menu-toggle").addEventListener("click", function () {
         const menu = document.getElementById("mobile-menu");
