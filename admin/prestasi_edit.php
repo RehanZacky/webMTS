@@ -178,6 +178,42 @@ $username = $_SESSION['username'];
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+            /* Additional CSS for mobile optimization */
+    @media (max-width: 640px) {
+        .line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    }
+
+    /* Existing line-clamp-3 for larger screens */
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Card hover effect adjustment for mobile */
+    @media (max-width: 640px) {
+        .card-hover:hover {
+            transform: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    }
+
         .gradient-bg {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
@@ -371,71 +407,92 @@ $username = $_SESSION['username'];
             </button>
         </div>
 
-<!-- Prestasi Grid - Responsif 2x3 untuk desktop, 2x untuk tablet, 1x untuk mobile -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <?php if (mysqli_num_rows($prestasi_query) > 0): ?>
-                <?php while ($prestasi = mysqli_fetch_assoc($prestasi_query)): ?>
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                    <div class="relative">
-                        <?php if (!empty($prestasi['gambar']) && file_exists("../upload/gambar_prestasi/" . $prestasi['gambar'])): ?>
-                            <img src="../upload/gambar_prestasi/<?= htmlspecialchars($prestasi['gambar']) ?>" 
-                                 alt="<?= htmlspecialchars($prestasi['nama_prestasi']) ?>" 
-                                 class="w-full h-48 object-cover">
-                        <?php else: ?>
-                        <div class="w-full h-48 bg-green-100 flex items-center justify-center">
-                            <i class="fas fa-trophy text-green-600 text-4xl"></i>
-                        </div>
-                        <?php endif; ?>
-                        <div class="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
-                            <?= htmlspecialchars($prestasi['tahun']) ?>
-                        </div>
+<!-- Prestasi Grid - Mobile Optimized: 2 baris untuk mobile, persegi panjang layout -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+    <?php if (mysqli_num_rows($prestasi_query) > 0): ?>
+        <?php while ($prestasi = mysqli_fetch_assoc($prestasi_query)): ?>
+        <div class="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden card-hover">
+            <!-- Mobile: Horizontal layout, Desktop: Vertical layout -->
+            <div class="flex sm:block">
+                <!-- Image Section -->
+                <div class="relative flex-shrink-0 w-28 h-20 sm:w-full sm:h-48">
+                    <?php if (!empty($prestasi['gambar']) && file_exists("../upload/gambar_prestasi/" . $prestasi['gambar'])): ?>
+                        <img src="../upload/gambar_prestasi/<?= htmlspecialchars($prestasi['gambar']) ?>" 
+                             alt="<?= htmlspecialchars($prestasi['nama_prestasi']) ?>" 
+                             class="w-full h-full object-cover">
+                    <?php else: ?>
+                    <div class="w-full h-full bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-trophy text-green-600 text-lg sm:text-4xl"></i>
+                    </div>
+                    <?php endif; ?>
+                    <!-- Year badge - positioned for mobile -->
+                    <div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-green-600 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-[10px] sm:text-xs">
+                        <?= htmlspecialchars($prestasi['tahun']) ?>
+                    </div>
+                </div>
+                
+                <!-- Content Section -->
+                <div class="flex-1 p-3 sm:p-6">
+                    <!-- Badges Row -->
+                    <div class="flex items-center justify-between mb-1 sm:mb-2 gap-1">
+                        <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-green-100 text-green-800 truncate">
+                            <?= htmlspecialchars($prestasi['tingkat']) ?>
+                        </span>
+                        <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-emerald-100 text-emerald-800 hidden sm:inline-flex">
+                            <?= date('d M Y', strtotime($prestasi['tanggal_post'])) ?>
+                        </span>
+                        <!-- Mobile: Show shorter date -->
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800 sm:hidden">
+                            <?= date('M Y', strtotime($prestasi['tanggal_post'])) ?>
+                        </span>
                     </div>
                     
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                <?= htmlspecialchars($prestasi['tingkat']) ?>
-                            </span>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                                <?= date('d M Y', strtotime($prestasi['tanggal_post'])) ?>
-                            </span>
-                        </div>
-                        
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"><?= htmlspecialchars($prestasi['nama_prestasi']) ?></h3>
-                        
-                        <?php if (!empty($prestasi['penyelenggara'])): ?>
-                        <p class="text-sm text-green-600 mb-2">
-                            <i class="fas fa-building mr-1"></i>
-                            <?= htmlspecialchars($prestasi['penyelenggara']) ?>
-                        </p>
-                        <?php endif; ?>
-                        
-                        <p class="text-sm text-gray-600 mb-4 line-clamp-3"><?= nl2br(htmlspecialchars($prestasi['deskripsi'])) ?></p>
-                        
-                        <div class="flex space-x-2">
-                            <button onclick="editPrestasi(<?= htmlspecialchars(json_encode($prestasi), ENT_QUOTES) ?>)" 
-                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                <i class="fas fa-edit mr-1"></i> Edit
-                            </button>
-                            <button onclick="deletePrestasi(<?= $prestasi['id'] ?>, '<?= htmlspecialchars($prestasi['nama_prestasi'], ENT_QUOTES) ?>')" 
-                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                <i class="fas fa-trash mr-1"></i> Hapus
-                            </button>
-                        </div>
+                    <!-- Title -->
+                    <h3 class="text-sm sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 line-clamp-1 sm:line-clamp-2">
+                        <?= htmlspecialchars($prestasi['nama_prestasi']) ?>
+                    </h3>
+                    
+                    <!-- Organizer -->
+                    <?php if (!empty($prestasi['penyelenggara'])): ?>
+                    <p class="text-xs sm:text-sm text-green-600 mb-1 sm:mb-2 line-clamp-1">
+                        <i class="fas fa-building mr-1"></i>
+                        <?= htmlspecialchars($prestasi['penyelenggara']) ?>
+                    </p>
+                    <?php endif; ?>
+                    
+                    <!-- Description - Hidden on mobile for space -->
+                    <p class="text-sm text-gray-600 mb-2 sm:mb-4 line-clamp-1 sm:line-clamp-3 hidden sm:block">
+                        <?= nl2br(htmlspecialchars($prestasi['deskripsi'])) ?>
+                    </p>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-1 sm:space-x-2">
+                        <button onclick="editPrestasi(<?= htmlspecialchars(json_encode($prestasi), ENT_QUOTES) ?>)" 
+                                class="flex-1 bg-green-600 hover:bg-green-700 text-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors">
+                            <i class="fas fa-edit mr-1"></i> 
+                            <span class="hidden sm:inline">Edit</span>
+                        </button>
+                        <button onclick="deletePrestasi(<?= $prestasi['id'] ?>, '<?= htmlspecialchars($prestasi['nama_prestasi'], ENT_QUOTES) ?>')" 
+                                class="flex-1 bg-red-600 hover:bg-red-700 text-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors">
+                            <i class="fas fa-trash mr-1"></i> 
+                            <span class="hidden sm:inline">Hapus</span>
+                        </button>
                     </div>
                 </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div class="col-span-full text-center py-16">
-                    <i class="fas fa-trophy text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-xl font-medium text-gray-900 mb-2">Belum ada prestasi</h3>
-                    <p class="text-gray-600 mb-4">Mulai dengan menambahkan prestasi pertama sekolah Anda</p>
-                    <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors">
-                        <i class="fas fa-plus mr-2"></i>Tambah Prestasi
-                    </button>
-                </div>
-            <?php endif; ?>
+            </div>
         </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <div class="col-span-full text-center py-8 sm:py-16">
+            <i class="fas fa-trophy text-gray-300 text-4xl sm:text-6xl mb-4"></i>
+            <h3 class="text-lg sm:text-xl font-medium text-gray-900 mb-2">Belum ada prestasi</h3>
+            <p class="text-gray-600 mb-4 text-sm sm:text-base">Mulai dengan menambahkan prestasi pertama sekolah Anda</p>
+            <button onclick="openModal('addModal')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors text-sm sm:text-base">
+                <i class="fas fa-plus mr-2"></i>Tambah Prestasi
+            </button>
+        </div>
+    <?php endif; ?>
+</div>
 
 <!-- Pagination -->
 <?php if ($total_pages > 1): ?>
