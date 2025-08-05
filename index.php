@@ -26,7 +26,15 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roudlotul Quran</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fancybox CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
     <style>
+        /* Image modal optimizations */
+        .image-modal-overlay {
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
         html {
             scroll-behavior: smooth;
         }
@@ -284,8 +292,12 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                         while ($foto = mysqli_fetch_assoc($galeri_query)) :
                     ?>
                     <div class="rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition-transform duration-300">
-                        <a href="<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>">
-                             <img src="upload/gambar_galeri/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-cover aspect-square">
+                        <a href="upload/gambar_galeri/<?= htmlspecialchars($foto['file_path']) ?>" 
+                           data-fancybox="gallery-home" 
+                           data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>">
+                             <img src="upload/gambar_galeri/<?= htmlspecialchars($foto['file_path']) ?>" 
+                                  alt="<?= htmlspecialchars($foto['deskripsi']) ?>" 
+                                  class="w-full h-full object-cover aspect-square">
                         </a>
                     </div>
                     <?php
@@ -414,6 +426,21 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
             </div>
         </div>
     </div>
-</footer>      
+</footer>
+
+<!-- Fancybox JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+
+<script>
+  // Script untuk galeri foto Fancybox
+  Fancybox.bind("[data-fancybox]", {
+    // Optional configuration
+    Thumbs: {
+      autoStart: false,
+    },
+  });
+
+</script>
+
 </body>
 </html>

@@ -9,7 +9,6 @@ while ($row = mysqli_fetch_assoc($profil_query)) {
     $profil_data[$row['jenis']] = $row['isi'];
 }
 
-
 // --- LOGIKA PAGINASI ---
 $per_halaman = 6;
 $halaman_aktif = isset($_GET['halaman']) ? (int)$_GET['halaman'] : 1;
@@ -31,8 +30,15 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeri - Roudlotul Quran</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fancybox CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
     <style>
+        /* Image modal optimizations */
+        .image-modal-overlay {
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
         html { scroll-behavior: smooth; }
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-30px); }
@@ -94,9 +100,14 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
                 if ($galeri_query && mysqli_num_rows($galeri_query) > 0) :
                     while ($foto = mysqli_fetch_assoc($galeri_query)) :
                 ?>
-                <a href="upload/<?= htmlspecialchars($foto['file_path']) ?>" data-fancybox="gallery" data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>" class="group block rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
+                <a href="upload/gambar_galeri/<?= htmlspecialchars($foto['file_path']) ?>" 
+                   data-fancybox="gallery" 
+                   data-caption="<?= htmlspecialchars($foto['deskripsi']) ?>" 
+                   class="group block rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
                      <div class="aspect-video w-full overflow-hidden bg-gray-100">
-                        <img src="upload/gambar_galeri/<?= htmlspecialchars($foto['file_path']) ?>" alt="<?= htmlspecialchars($foto['deskripsi']) ?>" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110">
+                        <img src="upload/gambar_galeri/<?= htmlspecialchars($foto['file_path']) ?>" 
+                             alt="<?= htmlspecialchars($foto['deskripsi']) ?>" 
+                             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
                      </div>
                      <?php if (!empty($foto['deskripsi'])): ?>
                         <div class="p-3 bg-gray-50">
@@ -259,11 +270,17 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
     </div>
 </footer>   
 
+<!-- Fancybox JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+
 <script>
   // Script untuk galeri foto Fancybox
-  if (typeof Fancybox !== 'undefined') {
-    Fancybox.bind("[data-fancybox]", {});
-  }
+  Fancybox.bind("[data-fancybox]", {
+    // Optional configuration
+    Thumbs: {
+      autoStart: false,
+    },
+  });
 
   // Script untuk toggle menu mobile (hamburger menu)
   document.getElementById("menu-toggle").addEventListener("click", function () {
