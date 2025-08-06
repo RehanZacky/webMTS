@@ -257,14 +257,16 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                     if (mysqli_num_rows($artikel_query) > 0) :
                         while ($artikel = mysqli_fetch_assoc($artikel_query)) :
                     ?>
+                    <a href="berita_detail.php?id=<?= $artikel['id'] ?>" class="text-green-600 hover:text-green-800 font-bold">
                     <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
                         <img src="upload/gambar_berita/<?= htmlspecialchars($artikel['gambar_utama']) ?>" class="h-56 w-full object-cover" alt="Gambar Artikel">
                         <div class="p-6">
                             <h3 class="text-xl font-semibold mb-2 text-gray-800"><?= htmlspecialchars($artikel['judul']) ?></h3>
                             <p class="text-gray-500 text-sm mb-4">Diposting: <?= date('d F Y', strtotime($artikel['tanggal_post'])) ?></p>
-                            <a href="berita_detail.php?id=<?= $artikel['id'] ?>" class="text-green-600 hover:text-green-800 font-bold">Baca Selengkapnya →</a>
+                            Baca Selengkapnya →
                         </div>
                     </div>
+                    </a>
                     <?php
                         endwhile;
                     else:
