@@ -596,7 +596,7 @@ $galeri_query = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY tanggal_po
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">File Foto</label>
-                        <div class="upload-area rounded-lg p-6 text-center cursor-pointer" onclick="document.getElementById('fileInput').click()">
+                        <div class="upload-area rounded-lg p-6 text-center cursor-pointer md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" onclick="document.getElementById('fileInput').click()">
                             <div id="uploadContent">
                                 <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
                                 <p class="text-gray-600 font-medium">Klik untuk upload foto</p>

@@ -493,7 +493,7 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                     <p class="text-green-100 text-sm">
                         © <?= date('Y') ?> Pondok Pesantren Roudlotul Quran. 
                         <span class="text-white font-semibold">Semua hak dilindungi undang-undang.</span><br>
-                        <a href="" class="text-white font-semibold">Dibuat oleh Rehan, Ferdie, dan Nadhif.❤️</a>
+                        <a href="https://hiimistis.carrd.co/" class="text-white font-semibold">Dibuat oleh Rehan, Ferdie, dan Nadhif.❤️</a>
                     </p>
                 </div>
             </div>
