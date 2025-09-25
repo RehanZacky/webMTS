@@ -28,7 +28,8 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri - Roudlotul Quran</title>
+    <link rel="icon" href="upload/logo/Logo_MTS.png" type="image/png">
+    <title>Galeri - Madrasah Tsanawiyah Roudlotul Quran</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Fancybox CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
@@ -52,8 +53,8 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
 <header class="bg-green-700 sticky top-0 z-50 shadow-lg">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
-            <img src="upload/logo/STK-20250718-WA0016.png" alt="Roudlotul Quran" class="h-20 w-20">
-            <span class="text-xl font-bold text-white leading-tight">Pondok Pesantren <br> Roudlotul Quran</span>
+            <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="h-20 w-20">
+            <span class="text-xl font-bold text-white leading-tight">Madrasah Tsanawiyah <br> Roudlotul Quran</span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-8">
@@ -164,9 +165,9 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
             <div class="lg:col-span-2">
                 <div class="flex items-center mb-6">
-                    <img src="upload/logo/STK-20250718-WA0016.png" alt="Roudlotul Quran" class="h-16 w-16 mr-4 rounded-full border-2 border-white/20">
+                    <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="h-16 w-16 mr-4 rounded-full border-2 border-white/20">
                     <div>
-                        <h4 class="text-white text-xl font-bold">Pondok Pesantren</h4>
+                        <h4 class="text-white text-xl font-bold">Madrasah Tsanawiyah</h4>
                         <h4 class="text-green-200 text-lg font-semibold">Roudlotul Quran</h4>
                     </div>
                 </div>
@@ -247,7 +248,7 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
                         <div class="bg-white/10 p-2 rounded-lg mr-3 group-hover:bg-white/20 transition-colors duration-300">
                             <svg class="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         </div>
-                        <p class="text-green-100">info@roudlotulquran.ponpes.id</p>
+                        <p class="text-green-100">mtsroudlotulquranngampelsari@gmail.com</p>
                     </li>
                 </ul>
             </div>
@@ -257,7 +258,7 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="text-center md:text-left mb-4 md:mb-0">
                     <p class="text-green-100 text-sm">
-                        © <?= date('Y') ?> Pondok Pesantren Roudlotul Quran. 
+                        © <?= date('Y') ?> Madrasah Tsanawiyah Roudlotul Quran. 
                         <span class="text-white font-semibold">Semua hak dilindungi undang-undang.</span><br>
                         <a href="https://hiimistis.carrd.co/" class="text-white font-semibold">Dibuat oleh Rehan, Ferdie, dan Nadhif.❤️</a>
                     </p>
@@ -265,7 +266,7 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
             </div>
         </div>
     </div>
-</footer>   
+</footer>
 
 <!-- Fancybox JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
