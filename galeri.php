@@ -173,7 +173,7 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
                 </div>
 
                 <p class="text-green-100 leading-relaxed mb-6">
-                    <?= htmlspecialchars($profil_data['tag_line'] ?? 'Pondok Pesantren Roudlotul Quran berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin.') ?>
+                    <?= htmlspecialchars($profil_data['tag_line'] ?? 'Madrasah Tsanawiyah Roudlotul Quran berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin.') ?>
                 </p>
                 
                 <div class="flex space-x-4">
