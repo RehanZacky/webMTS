@@ -46,7 +46,7 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
             <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="h-20 w-20">
-            <span class="text-xl font-bold text-white leading-tight">Madrasah Tsanawiyah <br> Roudlotul Quran</span>
+            <span class="text-xl font-bold text-white leading-tight">Madrasah Tsanawiyah <br> Roudlotul Quran <br> </span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-8">
@@ -96,13 +96,13 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center h-full">
                 <!-- Content Area (Tengah-Kiri) -->
                 <div class="lg:col-span-8 text-center lg:text-left text-white">
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-                        Selamat Datang di<br>
-                        <span class="text-green-300">Pondok Pesantren</span><br>
+                    <h1 class="text-xl md:text-5xl lg:text-4xl font-extrabold leading-tight mb-6">
+                        Yayasan Roudlotul Qur'an Az Zuhri<br>
+                        <span class="text-green-300">Pon.Pes & MTs Tahfidh</span><br>
                         Roudlotul Quran
                     </h1>
                     
-                    <p class="mt-4 text-lg md:text-xl text-green-200 max-w-2xl lg:mx-0 mx-auto leading-relaxed">
+                    <p class="mt-3 text-lg md:text-xl text-green-200 max-w-2xl lg:mx-0 mx-auto leading-relaxed">
                         <?= htmlspecialchars($profil_data['tag_line'] ?? 'Tagline belum diisi.') ?>
                     </p>
                     
