@@ -100,7 +100,7 @@ $pegawai_result = mysqli_query($koneksi, $query_pegawai);
                                 <h3 class="text-lg font-bold text-gray-800"><?= htmlspecialchars($pegawai['nama']) ?></h3>
                                 <p class="text-green-600 font-semibold mb-3"><?= htmlspecialchars($pegawai['jabatan']) ?></p>
                                 <p class="text-gray-500 text-sm flex-grow">
-                                    <?= htmlspecialchars($pegawai['pengalaman_kerja']) ?>
+                                    <?= htmlspecialchars($pegawai['tentang']) ?>
                                 </p>
                             </div>
                         <?php endwhile; ?>

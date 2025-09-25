@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif ($_POST['action'] == 'add') {
             $nama = mysqli_real_escape_string($koneksi, trim($_POST['nama']));
             $jabatan = mysqli_real_escape_string($koneksi, trim($_POST['jabatan']));
-            $pengalaman_kerja = mysqli_real_escape_string($koneksi, trim($_POST['pengalaman_kerja']));
+            $tentang = mysqli_real_escape_string($koneksi, trim($_POST['tentang']));
             $urutan = (int)$_POST['urutan'];
             
             // Cek duplikasi pegawai berdasarkan nama dan jabatan
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 
                 if (!isset($error_message)) {
-                    $query = "INSERT INTO pegawai (nama, jabatan, foto, urutan, pengalaman_kerja) VALUES ('$nama', '$jabatan', '$foto', $urutan, '$pengalaman_kerja')";
+                    $query = "INSERT INTO pegawai (nama, jabatan, foto, urutan, tentang) VALUES ('$nama', '$jabatan', '$foto', $urutan, '$tentang')";
                     if (mysqli_query($koneksi, $query)) {
                         $success_message = "Data pegawai berhasil ditambahkan!";
                     } else {
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $id = (int)$_POST['id'];
             $nama = mysqli_real_escape_string($koneksi, trim($_POST['nama']));
             $jabatan = mysqli_real_escape_string($koneksi, trim($_POST['jabatan']));
-            $pengalaman_kerja = mysqli_real_escape_string($koneksi, trim($_POST['pengalaman_kerja']));
+            $tentang = mysqli_real_escape_string($koneksi, trim($_POST['tentang']));
             $urutan = (int)$_POST['urutan'];
             
             // Cek duplikasi pegawai berdasarkan nama dan jabatan (kecuali data yang sedang diedit)
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                 }
                 
-                $query = "UPDATE pegawai SET nama = '$nama', jabatan = '$jabatan', pengalaman_kerja = '$pengalaman_kerja', urutan = $urutan $foto_query WHERE id = $id";
+                $query = "UPDATE pegawai SET nama = '$nama', jabatan = '$jabatan', tentang = '$tentang', urutan = $urutan $foto_query WHERE id = $id";
                 if (mysqli_query($koneksi, $query)) {
                     $success_message = "Data pegawai berhasil diperbarui!";
                 } else {
@@ -196,6 +196,7 @@ $username = $_SESSION['username'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../upload/logo/Logo_MTS.png" type="image/png">
     <title>Kelola Guru & Staff - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -456,7 +457,7 @@ $username = $_SESSION['username'];
                             <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
                             <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                             <th class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jabatan</th>
-                            <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pengalaman</th>
+                            <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tentang</th>
                             <th class="hidden sm:table-cell px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Urutan</th>
                             <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                         </tr>
@@ -482,7 +483,7 @@ $username = $_SESSION['username'];
                                     <div class="text-sm text-gray-900"><?= htmlspecialchars($pegawai['jabatan']) ?></div>
                                 </td>
                                 <td class="hidden lg:table-cell px-6 py-4">
-                                    <div class="text-sm text-gray-900"><?= htmlspecialchars($pegawai['pengalaman_kerja']) ?></div>
+                                    <div class="text-sm text-gray-900"><?= htmlspecialchars($pegawai['tentang']) ?></div>
                                 </td>
                                 <td class="hidden sm:table-cell px-3 md:px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -550,8 +551,8 @@ $username = $_SESSION['username'];
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Pengalaman Kerja</label>
-                        <textarea name="pengalaman_kerja" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tentang</label>
+                        <textarea name="tentang" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
                     </div>
                     
                     <div>
@@ -607,8 +608,8 @@ $username = $_SESSION['username'];
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Pengalaman Kerja</label>
-                        <textarea name="pengalaman_kerja" id="edit_pengalaman_kerja" rows="3" class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pengalaman</label>
+                        <textarea name="tentang" id="edit_tentang" rows="3" class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
@@ -827,7 +828,7 @@ $username = $_SESSION['username'];
             document.getElementById('edit_id').value = staff.id;
             document.getElementById('edit_nama').value = staff.nama;
             document.getElementById('edit_jabatan').value = staff.jabatan;
-            document.getElementById('edit_pengalaman_kerja').value = staff.pengalaman_kerja;
+            document.getElementById('edit_tentang').value = staff.tentang;
             document.getElementById('edit_urutan').value = staff.urutan;
             openModal('editModal');
         }
