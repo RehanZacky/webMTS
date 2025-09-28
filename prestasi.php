@@ -31,7 +31,7 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Prestasi Santri - Madrasah Tsanawiyah Roudlotul Quran</title>
+    <title>Prestasi Santri - Madrasah Tsanawiyah Roudlotul Qur'an</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="upload/logo/Logo_MTS.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,7 +49,7 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
             <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="h-20 w-20">
-            <span class="text-xl font-bold text-white leading-tight">Madrasah Tsanawiyah <br> Roudlotul Quran</span>
+            <span class="text-xl font-bold text-white leading-tight">Madrasah Tsanawiyah <br> Roudlotul Qur'an</span>
         </a>
         <nav class="hidden md:flex items-center space-x-8">
             <a href="index.php" class="text-green-100 hover:text-white font-semibold">Beranda</a>
@@ -80,7 +80,7 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
                 Galeri <span class="text-green-600">Prestasi</span>
             </h1>
             <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Kumpulan pencapaian dan prestasi membanggakan yang telah diraih oleh para santri Pondok Pesantren Roudlotul Quran dalam berbagai bidang.
+                Kumpulan pencapaian dan prestasi membanggakan yang telah diraih oleh para santri Madrasah Tsanawiyah Roudlotul Qur'an  dalam berbagai bidang.
             </p>
             <div class="w-24 h-1 bg-gradient-to-r from-green-400 to-green-600 rounded-full mx-auto mt-6"></div>
         </div>
@@ -160,7 +160,7 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
                     <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="h-16 w-16 mr-4 rounded-full border-2 border-white/20">
                     <div>
                         <h4 class="text-white text-xl font-bold">Madrasah Tsanawiyah</h4>
-                        <h4 class="text-green-200 text-lg font-semibold">Roudlotul Quran</h4>
+                        <h4 class="text-green-200 text-lg font-semibold">Roudlotul Qur'an</h4>
                     </div>
                 </div>
 
@@ -250,7 +250,7 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="text-center md:text-left mb-4 md:mb-0">
                     <p class="text-green-100 text-sm">
-                        © <?= date('Y') ?> Madrasah Tsanawiyah Roudlotul Quran. 
+                        © <?= date('Y') ?> Madrasah Tsanawiyah Roudlotul Qur'an. 
                         <span class="text-white font-semibold">Semua hak dilindungi undang-undang.</span><br>
                         <a href="https://hiimistis.carrd.co/" class="text-white font-semibold">Dibuat oleh Rehan, Ferdie, dan Nadhif.❤️</a>
                     </p>
