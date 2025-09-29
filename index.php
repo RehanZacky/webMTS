@@ -45,8 +45,12 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
    <header class="bg-green-700 sticky top-0 z-50 shadow-lg">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
-            <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="h-20 w-20">
-            <span class="text-xl font-bold text-white leading-tight">Madrasah Tsanawiyah <br> Roudlotul Qur'an <br> </span>
+            <div class="relative h-20 w-20">
+            <img src="upload/logo/Logo_MTS.png" alt="Logo MTs Roudlotul Quran" class="logo-slide absolute top-0 left-0 h-20 w-20 transition-opacity duration-1000 ease-in-out opacity-100">
+            <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes Roudlotul Quran" class="logo-slide absolute top-0 left-0 h-20 w-20 transition-opacity duration-1000 ease-in-out opacity-0">
+            <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan Roudlotul Quran" class="logo-slide absolute top-0 left-0 h-20 w-20 transition-opacity duration-1000 ease-in-out opacity-0">
+    </div>
+            <span class="text-xl font-bold text-white leading-tight">Yayasan Roudlotul Qur'an Az Zuhri <br> Pon.Pes & MTs Tahfidh <br> Roudlotul Qur'an </span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-8">
@@ -76,9 +80,30 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
 </header>
 
 <script>
+    // Mobile menu toggle
     document.getElementById("menu-toggle").addEventListener("click", function () {
         const menu = document.getElementById("mobile-menu");
         menu.classList.toggle("hidden");
+    });
+
+    // Logo slider functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const logos = document.querySelectorAll('.logo-slide');
+        if (logos.length > 1) { // Hanya berjalan jika ada lebih dari satu logo
+            let currentLogoIndex = 0;
+            setInterval(() => {
+                // Sembunyikan logo saat ini dengan efek fade-out
+                logos[currentLogoIndex].classList.remove('opacity-100');
+                logos[currentLogoIndex].classList.add('opacity-0');
+                
+                // Tentukan indeks logo berikutnya
+                currentLogoIndex = (currentLogoIndex + 1) % logos.length;
+
+                // Tampilkan logo berikutnya dengan efek fade-in
+                logos[currentLogoIndex].classList.remove('opacity-0');
+                logos[currentLogoIndex].classList.add('opacity-100');
+            }, 3000); // Ganti logo setiap 3 detik (3000 milidetik)
+        }
     });
 </script>
 
@@ -96,17 +121,6 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center h-full">
                 <!-- Content Area (Tengah-Kiri) -->
                 <div class="lg:col-span-8 text-center lg:text-left text-white">
-                    <!-- Logo Container -->
-                    <div class="flex justify-center lg:justify-start items-center gap-4 mb-8">
-                        <div class="bg-white/10 backdrop-blur-md p-4 rounded-full border-2 border-white/20 shadow-xl hover:bg-white/20 transition-all duration-300">
-                            <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan" class="h-16 w-16 object-contain">
-                        </div>
-                        <div class="flex justify-center lg:justify-start items-center gap-4 mb-0">
-                        <div class="bg-white/10 backdrop-blur-md p-4 rounded-full border-2 border-white/20 shadow-xl hover:bg-white/20 transition-all duration-300">
-                            <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes" class="h-16 w-16 object-contain">
-                        </div>
-                        </div>
-                    </div>
                     <h1 class="text-xl md:text-5xl lg:text-4xl font-extrabold leading-tight mb-6">
                         Yayasan Roudlotul Qur'an Az Zuhri<br>
                         <span class="text-green-300">Pon.Pes & MTs Tahfidh</span><br>
@@ -409,10 +423,12 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
             <div class="lg:col-span-2">
                 <div class="flex items-center mb-6">
-                    <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="h-16 w-16 mr-4 rounded-full border-2 border-white/20">
+                    <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="logo-slide-footer h-16 w-16 mr-4 rounded-full border-2 border-white/20">
+                    <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes" class="logo-slide-footer h-16 w-16 mr-4 rounded-full border-2 border-white/20">
+                    <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan" class="logo-slide-footer h-16 w-16 mr-4 rounded-full border-2 border-white/20">
                     <div>
-                        <h4 class="text-white text-xl font-bold">Madrasah Tsanawiyah</h4>
-                        <h4 class="text-green-200 text-lg font-semibold">Roudlotul Qur'an</h4>
+                        <h4 class="text-white text-xl font-bold">Yayasan Roudlotul Qur'an Az Zuhri </h4>
+                        <h4 class="text-green-200 text-lg font-semibold"> Pon.Pes & MTs Tahfidh <br> Roudlotul Qur'an</h4>
                     </div>
                 </div>
 
