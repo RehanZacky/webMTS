@@ -40,10 +40,11 @@ $berita_lainnya = mysqli_query($koneksi, $query_lainnya);
    <header class="bg-green-700 sticky top-0 z-50 shadow-lg">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
-            <div class="relative h-20 w-20">
-            <img src="upload/logo/Logo_MTS.png" alt="Logo MTs Roudlotul Quran" class="logo-slide absolute top-0 left-0 h-20 w-20 transition-opacity duration-1000 ease-in-out opacity-100">
-            <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes Roudlotul Quran" class="logo-slide absolute top-0 left-0 h-20 w-20 transition-opacity duration-1000 ease-in-out opacity-0">
-            <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan Roudlotul Quran" class="logo-slide absolute top-0 left-0 h-20 w-20 transition-opacity duration-1000 ease-in-out opacity-0">
+            <!-- Responsive logo: larger on mobile (h-20) and larger on sm+ (h-28) -->
+            <div class="relative h-20 w-20 sm:h-28 sm:w-28">
+            <img src="upload/logo/Logo_MTS.png" alt="Logo MTs Roudlotul Quran" class="logo-slide absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out opacity-100">
+            <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes Roudlotul Quran" class="logo-slide absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out opacity-0">
+            <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan Roudlotul Quran" class="logo-slide absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out opacity-0">
     </div>
             <span class="text-xl font-bold text-white leading-tight">Yayasan Roudlotul Qur'an Az Zuhri <br> Pon.Pes & MTs Tahfidh <br> Roudlotul Qur'an </span>
         </a>
@@ -75,36 +76,28 @@ $berita_lainnya = mysqli_query($koneksi, $query_lainnya);
 </header>
 
 <script>
-    // Mobile menu toggle
-    document.getElementById("menu-toggle").addEventListener("click", function () {
-        const menu = document.getElementById("mobile-menu");
-        menu.classList.toggle("hidden");
-    });
+    // Safe mobile menu toggle: wait for DOM to be ready and guard against missing elements
+    document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+        if (btn && menu) {
+            btn.addEventListener('click', function () {
+                menu.classList.toggle('hidden');
+            });
+        }
 
-    // Logo slider functionality
-    document.addEventListener('DOMContentLoaded', () => {
+        // Logo slider functionality
         const logos = document.querySelectorAll('.logo-slide');
-        if (logos.length > 1) { // Hanya berjalan jika ada lebih dari satu logo
+        if (logos.length > 1) { // Only run if there's more than one logo
             let currentLogoIndex = 0;
             setInterval(() => {
-                // Sembunyikan logo saat ini dengan efek fade-out
                 logos[currentLogoIndex].classList.remove('opacity-100');
                 logos[currentLogoIndex].classList.add('opacity-0');
-                
-                // Tentukan indeks logo berikutnya
                 currentLogoIndex = (currentLogoIndex + 1) % logos.length;
-
-                // Tampilkan logo berikutnya dengan efek fade-in
                 logos[currentLogoIndex].classList.remove('opacity-0');
                 logos[currentLogoIndex].classList.add('opacity-100');
-            }, 3000); // Ganti logo setiap 3 detik (3000 milidetik)
+            }, 3000);
         }
-    });
-</script>
-
-<script>
-    document.getElementById("menu-toggle").addEventListener("click", function () {
-        document.getElementById("mobile-menu").classList.toggle("hidden");
     });
 </script>
 
