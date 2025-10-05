@@ -105,6 +105,19 @@ $berita_result = mysqli_query($koneksi, $query_berita);
                     logos[currentLogoIndex].classList.add('opacity-100');
                 }, 3000);
             }
+            // Footer logo rotator
+            const footerLogos = document.querySelectorAll('.logo-slide-footer');
+            if (footerLogos.length > 1) {
+                let currentFooterIndex = 0;
+                footerLogos.forEach((el, i) => el.classList.toggle('opacity-100', i === 0));
+                setInterval(() => {
+                    footerLogos[currentFooterIndex].classList.remove('opacity-100');
+                    footerLogos[currentFooterIndex].classList.add('opacity-0');
+                    currentFooterIndex = (currentFooterIndex + 1) % footerLogos.length;
+                    footerLogos[currentFooterIndex].classList.remove('opacity-0');
+                    footerLogos[currentFooterIndex].classList.add('opacity-100');
+                }, 3000);
+            }
         }
 
         if (document.readyState === 'loading') {
@@ -200,11 +213,13 @@ $berita_result = mysqli_query($koneksi, $query_berita);
     <div class="container mx-auto px-6 py-12 relative z-10">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
             <div class="lg:col-span-2">
-                <div class="flex items-center mb-6">
-                    <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="logo-slide-footer h-16 w-16 mr-4 rounded-full border-2 border-white/20">
-                    <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes" class="logo-slide-footer h-16 w-16 mr-4 rounded-full border-2 border-white/20">
-                    <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan" class="logo-slide-footer h-16 w-16 mr-4 rounded-full border-2 border-white/20">
-                    <div>
+                <div class="flex items-center mb-6 gap-4">
+                    <div class="relative h-14 w-14 sm:h-20 sm:w-20 flex-shrink-0">
+                        <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="logo-slide-footer absolute inset-0 h-full w-full object-cover rounded-full border-2 border-white/20 opacity-100">
+                        <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes" class="logo-slide-footer absolute inset-0 h-full w-full object-cover rounded-full border-2 border-white/20 opacity-0">
+                        <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan" class="logo-slide-footer absolute inset-0 h-full w-full object-cover rounded-full border-2 border-white/20 opacity-0">
+                    </div>
+                    <div class="text-left">
                         <h4 class="text-white text-xl font-bold">Yayasan Roudlotul Qur'an Az Zuhri </h4>
                         <h4 class="text-green-200 text-lg font-semibold"> Pon.Pes & MTs Tahfidh <br> Roudlotul Qur'an</h4>
                     </div>

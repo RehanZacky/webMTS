@@ -88,61 +88,7 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
     </div>
     </header>
 
-    <script>
-        // Initialize mobile menu toggle and logo slider reliably
-        (function () {
-            function initHeaderInteractions() {
-                const btn = document.getElementById('menu-toggle');
-                const menu = document.getElementById('mobile-menu');
-                if (btn && menu) {
-                    btn.addEventListener('click', function () {
-                        menu.classList.toggle('hidden');
-                    });
-                }
-
-                const logos = document.querySelectorAll('.logo-slide');
-                if (logos.length > 1) {
-                    let currentLogoIndex = 0;
-                    setInterval(() => {
-                        logos[currentLogoIndex].classList.remove('opacity-100');
-                        logos[currentLogoIndex].classList.add('opacity-0');
-                        currentLogoIndex = (currentLogoIndex + 1) % logos.length;
-                        logos[currentLogoIndex].classList.remove('opacity-0');
-                        logos[currentLogoIndex].classList.add('opacity-100');
-                    }, 3000);
-                }
-            }
-
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initHeaderInteractions);
-            } else {
-                initHeaderInteractions();
-            }
-            </script>
-
-            <script>
-                // Debug helper: log menu toggle interactions (temporary)
-                (function () {
-                    function initDebug() {
-                        const btn = document.getElementById('menu-toggle');
-                        const menu = document.getElementById('mobile-menu');
-                        console.log('Gallery debug: menu-toggle button found?', !!btn);
-                        console.log('Gallery debug: mobile-menu found?', !!menu);
-                        if (btn) {
-                            btn.addEventListener('click', function () {
-                                console.log('Gallery debug: menu-toggle clicked. menu.classList contains:', menu ? menu.className : 'no-menu');
-                            });
-                        }
-                    }
-
-                    if (document.readyState === 'loading') {
-                        document.addEventListener('DOMContentLoaded', initDebug);
-                    } else {
-                        initDebug();
-                    }
-                })();
-            </script>
-    </script>
+    <!-- Header scripts removed from here; initialization happens at the bottom of the page to avoid duplicate bindings -->
 
 <main class="py-24">
     <div class="container mx-auto px-6">
@@ -225,11 +171,13 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
     <div class="container mx-auto px-6 py-12 relative z-10">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
             <div class="lg:col-span-2">
-                <div class="flex items-center mb-6">
-                    <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="logo-slide-footer h-16 w-16 mr-4 rounded-full border-2 border-white/20">
-                    <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes" class="logo-slide-footer h-16 w-16 mr-4 rounded-full border-2 border-white/20">
-                    <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan" class="logo-slide-footer h-16 w-16 mr-4 rounded-full border-2 border-white/20">
-                    <div>
+                <div class="flex items-center mb-6 gap-4">
+                    <div class="relative h-14 w-14 sm:h-20 sm:w-20 flex-shrink-0">
+                        <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="logo-slide-footer absolute inset-0 h-full w-full object-cover rounded-full border-2 border-white/20 opacity-100">
+                        <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes" class="logo-slide-footer absolute inset-0 h-full w-full object-cover rounded-full border-2 border-white/20 opacity-0">
+                        <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan" class="logo-slide-footer absolute inset-0 h-full w-full object-cover rounded-full border-2 border-white/20 opacity-0">
+                    </div>
+                    <div class="text-left">
                         <h4 class="text-white text-xl font-bold">Yayasan Roudlotul Qur'an Az Zuhri </h4>
                         <h4 class="text-green-200 text-lg font-semibold"> Pon.Pes & MTs Tahfidh <br> Roudlotul Qur'an</h4>
                     </div>
@@ -334,7 +282,7 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
 <!-- Fancybox JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 
-<script>
+    <script>
   // Script untuk galeri foto Fancybox
   Fancybox.bind("[data-fancybox]", {
     // Optional configuration
@@ -343,26 +291,76 @@ $galeri_query = mysqli_query($koneksi, $query_gambar);
     },
   });
 
-    // Script untuk toggle menu mobile (hamburger menu) + logo slider
+    // Improved script untuk toggle menu mobile (hamburger menu) + logo slider + footer rotator
     (function () {
         function initHeaderInteractions() {
             const btn = document.getElementById('menu-toggle');
             const menu = document.getElementById('mobile-menu');
+
+            // Ensure menu has an initial inline display matching the 'hidden' class
+            if (menu) {
+                if (menu.classList.contains('hidden')) {
+                    menu.style.display = 'none';
+                    menu.setAttribute('aria-hidden', 'true');
+                } else {
+                    menu.style.display = '';
+                    menu.setAttribute('aria-hidden', 'false');
+                }
+            }
+
             if (btn && menu) {
+                // Accessibility attributes
+                btn.setAttribute('aria-controls', 'mobile-menu');
+                btn.setAttribute('aria-expanded', menu.classList.contains('hidden') ? 'false' : 'true');
+
                 btn.addEventListener('click', function () {
-                    menu.classList.toggle('hidden');
+                    const isHidden = menu.classList.toggle('hidden');
+                    // Toggle inline display as a fallback if CSS utilities get overridden
+                    if (isHidden) {
+                        // was visible, now hidden
+                        menu.style.display = 'none';
+                        menu.setAttribute('aria-hidden', 'true');
+                        btn.setAttribute('aria-expanded', 'false');
+                    } else {
+                        // was hidden, now visible
+                        menu.style.display = 'block';
+                        // Force a reflow to ensure the browser applies the change
+                        void menu.offsetHeight;
+                        menu.setAttribute('aria-hidden', 'false');
+                        btn.setAttribute('aria-expanded', 'true');
+                    }
                 });
             }
 
+            // Header logo slider
             const logos = document.querySelectorAll('.logo-slide');
             if (logos.length > 1) {
                 let currentLogoIndex = 0;
+                // ensure initial state
+                logos.forEach((el, i) => {
+                    el.classList.toggle('opacity-100', i === 0);
+                    el.classList.toggle('opacity-0', i !== 0);
+                });
                 setInterval(() => {
                     logos[currentLogoIndex].classList.remove('opacity-100');
                     logos[currentLogoIndex].classList.add('opacity-0');
                     currentLogoIndex = (currentLogoIndex + 1) % logos.length;
                     logos[currentLogoIndex].classList.remove('opacity-0');
                     logos[currentLogoIndex].classList.add('opacity-100');
+                }, 3000);
+            }
+
+            // Footer logo rotator
+            const footerLogos = document.querySelectorAll('.logo-slide-footer');
+            if (footerLogos.length > 1) {
+                let currentFooterIndex = 0;
+                footerLogos.forEach((el, i) => el.classList.toggle('opacity-100', i === 0));
+                setInterval(() => {
+                    footerLogos[currentFooterIndex].classList.remove('opacity-100');
+                    footerLogos[currentFooterIndex].classList.add('opacity-0');
+                    currentFooterIndex = (currentFooterIndex + 1) % footerLogos.length;
+                    footerLogos[currentFooterIndex].classList.remove('opacity-0');
+                    footerLogos[currentFooterIndex].classList.add('opacity-100');
                 }, 3000);
             }
         }
