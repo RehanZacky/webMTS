@@ -67,9 +67,9 @@ $berita_lainnya = mysqli_query($koneksi, $query_lainnya);
     </div>
 
     <div id="mobile-menu" class="hidden md:hidden bg-green-700 px-6 pb-4">
-        <a href="index.php" class="block py-2 text-white font-semibold">Beranda</a>
+        <a href="index.php" class="text-green-100 hover:text-white font-semibold">Beranda</a>
         <a href="profil.php" class="block py-2 text-green-100 hover:text-white">Profil</a>
-        <a href="berita.php" class="block py-2 text-green-100 hover:text-white">Berita</a>
+        <a href="berita.php" class="text-white font-bold">Berita</a>
         <a href="prestasi.php" class="block py-2 text-green-100 hover:text-white">Prestasi</a>
         <a href="galeri.php" class="block py-2 text-green-100 hover:text-white">Galeri</a>
     </div>

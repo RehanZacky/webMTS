@@ -58,10 +58,10 @@ $prestasi_result = mysqli_query($koneksi, $query_prestasi);
         </a>
 
         <nav class="hidden md:flex items-center space-x-8">
-            <a href="index.php" class="text-white font-bold">Beranda</a>
+            <a href="index.php" class="text-green-100 hover:text-white font-semibold">Beranda</a>
             <a href="profil.php" class="text-green-100 hover:text-white font-semibold">Profil</a>
             <a href="berita.php" class="text-green-100 hover:text-white font-semibold">Berita</a>
-            <a href="prestasi.php" class="text-green-100 hover:text-white font-semibold">Prestasi</a>
+            <a href="prestasi.php" class="text-white font-bold">Prestasi</a>
             <a href="galeri.php" class="text-green-100 hover:text-white font-semibold">Galeri</a>
         </nav>
 
