@@ -379,6 +379,10 @@ $username = $_SESSION['username'];
                     <i class="fas fa-plus mr-2"></i>
                     Tambah Guru/Staff Baru
                 </button>
+                <button onclick="openModal('addPemimpinModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
+                    <i class="fas fa-crown mr-2"></i>
+                    Tambah Profil Pemimpin
+                </button>
             </div>
         </div>
 

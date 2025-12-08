@@ -10,8 +10,11 @@ while ($row = mysqli_fetch_assoc($profil_query)) {
 }
 
 // Mengambil data pimpinan dari tabel profil_pemimpin
-$pemimpin_query = mysqli_query($koneksi, "SELECT * FROM profil_pemimpin LIMIT 1");
-$pemimpin = mysqli_fetch_assoc($pemimpin_query);
+$pemimpin_query = mysqli_query($koneksi, "SELECT * FROM profil_pemimpin LIMIT 2");
+$pemimpin_list = [];
+while ($row = mysqli_fetch_assoc($pemimpin_query)) {
+    $pemimpin_list[] = $row;
+}
 
 // Mengambil gambar beranda dari database
 $gambar_beranda_query = mysqli_query($koneksi, "SELECT nama_file FROM gambar_beranda ORDER BY id DESC LIMIT 1");
@@ -261,17 +264,24 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                     <h2 class="text-3xl font-bold text-gray-800">Profil Pondok</h2>
                     <p class="mt-2 text-gray-600">Mengenal lebih dekat pimpinan dan visi kehidupan di Pondok Pesantren.</p>
                 </div>
-                <?php if ($pemimpin): ?>
-                 <div class="text-center mb-12">
-                    <div class="flex justify-center">
-                        <img src="upload/gambar_pegawai/<?= htmlspecialchars($pemimpin['foto']) ?>" alt="Foto <?= htmlspecialchars($pemimpin['nama']) ?>" class="w-40 h-40 object-cover rounded-full shadow-md border-4 border-white">
+                
+                <?php if (!empty($pemimpin_list)): ?>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-12 mb-12">
+                        <?php foreach ($pemimpin_list as $pemimpin): ?>
+                        <div class="text-center">
+                            <div class="flex justify-center mb-4">
+                                <img src="upload/gambar_pegawai/<?= htmlspecialchars($pemimpin['foto']) ?>" 
+                                     alt="Foto <?= htmlspecialchars($pemimpin['nama']) ?>" 
+                                     class="w-32 h-32 object-cover rounded-full shadow-md border-4 border-green-100">
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-800"><?= htmlspecialchars($pemimpin['nama']) ?></h3>
+                            <p class="text-green-600 font-medium mb-3"><?= htmlspecialchars($pemimpin['jabatan']) ?></p>
+                            <blockquote class="italic text-gray-600 text-sm leading-relaxed">"<?= htmlspecialchars($pemimpin['slogan']) ?>"</blockquote>
+                        </div>
+                        <?php endforeach; ?>
                     </div>
-                    <h3 class="mt-6 text-xl font-semibold text-gray-800"><?= htmlspecialchars($pemimpin['nama']) ?></h3>
-                    <p class="text-gray-500 mb-4"><?= htmlspecialchars($pemimpin['jabatan']) ?></p>
-                    <blockquote class="italic text-green-700 text-lg font-medium">"<?= htmlspecialchars($pemimpin['slogan']) ?>"</blockquote>
-                </div>
                 <?php else: ?>
-                    <p class="text-center text-gray-500">Data pimpinan belum tersedia.</p>
+                    <p class="text-center text-gray-500 mb-12">Data pimpinan belum tersedia.</p>
                 <?php endif; ?>
                     
                 <?php
