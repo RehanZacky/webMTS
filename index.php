@@ -45,13 +45,17 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
    <header class="bg-green-700 sticky top-0 z-50 shadow-lg">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="index.php" class="flex items-center gap-3">
-            <!-- Responsive logo: larger on mobile (h-20) and larger on sm+ (h-28) -->
+            <!-- Responsive logo -->
             <div class="relative h-20 w-20 sm:h-28 sm:w-28">
-            <img src="upload/logo/Logo_MTS.png" alt="Logo MTs Roudlotul Quran" class="logo-slide absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out opacity-100">
-            <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes Roudlotul Quran" class="logo-slide absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out opacity-0">
-            <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan Roudlotul Quran" class="logo-slide absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out opacity-0">
+            <img src="upload/logo/Logo_MTS.png" alt="Logo MTs Roudlotul Quran" 
+            class="logo-slide absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out opacity-100">
+            <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes Roudlotul Quran" 
+            class="logo-slide absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out opacity-0">
+            <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan Roudlotul Quran" 
+            class="logo-slide absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out opacity-0">
     </div>
-            <span class="text-xl font-bold text-white leading-tight">Yayasan Roudlotul Qur'an Az Zuhri <br> Pon.Pes & MTs Tahfidh <br> Roudlotul Qur'an </span>
+            <span class="text-xl font-bold text-white leading-tight">Yayasan Roudlotul Qur'an Az Zuhri <br> Pon.Pes & MTs Tahfidh 
+            <br> Roudlotul Qur'an </span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-8">
@@ -152,14 +156,7 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                         <?= htmlspecialchars($profil_data['tag_line'] ?? 'Tagline belum diisi.') ?>
                     </p>
                     
-                    <div class="mt-8 flex flex-col sm:flex-row lg:justify-start justify-center gap-4">
-                        <a href="#profil-video" class="bg-white text-green-700 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-transform hover:scale-105 shadow-lg">
-                            Tentang Kami
-                        </a>
-                        <a href="#galeri" class="border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-green-700 transition-all hover:scale-105">
-                            Lihat Galeri
-                        </a>
-                    </div>
+
                 </div>
                 
                 <!-- Social Media Icons (Kanan) -->
@@ -282,14 +279,35 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                 $data_profil = mysqli_fetch_assoc($profil);
                 $link = $data_profil['isi'] ?? '';
 
-                // Ekstrak ID dari link YouTube
-                parse_str(parse_url($link, PHP_URL_QUERY), $ytParams);
-                $videoID = $ytParams['v'] ?? null;
+                // Ekstrak ID dari link YouTube (support berbagai format)
+                $videoID = null;
+                
+                if (!empty($link)) {
+                    // Format: https://www.youtube.com/watch?v=ID
+                    if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $link, $matches)) {
+                        $videoID = $matches[1];
+                    }
+                    // Format: hanya ID langsung
+                    else if (preg_match('/^[a-zA-Z0-9_-]{11}$/', trim($link))) {
+                        $videoID = trim($link);
+                    }
+                }
+
                 if ($videoID) {
-                echo '<div class="flex justify-center">';
-                echo '<div class="w-full max-w-2xl aspect-video">';
-                echo "<iframe class='w-full h-full' src='https://www.youtube.com/embed/$videoID' frameborder='0' allowfullscreen></iframe>";
-                echo '</div></div>';} else {echo "<p class='text-gray-500'>Link video tidak valid atau belum diisi.</p>";}
+                    echo '<div class="flex justify-center">';
+                    echo '<div class="w-full max-w-2xl aspect-video rounded-lg overflow-hidden shadow-lg">';
+                    echo "<iframe class='w-full h-full' src='https://www.youtube.com/embed/$videoID' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+                    echo '</div></div>';
+                } else {
+                    echo "<div class='bg-gray-200 rounded-lg w-full max-w-2xl mx-auto aspect-video flex items-center justify-center'>";
+                    echo "<div class='text-center'>";
+                    echo "<svg class='w-16 h-16 text-gray-400 mx-auto mb-4' fill='currentColor' viewBox='0 0 24 24'>";
+                    echo "<path d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'/>";
+                    echo "</svg>";
+                    echo "<p class='text-gray-600 font-semibold'>Video Sambutan Belum Diupload</p>";
+                    echo "<p class='text-gray-500 text-sm mt-2'>Silakan hubungi admin untuk menambahkan video youtube channel</p>";
+                    echo "</div></div>";
+                }
                 ?>
             </div>
         </section>
@@ -445,9 +463,15 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
             <div class="lg:col-span-2">
                 <div class="flex items-center mb-6 gap-4">
                     <div class="relative h-14 w-14 sm:h-20 sm:w-20 flex-shrink-0">
-                        <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" class="logo-slide-footer absolute inset-0 h-full w-full object-cover rounded-full border-2 border-white/20 opacity-100">
-                        <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes" class="logo-slide-footer absolute inset-0 h-full w-full object-cover rounded-full border-2 border-white/20 opacity-0">
-                        <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan" class="logo-slide-footer absolute inset-0 h-full w-full object-cover rounded-full border-2 border-white/20 opacity-0">
+                        <img src="upload/logo/Logo_MTS.png" alt="Roudlotul Quran" 
+                        class="logo-slide-footer absolute inset-0 h-full w-full object-cover 
+                        rounded-full border-2 border-white/20 opacity-100">
+                        <img src="upload/logo/Logo_Ponpes.png" alt="Logo Ponpes" 
+                        class="logo-slide-footer absolute inset-0 h-full w-full object-cover 
+                        rounded-full border-2 border-white/20 opacity-0">
+                        <img src="upload/logo/Logo_Yayasan.png" alt="Logo Yayasan"
+                        class="logo-slide-footer absolute inset-0 h-full w-full object-cover 
+                        rounded-full border-2 border-white/20 opacity-0">
                     </div>
                     <div class="text-left">
                         <h4 class="text-white text-xl font-bold">Yayasan Roudlotul Qur'an Az Zuhri </h4>
@@ -456,7 +480,8 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                 </div>
 
                 <p class="text-green-100 leading-relaxed mb-6">
-                    <?= htmlspecialchars($profil_data['tag_line'] ?? 'Madrasah Tsanawiyah Roudlotul Quran berkomitmen untuk mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin.') ?>
+                    <?= htmlspecialchars($profil_data['tag_line'] ?? 'Madrasah Tsanawiyah Roudlotul Quran berkomitmen untuk 
+                    mendidik generasi muda Islami yang berakhlak mulia, berilmu pengetahuan, dan berjiwa pemimpin.') ?>
                 </p>
                 
                 <div class="flex space-x-4">
@@ -525,7 +550,8 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                         <div class="bg-white/10 p-2 rounded-lg mr-3 group-hover:bg-white/20 transition-colors duration-300">
                             <svg class="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                         </div>
-                        <p class="text-green-100">082145964013</p>
+                        <a href="https://wa.me/6281231112301" target="_blank" class="text-green-100 hover:text-white transition-colors">081231112301</a>
+                    </li>
                     </li>
                     <li class="flex items-center group">
                         <div class="bg-white/10 p-2 rounded-lg mr-3 group-hover:bg-white/20 transition-colors duration-300">
