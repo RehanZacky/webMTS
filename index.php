@@ -279,35 +279,14 @@ $gambar_beranda_url = $gambar_beranda && $gambar_beranda['nama_file'] ? 'upload/
                 $data_profil = mysqli_fetch_assoc($profil);
                 $link = $data_profil['isi'] ?? '';
 
-                // Ekstrak ID dari link YouTube (support berbagai format)
-                $videoID = null;
-                
-                if (!empty($link)) {
-                    // Format: https://www.youtube.com/watch?v=ID
-                    if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $link, $matches)) {
-                        $videoID = $matches[1];
-                    }
-                    // Format: hanya ID langsung
-                    else if (preg_match('/^[a-zA-Z0-9_-]{11}$/', trim($link))) {
-                        $videoID = trim($link);
-                    }
-                }
-
+                // Ekstrak ID dari link YouTube
+                parse_str(parse_url($link, PHP_URL_QUERY), $ytParams);
+                $videoID = $ytParams['v'] ?? null;
                 if ($videoID) {
-                    echo '<div class="flex justify-center">';
-                    echo '<div class="w-full max-w-2xl aspect-video rounded-lg overflow-hidden shadow-lg">';
-                    echo "<iframe class='w-full h-full' src='https://www.youtube.com/embed/$videoID' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
-                    echo '</div></div>';
-                } else {
-                    echo "<div class='bg-gray-200 rounded-lg w-full max-w-2xl mx-auto aspect-video flex items-center justify-center'>";
-                    echo "<div class='text-center'>";
-                    echo "<svg class='w-16 h-16 text-gray-400 mx-auto mb-4' fill='currentColor' viewBox='0 0 24 24'>";
-                    echo "<path d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'/>";
-                    echo "</svg>";
-                    echo "<p class='text-gray-600 font-semibold'>Video Sambutan Belum Diupload</p>";
-                    echo "<p class='text-gray-500 text-sm mt-2'>Silakan hubungi admin untuk menambahkan video youtube channel</p>";
-                    echo "</div></div>";
-                }
+                echo '<div class="flex justify-center">';
+                echo '<div class="w-full max-w-2xl aspect-video">';
+                echo "<iframe class='w-full h-full' src='https://www.youtube.com/embed/$videoID' frameborder='0' allowfullscreen></iframe>";
+                echo '</div></div>';} else {echo "<p class='text-gray-500'>Link video tidak valid atau belum diisi.</p>";}
                 ?>
             </div>
         </section>
