@@ -102,6 +102,9 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                 <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-images mr-2"></i>Galeri
                 </a>
+                 <a href="spmb_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-envelope mr-2"></i>SPMB
+                </a>
                         <a href="../logout.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                         <i class="fas fa-sign-out-alt mr-2"></i>Logout
                     </a>
@@ -151,6 +154,9 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                 </a>
                 <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-images mr-2"></i>Galeri
+                </a>
+                <a href="spmb_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-envelope mr-2"></i>SPMB
                 </a>
                 <div class="border-t border-green-600 pt-4">
                     <a href="../logout.php" class="text-red-300 hover:bg-red-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
@@ -391,6 +397,16 @@ while ($row = mysqli_fetch_assoc($statistik_query)) {
                     <div class="text-center">
                        <p class="font-medium text-slate-700">Guru & Staff</p>
                        <p class="text-xs text-slate-600">Tambah Guru dan Staff</p>
+                    </div>
+                </a>
+
+                <a href="spmb_admin.php" class="flex flex-col items-center space-y-3 p-4 bg-green-50 rounded-lg hover:bg-green-100 group">
+                   <div class="p-3 bg-green-500 rounded-full">
+                        <i class="fas fa-envelope text-white text-xl"></i>
+                    </div>
+                    <div class="text-center">
+                       <p class="font-medium text-slate-700">SPMB</p>
+                       <p class="text-xs text-slate-600">Monitoring SPMB</p>
                     </div>
                 </a>
             </div>

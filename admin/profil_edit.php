@@ -177,6 +177,9 @@ $username = $_SESSION['username'];
                 <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-images mr-2"></i>Galeri
                 </a>
+                <a href="spmb_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-envelope mr-2"></i>SPMB
+                </a>
                         <a href="../logout.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                         <i class="fas fa-sign-out-alt mr-2"></i>Logout
                     </a>
@@ -226,6 +229,9 @@ $username = $_SESSION['username'];
                 </a>
                 <a href="galeri_edit.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-images mr-2"></i>Galeri
+                </a>
+                <a href="spmb_admin.php" class="text-green-100 hover:bg-green-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="fas fa-envelope mr-2"></i>SPMB
                 </a>
                 <div class="border-t border-green-600 pt-4">
                     <a href="../logout.php" class="text-red-300 hover:bg-red-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
